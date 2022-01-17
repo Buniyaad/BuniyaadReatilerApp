@@ -1,22 +1,30 @@
-import React from 'react';
+import * as React from 'react';
 import {
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-
+import {Container, NativeBaseProvider} from 'native-base';
+import Login from './components/login';
 
 
 export default function App() {
   
 
   return (
-    <Text>hello</Text>
+    
+  
+      <Login /> 
+   
+      
+    
   );
 };
 
 const styles = StyleSheet.create({
-
+  containerStyle:{
+    backgroundColor:'white',
+}
 });
 
 
