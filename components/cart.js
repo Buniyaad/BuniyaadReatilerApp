@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet,Image} from 'react-native';
-import {Body,Container,Content,Text,Item,Button,Header,Footer,FooterTab,Tabs,Tab,Input,Label} from 'native-base';
+import {Badge,Body,Container,Content,Text,Item,Button,Header,Footer,FooterTab,Tabs,Tab,Input,Label} from 'native-base';
 import Icon from 'react-native-ionicons'
 
 export default class Cart extends React.Component{
@@ -24,8 +24,11 @@ export default class Cart extends React.Component{
                      <Label style={{color:'#737070'}}>Categories</Label>
                  </Button>
 
-                 <Button transparent
+                 <Button transparent badge vertical
                  onPress={()=>{this.props.navigation.navigate('Cart')}}>
+                     <Badge warning>
+                         <Text>1</Text>
+                     </Badge>
                      <Icon name='cart' style={{color:'#737070'}}/>
                      <Label style={{color:'#737070'}}>Cart</Label>
                  </Button>
