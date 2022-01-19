@@ -10,6 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native-stack": "^6.2.5",
     "aws-sdk": "^2.1055.0",
     "bcrypt": "^5.0.1",
     "config": "^3.3.6",
@@ -22,8 +24,11 @@
     "native-base": "^2.15.0",
     "react": "17.0.2",
     "react-native": "0.66.4",
+    "react-native-ionicons": "^4.6.5",
     "react-native-safe-area-context": "^3.3.2",
-    "react-native-svg": "^12.1.1"
+    "react-native-screens": "^3.10.2",
+    "react-native-svg": "^12.1.1",
+    "react-native-vector-icons": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
