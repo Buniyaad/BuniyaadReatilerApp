@@ -9,22 +9,24 @@ import {
   Input,
   Label,
   Button,
+  Spinner,
 } from 'native-base';
 
 export default class Login extends React.Component {
   state = {
     phoneno: '',
-    btnShow: false,
+    showBtn: false,
     isRegistered:false,
+    showSpinner:false,
   };
 
   // check if complete phone num is entered then show next btn
   handle_phoneno(text) {
     this.setState({phoneno: text});
     if (text.length === 10) {
-      this.setState({btnShow: true});
+      this.setState({showBtn: true});
     } else {
-      this.setState({btnShow: false});
+      this.setState({showBtn: false});
     }
   }
 
@@ -42,6 +44,7 @@ export default class Login extends React.Component {
 
   //check if number is registered, button onpress event
    handle_loginbtn(){
+     this.setState({showSpinner:true,showBtn:false})
     fetch('https://api.buniyaad.pk/auth/contact', {
   method: 'POST',
   headers: {
@@ -54,6 +57,16 @@ export default class Login extends React.Component {
 }).then((response)=>response.json())
 .then(data=>this.setState({isRegistered:data.data}))
 .then(()=> this.check_registered());
+  }
+
+  componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({showSpinner:false,phoneno:''})
+    });
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
   }
 
   render() {
@@ -79,7 +92,7 @@ export default class Login extends React.Component {
             />
           </Item>
 
-          {this.state.btnShow && (
+          {this.state.showBtn && (
             <Button
               style={styles.btnStyle}
               onPress={() => this.handle_loginbtn()}>
@@ -88,6 +101,10 @@ export default class Login extends React.Component {
                 Next
               </Text>
             </Button>
+          )}
+
+          {this.state.showSpinner && (
+            <Spinner color={'black'}/>
           )}
         </Content>
       </Container>

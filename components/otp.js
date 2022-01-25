@@ -1,83 +1,78 @@
 import * as React from 'react';
-import {StyleSheet, Image, View,TouchableOpacity} from 'react-native';
+import {StyleSheet, Image, View, TouchableOpacity} from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import {
   Container,
-  Form,
   Content,
   Text,
-  Item,
-  Input,
-  Label,
-  Button,
-  textInput,
 } from 'native-base';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import {route} from 'express/lib/application';
-import { CloudWatchLogs } from 'aws-sdk';
-
 
 export default class Otp extends React.Component {
   state = {
     code: '',
     otp: this.generate_otp(),
     timer: 30,
-    phoneno:`92${this.props.route.params.phoneno}`,
-    showResendBtn:false,
+    phoneno: `92${this.props.route.params.phoneno}`,
+    showResendBtn: false,
   };
 
-  setTimer(){
+  //otp timer
+  setTimer() {
     this.interval = setInterval(
       () => this.setState(prevState => ({timer: prevState.timer - 1})),
       1000,
     );
   }
 
-  generate_otp(){
-
-    return parseInt(Math.random() * (9999 - 1000) + 1000)
+  //function to generate 4 digit otp
+  generate_otp() {
+    return parseInt(Math.random() * (9999 - 1000) + 1000);
   }
 
-  send_sms(){
-    fetch(`https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${this.state.phoneno}&type=English&message=your%20passcode%20is:${this.state.otp}`)
+  //send sms params: phoneno, otp
+  send_sms() {
+    fetch(
+      `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${this.state.phoneno}&type=English&message=your%20passcode%20is:${this.state.otp}`,
+    );
   }
 
+  //match entered otp with generated otp
   check_otp(code) {
-    console.log(code);
+    //console.log(code);
     if (parseInt(this.state.otp) === parseInt(code)) {
-      this.props.navigation.navigate('Setpin',{phoneno: this.props.route.params.phoneno});
+      this.props.navigation.navigate('Setpin', {
+        phoneno: this.props.route.params.phoneno,
+      });
     }
   }
 
-  resend_sms(){
-    if(this.state.timer===0){
-      this.setState({timer:30});
+  // reset timer and send sms again on resesnd btn
+  resend_sms() {
+    if (this.state.timer === 0) {
+      this.setState({timer: 30});
       this.setTimer();
       this.send_sms();
     }
-
   }
 
- 
-
   componentDidMount() {
-  
-   this.send_sms();
+    // send sms and set timer
+    this.send_sms();
     console.log(this.state.otp);
+    Clipboard.setString('');
     this.setTimer();
- 
-    
-  
   }
 
   componentDidUpdate() {
+    // stop timer interval on count down 0
     if (this.state.timer === 0) {
-
       clearInterval(this.interval);
-      
     }
   }
 
   componentWillUnmount() {
+    // refresh timer
     clearInterval(this.interval);
   }
 
@@ -98,10 +93,9 @@ export default class Otp extends React.Component {
             }>{`0${this.props.route.params.phoneno}`}</Text>
           <Text style={styles.timerStyle}>{this.state.timer}</Text>
 
-          <TouchableOpacity onPress={()=>this.resend_sms()}>
+          <TouchableOpacity onPress={() => this.resend_sms()}>
             <Text style={styles.smallLabelStyle}>Tap here to Resend</Text>
           </TouchableOpacity>
-          
 
           <OTPInputView
             style={{width: '80%', height: 200}}
@@ -133,7 +127,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    textDecorationLine:'underline',
+    textDecorationLine: 'underline',
   },
   phonenoStyle: {
     marginTop: 10,

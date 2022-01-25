@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Image,
   View,
+  Alert,
+  BackHandler,
 } from 'react-native';
 import {
   Badge,
@@ -71,7 +73,7 @@ export default class Login extends React.Component {
   recommendedProductsItemComponent = itemData => (
     <TouchableOpacity>
       <Card style={styles.recommendedStyle}>
-        <Image source={require('./assets/logo.png')} />
+      <Image style={styles.imageStyle} source={{uri:'https://buniyaad-images.s3.ap-southeast-1.amazonaws.com/9137167.jpg'}} />
         <Text>{itemData.item.title}</Text>
         <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
           {itemData.item.price}
@@ -91,7 +93,27 @@ export default class Login extends React.Component {
       </Card>
     </TouchableOpacity>
   );
+ 
+  //handle back button function
+  backAction = () => {
+    Alert.alert("Hold on!", "Are you sure you want to go back?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "YES", onPress: () => BackHandler.exitApp() }
+    ]);
+    return true;
+  };
 
+  componentDidMount(){
+    BackHandler.addEventListener("hardwareBackPress", this.backAction);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.backAction);
+  }
 
   render() {
     return (
@@ -119,8 +141,11 @@ export default class Login extends React.Component {
           </Item>
         </View>
 
-        <Content>
-          <Card style={styles.bannerStyle}>
+        {/*set aap keh liye as header to sab samaan */}
+          
+            
+            <FlatList
+            ListHeaderComponent={ <><Card style={styles.bannerStyle}>
             <Image source={require('./assets/logo.png')} />
           </Card>
 
@@ -132,16 +157,13 @@ export default class Login extends React.Component {
               renderItem={item => this.recommendedProductsItemComponent(item)}
             />
           </View>
-
-          <View>
-            <Text style={styles.labelStyle}> SAB SAMAAN</Text>
-            <FlatList
+          <Text style={styles.labelStyle}> SAB SAMAAN</Text></>}
               data={this.state.data}
               numColumns={2}
               renderItem={item => this.allProductsItemComponent(item)}
             />
-          </View>
-        </Content>
+        
+     
 
         <Footer>
           <FooterTab style={styles.footerStyle}>
@@ -232,7 +254,8 @@ const styles = StyleSheet.create({
   recommendedStyle: {
     marginLeft: 10,
     borderRadius: 5,
-    height: 150,
+    height: 250,
+    width:150,
     justifyContent: 'space-between',
   },
   allStyle: {
@@ -241,4 +264,8 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: 'space-between',
   },
+  imageStyle:{
+    height:150,
+    width:150,
+  }
 });

@@ -1,17 +1,15 @@
 import * as React from 'react';
 import {StyleSheet, Image, View,TouchableOpacity} from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import {
   Container,
-  Form,
   Content,
   Text,
-  Item,
-  Input,
-  Label,
   Button,
-  textInput,
+  Spinner,
 } from 'native-base';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import Icon from 'react-native-ionicons';
 
 
 
@@ -22,6 +20,8 @@ export default class Setpin extends React.Component{
         confirmpin:'',
         matched:false,
         phoneno:this.props.route.params.phoneno,
+        showSpinner:false,
+        showPin:false,
     }
 
     check_pin(confirmpin){
@@ -36,6 +36,7 @@ export default class Setpin extends React.Component{
     }
 
     handle_register(){
+      this.setState({showSpinner:true,matched:false})
         fetch('https://api.buniyaad.pk/auth/register', {
   method: 'POST',
   headers: {
@@ -49,6 +50,10 @@ export default class Setpin extends React.Component{
 }).then((response)=>response.json())
 .then(data=> console.log(data.data))
 .then(() => this.props.navigation.navigate('NotVerified'));
+    }
+
+    componentDidMount(){
+      Clipboard.setString('');
     }
 
     render(){return(
@@ -69,7 +74,7 @@ export default class Setpin extends React.Component{
             }}
             codeInputFieldStyle={styles.underlineStyleBase}
             autoFocusOnLoad={false}
-            secureTextEntry={true}
+            secureTextEntry={!this.state.showPin}
             codeInputHighlightStyle={styles.underlineStyleHighLighted}
             onCodeFilled={pin => {
               console.log(pin);
@@ -85,13 +90,17 @@ export default class Setpin extends React.Component{
             }}
             codeInputFieldStyle={styles.underlineStyleBase}
             autoFocusOnLoad={false}
-            secureTextEntry={true}
+            secureTextEntry={!this.state.showPin}
             codeInputHighlightStyle={styles.underlineStyleHighLighted}
             onCodeFilled={confirmpin => {
               console.log(confirmpin);
               this.check_pin(confirmpin);
             }}
           />
+
+          <Button transparent style={{alignSelf:'center'}} onPress={()=>this.setState({showPin:!this.state.showPin})}>
+            <Icon name={this.state.showPin?'eye-off':'eye'} color='black'/>
+          </Button>
 
              {this.state.matched && (
             <Button
@@ -102,6 +111,10 @@ export default class Setpin extends React.Component{
                 Next
               </Text>
             </Button>
+          )}
+
+          {this.state.showSpinner && (
+            <Spinner color={'black'}/>
           )}
             </Content>
         </Container>
