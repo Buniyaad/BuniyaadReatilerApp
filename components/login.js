@@ -11,6 +11,9 @@ import {
   Button,
   Spinner,
 } from 'native-base';
+import SmsRetriever from 'react-native-sms-retriever';
+
+
 
 export default class Login extends React.Component {
   state = {
@@ -19,11 +22,29 @@ export default class Login extends React.Component {
     isRegistered:false,
     showSpinner:false,
   };
-
+ 
+  
+  // check available phone number on device
+  getPhoneNumber = async () => {
+    let phoneNumber=''
+    try {
+      phoneNumber = await SmsRetriever.requestPhoneNumber();
+      console.log('0'+phoneNumber.substring(3))
+     phoneNumber='0'+phoneNumber.substring(3)
+     
+      
+    } catch (error) {
+      console.log(JSON.stringify(error));
+    }
+    
+    this.handle_phoneno(phoneNumber)
+    //this.setState({phoneno:phoneNumber})
+   }; 
+   
   // check if complete phone num is entered then show next btn
   handle_phoneno(text) {
     this.setState({phoneno: text});
-    if (text.length === 10) {
+    if (text.length === 11) {
       this.setState({showBtn: true});
     } else {
       this.setState({showBtn: false});
@@ -52,7 +73,7 @@ export default class Login extends React.Component {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    "contactNo":`0${this.state.phoneno}`,
+    "contactNo":this.state.phoneno,
   })
 }).then((response)=>response.json())
 .then(data=>this.setState({isRegistered:data.data}))
@@ -63,10 +84,17 @@ export default class Login extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({showSpinner:false,phoneno:''})
     });
+  
+   this.getPhoneNumber() 
+
+    
   }
+
 
   componentWillUnmount() {
     this._unsubscribe();
+    
+    
   }
 
   render() {
@@ -80,15 +108,17 @@ export default class Login extends React.Component {
           <Text style={styles.txt}>Mobile number darj karein!</Text>
 
           <Item style={styles.phoneInputStyle} inlineLabel>
-            <Label style={styles.inputlabelStyle}> +92</Label>
             <Input
-              placeholder="Enter phone number"
+              placeholder="e.g. 03xxxxxxxxx"
               style={{marginLeft: 10}}
               keyboardType="numeric"
-              maxLength={10}
+              maxLength={11}
+              textAlign='center'
+              value={this.state.phoneno}
               onChangeText={text => {
                 this.handle_phoneno(text);
               }}
+            
             />
           </Item>
 
@@ -116,6 +146,10 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     backgroundColor: '#FAB624',
+    flex:1,
+  },
+  contentStyle:{
+    flex:1,
   },
   logoStyle: {
     alignSelf: 'center',

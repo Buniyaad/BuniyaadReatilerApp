@@ -5,7 +5,7 @@ import Icon from 'react-native-ionicons'
 
 export default class Cart extends React.Component{
     render(){return(
-        <Container>
+        <Container style={styles.containerStyle}>
             <Content>
              <Text>Cart</Text>
             </Content>
@@ -46,10 +46,10 @@ export default class Cart extends React.Component{
 }
 
 const styles = StyleSheet.create({
-    containerStyle:{
-       justifyContent:'center',   
-   
-    },
+    containerStyle: {
+        justifyContent: 'center',
+        flex: 1,
+      },
     headerStyle:{
        backgroundColor:'#FAB624'
     },
