@@ -20,10 +20,12 @@ export default class Pin extends React.Component {
     data: '',
     showSpinner: false,
     showPin:false,
+    showError:false,
   };
 
   //call api to authenticte pin
   check_pin() {
+    console.log(this.state.phoneno)
     this.setState({showSpinner: true, showBtn: false});
     fetch('https://api.buniyaad.pk/auth/login', {
       method: 'POST',
@@ -32,22 +34,21 @@ export default class Pin extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contactNo: `0${this.state.phoneno}`,
+        contactNo: this.state.phoneno,
         pin: this.state.enteredpin,
       }),
     })
       .then(response => response.json())
       .then(data =>
         this.setState({data: data.data.checkUser, authenticated: !data.error}),
-      )
-      .then(() => console.log(this.state))
+      ).then(() => console.log(this.state))
       .then(() => this.check_Verified());
   }
 
   //check whether user is verified
   check_Verified() {
     if (this.state.authenticated === false) {
-      alert('invalid pin');
+      this.setState({showSpinner:false,showError:true})
     }
     if (this.state.data.Verified === true) {
       console.log('you have permission');
@@ -64,7 +65,7 @@ export default class Pin extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container style={styles.containerStyle}>
         <Content
           contentContainerStyle={{
             justifyContent: 'center',
@@ -101,6 +102,8 @@ export default class Pin extends React.Component {
             </Button>
           )}
 
+        {this.state.showError && <Text style={styles.errorStyle}>invalid pin</Text>}
+
           {this.state.showSpinner && <Spinner color={'black'} />}
         </Content>
       </Container>
@@ -109,6 +112,10 @@ export default class Pin extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  containerStyle: {
+    justifyContent: 'center',
+    flex: 1,
+  },
   labelStyle: {
     marginTop: 50,
     fontSize: 20,
@@ -118,6 +125,11 @@ const styles = StyleSheet.create({
   smallLabelStyle: {
     marginTop: 20,
     fontWeight: 'bold',
+  },
+  errorStyle: {
+    marginTop: 20,
+    fontWeight: 'bold',
+    color:'red'
   },
   phonenoStyle: {
     marginTop: 10,

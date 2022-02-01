@@ -11,7 +11,7 @@ export default class Categories extends React.Component{
     categoryCardComponent = itemData => (
         <TouchableOpacity>
           <Card style={styles.categoryCardStyle}>
-          <Image style={styles.imageStyle} source={{uri:'https://buniyaad-images.s3.ap-southeast-1.amazonaws.com/9137167.jpg'}} />
+          <Image style={styles.imageStyle} source={{uri:itemData.item.CategoryImage}} />
             <Text style={{color: '#FAB624', fontWeight: 'bold',textAlign:'center',fontSize:25}}>
               {itemData.item.Name}
             </Text>
@@ -22,10 +22,13 @@ export default class Categories extends React.Component{
       componentDidMount(){
          fetch('https://api.buniyaad.pk/categories/get',{
          headers:{
-             token:'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTg1NDgxMjcwNzU5MDU3MjhiYWI4OCIsImVtYWlsIjoidGVzdC5zaWRkaXF1aUBidW5peWFhZC5wayIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0Mjc1OTEwNywiZXhwIjoxNjQzMzYzOTA3fQ.Mq1UtXT4elAzZVS-k_qXP0g7SM7SnUoV6KtzXieqbTA'
+             token:'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTE1ZjdmMGIwMGRiMjY5YTRkYzQ3OCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0MzM0OTQ0MywiZXhwIjoxNjQzOTU0MjQzfQ.qX1LfotXwn8pgv02sB3kWUH3_xEdktIuXptbCP1xAV8'
          }})
          .then((response)=>response.json())
-         .then((res)=>this.setState({data:res.data}))
+         .then((res)=>{this.setState({data:res.data})
+         console.log(JSON.stringify(res.data))})
+
+         
       }
 
     render(){return(
@@ -84,7 +87,7 @@ export default class Categories extends React.Component{
 const styles = StyleSheet.create({
     containerStyle:{
        justifyContent:'center',
-    
+       flex:1,
    
     },
     headerStyle:{

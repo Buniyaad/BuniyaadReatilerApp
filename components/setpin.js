@@ -44,7 +44,7 @@ export default class Setpin extends React.Component{
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    "contactNo":`0${this.state.phoneno}`,
+    "contactNo":this.state.phoneno,
     "pin":this.state.pin,
   })
 }).then((response)=>response.json())
@@ -57,7 +57,7 @@ export default class Setpin extends React.Component{
     }
 
     render(){return(
-        <Container>
+        <Container style={styles.containerStyle}>
             <Content
              contentContainerStyle={{
                 justifyContent: 'center',
@@ -122,6 +122,10 @@ export default class Setpin extends React.Component{
 }
 
 const styles = StyleSheet.create({
+  containerStyle: {
+    justifyContent: 'center',
+    flex: 1,
+  },
     labelStyle: {
       marginTop: 50,
       fontSize: 20,

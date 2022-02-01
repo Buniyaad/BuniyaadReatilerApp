@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Image, View, TouchableOpacity,PermissionsAndroid,Alert, NativeSyntheticEvent,} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import {
   Container,
@@ -7,13 +7,17 @@ import {
   Text,
 } from 'native-base';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import SmsRetriever from 'react-native-sms-retriever';
+import SmsListener from 'react-native-android-sms-listener'
+
+
 
 export default class Otp extends React.Component {
   state = {
     code: '',
     otp: this.generate_otp(),
     timer: 30,
-    phoneno: `92${this.props.route.params.phoneno}`,
+    phoneno: `${this.props.route.params.phoneno}`,
     showResendBtn: false,
   };
 
@@ -32,10 +36,37 @@ export default class Otp extends React.Component {
 
   //send sms params: phoneno, otp
   send_sms() {
+    const messagebody=encodeURIComponent(`<#> Your passcode is: ${this.state.otp}\ndbc8a545027`)
+    console.log(messagebody)
+    let phoneno=`92${this.state.phoneno.substring(1)}`
+    console.log(phoneno)
+
     fetch(
-      `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${this.state.phoneno}&type=English&message=your%20passcode%20is:${this.state.otp}`,
+      `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${phoneno}&type=English&message=${messagebody}`,
     );
   }
+
+
+
+
+
+  _onSmsListenerPressed = async () => {
+    try {
+      const registered = await SmsRetriever.startSmsRetriever();
+      console.log("in func")
+      if (registered) {
+        SmsRetriever.addSmsListener(event => {
+          console.log("listener:",event.message);
+          SmsRetriever.removeSmsListener();
+        }); 
+      }
+    } catch (error) {
+      console.log(JSON.stringify(error));
+    }
+  };
+
+  
+
 
   //match entered otp with generated otp
   check_otp(code) {
@@ -62,6 +93,10 @@ export default class Otp extends React.Component {
     console.log(this.state.otp);
     Clipboard.setString('');
     this.setTimer();
+    this._onSmsListenerPressed()
+  
+
+   
   }
 
   componentDidUpdate() {
@@ -78,7 +113,7 @@ export default class Otp extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container style={styles.containerStyle}>
         <Content
           contentContainerStyle={{
             justifyContent: 'center',
@@ -90,7 +125,7 @@ export default class Otp extends React.Component {
           <Text
             style={
               styles.phonenoStyle
-            }>{`0${this.props.route.params.phoneno}`}</Text>
+            }>{`${this.props.route.params.phoneno}`}</Text>
           <Text style={styles.timerStyle}>{this.state.timer}</Text>
 
           <TouchableOpacity onPress={() => this.resend_sms()}>
@@ -117,6 +152,10 @@ export default class Otp extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  containerStyle: {
+    justifyContent: 'center',
+    flex: 1,
+  },
   labelStyle: {
     marginTop: 50,
     fontSize: 20,

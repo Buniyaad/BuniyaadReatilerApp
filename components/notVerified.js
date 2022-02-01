@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     backgroundColor: '#FAB624',
+    flex:1,
   },
   logoStyle: {
     alignSelf: 'center',
