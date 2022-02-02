@@ -36,7 +36,7 @@ export default class Otp extends React.Component {
 
   //send sms params: phoneno, otp
   send_sms() {
-    const messagebody=encodeURIComponent(`<#> Your passcode is: ${this.state.otp}\ndbc8a545027`)
+    const messagebody=encodeURIComponent(`<#> Your passcode is: ${this.state.otp}\nonDlwvOi9qy`)
     console.log(messagebody)
     let phoneno=`92${this.state.phoneno.substring(1)}`
     console.log(phoneno)
@@ -53,12 +53,12 @@ export default class Otp extends React.Component {
   _onSmsListenerPressed = async () => {
     try {
       const registered = await SmsRetriever.startSmsRetriever();
-      console.log("in func")
       if (registered) {
-        SmsRetriever.addSmsListener(event => {
-          console.log("listener:",event.message);
-          SmsRetriever.removeSmsListener();
+         await SmsRetriever.addSmsListener(event => {
+          console.log(event.message);
+          
         }); 
+        SmsRetriever.removeSmsListener();
       }
     } catch (error) {
       console.log(JSON.stringify(error));

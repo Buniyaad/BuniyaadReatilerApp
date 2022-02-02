@@ -35,39 +35,27 @@ import Icon from 'react-native-ionicons';
 export default class Login extends React.Component {
   state = {
     search: '',
-    data: [
-      {
-        id: '1',
-        title: 'First Item',
-        price: 'PKR 5000',
-      },
-      {
-        id: '2',
-        title: 'Second Item',
-        price: 'PKR 5000',
-      },
-      {
-        id: '3',
-        title: 'Third Item',
-        price: 'PKR 5000',
-      },
-      {
-        id: '4',
-        title: 'fourth Item',
-        price: 'PKR 5000',
-      },
-      {
-        id: '5',
-        title: 'fifth Item',
-        price: 'PKR 5000',
-      },
-      {
-        id: '6',
-        title: 'sixth Item',
-        price: 'PKR 5000',
-      },
-    ],
+    retailerData:this.props.route.params.data,
+    data: [],
+    prices:[],
   };
+
+     getPrices(prices){
+    let pricesArr=[]
+      for(let i=0;i<prices.length;i++){
+         fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`,{
+          headers:{
+              token:`bearer ${this.state.retailerData.token}`
+          }})
+          .then((response)=>response.json())
+          .then((res)=>{console.log(res.data.price)})
+      }
+
+     
+      
+     console.log(prices)
+     return 600
+  }
 
   //product card components
   recommendedProductsItemComponent = itemData => (
@@ -85,14 +73,34 @@ export default class Login extends React.Component {
   allProductsItemComponent = itemData => (
     <TouchableOpacity>
       <Card style={styles.allStyle}>
-        <Image source={require('./assets/logo.png')} />
-        <Text>{itemData.item.title}</Text>
+        <Image style={styles.imageStyle} source={{uri:itemData.item.Image}} />
+        <Text>{itemData.item.Title}</Text>
         <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
-          {itemData.item.price}
+          {500/*this.getPrices(itemData.item.Price)*/}
         </Text>
       </Card>
     </TouchableOpacity>
   );
+
+  getAllProducts(){
+    fetch(`https://api.buniyaad.pk/products`,{
+         headers:{
+             token:`bearer ${this.state.retailerData.token}`
+         }})
+         .then((response)=>response.json())
+         .then((res)=>{this.setState({data:res.data})
+           console.log(JSON.stringify(res.data))})
+  }
+
+  getAllPrices(){
+    fetch(`https://api.buniyaad.pk/price/get`,{
+         headers:{
+             token:`bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjNlOTM5ZTEyMmRlMmU1YmE0MjFlNCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0MzYyMTcxNSwiZXhwIjoxNjQ0MjI2NTE1fQ.PEJ5_EdEvqvyAZYvhnFfGBdkF1tzM5Kxxsglnnp55Cc`
+         }})
+         .then((response)=>response.json())
+         .then((res)=>{this.setState({prices:res.data})
+           console.log(JSON.stringify(res.data))})
+  }
  
   //handle back button function
   backAction = () => {
@@ -107,9 +115,15 @@ export default class Login extends React.Component {
     return true;
   };
 
+ 
   componentDidMount(){
+    this.getAllProducts()
+    //this.getAllPrices()
+   
     BackHandler.addEventListener("hardwareBackPress", this.backAction);
   }
+
+
 
   componentWillUnmount() {
     BackHandler.removeEventListener("hardwareBackPress", this.backAction);
@@ -145,6 +159,7 @@ export default class Login extends React.Component {
           
             
             <FlatList
+            columnWrapperStyle={{justifyContent: 'space-evenly'}}
             ListHeaderComponent={ <><Card style={styles.bannerStyle}>
             <Image source={require('./assets/logo.png')} />
           </Card>
@@ -179,7 +194,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Categories');
+                this.props.navigation.navigate('Categories',{data: this.state.retailerData});
               }}>
               <Icon name="grid" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Categories</Label>
@@ -190,7 +205,7 @@ export default class Login extends React.Component {
               badge
               vertical
               onPress={() => {
-                this.props.navigation.navigate('Cart');
+                this.props.navigation.navigate('Cart',{data: this.state.retailerData});
               }}>
               <Badge warning>
                 <Text>1</Text>
@@ -202,7 +217,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Account');
+                this.props.navigation.navigate('Account',{data: this.state.retailerData});
               }}>
               <Icon name="person" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Account</Label>
@@ -259,13 +274,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   allStyle: {
-    marginTop: 10,
+ 
     borderRadius: 5,
-    height: 150,
+    height: 250,
+    width:150,
     justifyContent: 'space-between',
   },
   imageStyle:{
     height:150,
-    width:150,
+    minWidth:150,
+    
   }
 });

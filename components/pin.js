@@ -40,7 +40,7 @@ export default class Pin extends React.Component {
     })
       .then(response => response.json())
       .then(data =>
-        this.setState({data: data.data.checkUser, authenticated: !data.error}),
+        this.setState({data: data.data, authenticated: !data.error}),
       ).then(() => console.log(this.state))
       .then(() => this.check_Verified());
   }
@@ -50,9 +50,9 @@ export default class Pin extends React.Component {
     if (this.state.authenticated === false) {
       this.setState({showSpinner:false,showError:true})
     }
-    if (this.state.data.Verified === true) {
+    if (this.state.data.checkUser.Verified === true) {
       console.log('you have permission');
-      this.props.navigation.navigate('Home');
+      this.props.navigation.navigate('Home',{data: this.state.data});
     } else {
       console.log('you dont have permission');
       this.props.navigation.navigate('NotVerified');

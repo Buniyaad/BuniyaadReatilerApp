@@ -6,10 +6,11 @@ import Icon from 'react-native-ionicons'
 export default class Categories extends React.Component{
     state={
         data:[],
+        retailerData:this.props.route.params.data,
     }
 
     categoryCardComponent = itemData => (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>this.getCategoryById(itemData.item._id)}>
           <Card style={styles.categoryCardStyle}>
           <Image style={styles.imageStyle} source={{uri:itemData.item.CategoryImage}} />
             <Text style={{color: '#FAB624', fontWeight: 'bold',textAlign:'center',fontSize:25}}>
@@ -19,14 +20,26 @@ export default class Categories extends React.Component{
         </TouchableOpacity>
       );
 
+      getCategoryById(id){
+        fetch(`https://api.buniyaad.pk/categories/getById/${id}`,{
+         headers:{
+             token:`bearer ${this.state.retailerData.token}`
+         }})
+         .then((response)=>response.json())
+         .then((res)=>{console.log(JSON.stringify(res.data))})
+
+      }
+
       componentDidMount(){
          fetch('https://api.buniyaad.pk/categories/get',{
          headers:{
-             token:'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTE1ZjdmMGIwMGRiMjY5YTRkYzQ3OCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0MzM0OTQ0MywiZXhwIjoxNjQzOTU0MjQzfQ.qX1LfotXwn8pgv02sB3kWUH3_xEdktIuXptbCP1xAV8'
+             token:`bearer ${this.state.retailerData.token}`
          }})
          .then((response)=>response.json())
          .then((res)=>{this.setState({data:res.data})
          console.log(JSON.stringify(res.data))})
+
+         console.log(this.state)
 
          
       }
