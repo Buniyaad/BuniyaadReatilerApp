@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {
   Badge,
-  Body,
   Container,
   Content,
   CardItem,
@@ -20,48 +19,34 @@ import {
   Header,
   Footer,
   FooterTab,
-  Tabs,
-  Tab,
   Text,
   Input,
   Label,
   Left,
-  List,
-  ListItem,
   Right,
+  Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 
 export default class Login extends React.Component {
   state = {
     search: '',
-    retailerData:this.props.route.params.data,
+    retailerData: this.props.route.params.data,
     data: [],
-    prices:[],
+    showSpinner:true,
   };
 
-     getPrices(prices){
-    let pricesArr=[]
-      for(let i=0;i<prices.length;i++){
-         fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`,{
-          headers:{
-              token:`bearer ${this.state.retailerData.token}`
-          }})
-          .then((response)=>response.json())
-          .then((res)=>{console.log(res.data.price)})
-      }
-
-     
-      
-     console.log(prices)
-     return 600
-  }
 
   //product card components
   recommendedProductsItemComponent = itemData => (
     <TouchableOpacity>
       <Card style={styles.recommendedStyle}>
-      <Image style={styles.imageStyle} source={{uri:'https://buniyaad-images.s3.ap-southeast-1.amazonaws.com/9137167.jpg'}} />
+        <Image
+          style={styles.imageStyle}
+          source={{
+            uri: 'https://buniyaad-images.s3.ap-southeast-1.amazonaws.com/9137167.jpg',
+          }}
+        />
         <Text>{itemData.item.title}</Text>
         <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
           {itemData.item.price}
@@ -73,60 +58,56 @@ export default class Login extends React.Component {
   allProductsItemComponent = itemData => (
     <TouchableOpacity>
       <Card style={styles.allStyle}>
-        <Image style={styles.imageStyle} source={{uri:itemData.item.Image}} />
+        <Image
+          style={itemData.item.Image === '' ? null : styles.imageStyle}
+          source={
+            itemData.item.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: itemData.item.Image}
+          }
+        />
         <Text>{itemData.item.Title}</Text>
         <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
-          {500/*this.getPrices(itemData.item.Price)*/}
+          {itemData.item.MinPrice.price}
         </Text>
       </Card>
     </TouchableOpacity>
   );
 
-  getAllProducts(){
-    fetch(`https://api.buniyaad.pk/products`,{
-         headers:{
-             token:`bearer ${this.state.retailerData.token}`
-         }})
-         .then((response)=>response.json())
-         .then((res)=>{this.setState({data:res.data})
-           console.log(JSON.stringify(res.data))})
+  //get Sab Samaan products
+  getAllProducts() {
+    fetch(`https://api.buniyaad.pk/products`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.setState({data: res.data,showSpinner:false});
+        console.log(JSON.stringify(res.data));
+      });
   }
 
-  getAllPrices(){
-    fetch(`https://api.buniyaad.pk/price/get`,{
-         headers:{
-             token:`bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjNlOTM5ZTEyMmRlMmU1YmE0MjFlNCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0MzYyMTcxNSwiZXhwIjoxNjQ0MjI2NTE1fQ.PEJ5_EdEvqvyAZYvhnFfGBdkF1tzM5Kxxsglnnp55Cc`
-         }})
-         .then((response)=>response.json())
-         .then((res)=>{this.setState({prices:res.data})
-           console.log(JSON.stringify(res.data))})
-  }
- 
   //handle back button function
   backAction = () => {
-    Alert.alert("Hold on!", "Are you sure you want to go back?", [
+    Alert.alert('Hold on!', 'Are you sure you want to go back?', [
       {
-        text: "Cancel",
+        text: 'Cancel',
         onPress: () => null,
-        style: "cancel"
+        style: 'cancel',
       },
-      { text: "YES", onPress: () => BackHandler.exitApp() }
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
     ]);
     return true;
   };
 
- 
-  componentDidMount(){
-    this.getAllProducts()
-    //this.getAllPrices()
-   
-    BackHandler.addEventListener("hardwareBackPress", this.backAction);
+  componentDidMount() {
+    this.getAllProducts();
+    BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
 
-
-
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.backAction);
+    BackHandler.removeEventListener('hardwareBackPress', this.backAction);
   }
 
   render() {
@@ -150,42 +131,58 @@ export default class Login extends React.Component {
             <Input
               placeholder="search"
               onChangeText={text => this.setState({search: text})}
-              onSubmitEditing={() => alert(this.state.search)}
+              returnKeyType='search'
+              onSubmitEditing={() =>
+                this.state.search == ''
+                  ? null
+                  : this.props.navigation.navigate('Search', {
+                      data: this.state.retailerData,
+                      search: this.state.search,
+                    })
+              }
             />
           </Item>
         </View>
 
         {/*set aap keh liye as header to sab samaan */}
-          
-            
-            <FlatList
-            columnWrapperStyle={{justifyContent: 'space-evenly'}}
-            ListHeaderComponent={ <><Card style={styles.bannerStyle}>
-            <Image source={require('./assets/logo.png')} />
-          </Card>
 
-          <View>
-            <Text style={styles.labelStyle}> AAP KEH LIYE</Text>
-            <FlatList
-              horizontal={true}
-              data={this.state.data}
-              renderItem={item => this.recommendedProductsItemComponent(item)}
-            />
-          </View>
-          <Text style={styles.labelStyle}> SAB SAMAAN</Text></>}
-              data={this.state.data}
-              numColumns={2}
-              renderItem={item => this.allProductsItemComponent(item)}
-            />
-        
-     
+        <FlatList
+          columnWrapperStyle={{justifyContent: 'space-evenly'}}
+          ListHeaderComponent={
+            <>
+               {this.state.showSpinner && (
+                <Spinner color={'black'}/>
+               )}
+              <Card style={styles.bannerStyle}>
+                <Image source={require('./assets/logo.png')} />
+              </Card>
+
+              <View>
+                <Text style={styles.labelStyle}> AAP KEH LIYE</Text>
+                <FlatList
+                  horizontal={true}
+                  data={this.state.data}
+                  renderItem={item =>
+                    this.recommendedProductsItemComponent(item)
+                  }
+                />
+              </View>
+              <Text style={styles.labelStyle}> SAB SAMAAN</Text>
+            </>
+          }
+          data={this.state.data}
+          numColumns={2}
+          renderItem={item => this.allProductsItemComponent(item)}
+        />
 
         <Footer>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('Home', {
+                  data: this.state.retailerData,
+                });
               }}>
               <Icon name="home" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Home</Label>
@@ -194,7 +191,9 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Categories',{data: this.state.retailerData});
+                this.props.navigation.navigate('Categories', {
+                  data: this.state.retailerData,
+                });
               }}>
               <Icon name="grid" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Categories</Label>
@@ -205,7 +204,9 @@ export default class Login extends React.Component {
               badge
               vertical
               onPress={() => {
-                this.props.navigation.navigate('Cart',{data: this.state.retailerData});
+                this.props.navigation.navigate('Cart', {
+                  data: this.state.retailerData,
+                });
               }}>
               <Badge warning>
                 <Text>1</Text>
@@ -217,7 +218,9 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Account',{data: this.state.retailerData});
+                this.props.navigation.navigate('Account', {
+                  data: this.state.retailerData,
+                });
               }}>
               <Icon name="person" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Account</Label>
@@ -270,19 +273,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderRadius: 5,
     height: 250,
-    width:150,
+    width: 150,
     justifyContent: 'space-between',
   },
   allStyle: {
- 
     borderRadius: 5,
     height: 250,
-    width:150,
+    width: 150,
     justifyContent: 'space-between',
   },
-  imageStyle:{
-    height:150,
-    minWidth:150,
-    
-  }
+  imageStyle: {
+    height: 150,
+    minWidth: 150,
+  },
 });

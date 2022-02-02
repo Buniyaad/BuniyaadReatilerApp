@@ -1,99 +1,103 @@
 import * as React from 'react';
 import {
   StyleSheet,
-  Image,
   FlatList,
   TouchableOpacity,
+  Image,
   View,
+  Alert,
+  BackHandler,
 } from 'react-native';
 import {
   Badge,
-  Body,
-  Card,
   Container,
-  Content,
-  Text,
+  Card,
   Item,
   Button,
   Header,
   Footer,
   FooterTab,
-  Tabs,
-  Tab,
+  Text,
   Input,
   Label,
   Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 
-export default class Categories extends React.Component {
+export default class Login extends React.Component {
   state = {
-    data: [],
+    search: this.props.route.params.search,
     retailerData: this.props.route.params.data,
+    data: [],
     showSpinner:true,
   };
 
-  categoryCardComponent = itemData => (
-    <TouchableOpacity onPress={() => this.getCategoryById(itemData.item._id)}>
-      <Card style={styles.categoryCardStyle}>
+  allProductsItemComponent = itemData => (
+    <TouchableOpacity>
+      <Card style={styles.allStyle}>
         <Image
-          style={styles.imageStyle}
-          source={{uri: itemData.item.CategoryImage}}
+          style={itemData.item.Image === '' ? null : styles.imageStyle}
+          source={
+            itemData.item.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: itemData.item.Image}
+          }
         />
-        <Text
-          style={{
-            color: '#FAB624',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            fontSize: 25,
-          }}>
-          {itemData.item.Name}
+        <Text>{itemData.item.Title}</Text>
+        <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
+          {itemData.item.MinPrice.price}
         </Text>
       </Card>
     </TouchableOpacity>
   );
 
-  getCategoryById(id) {
-    fetch(`https://api.buniyaad.pk/categories/getById/${id}`, {
+  
+ // get search results
+  getProductsBySearch() {
+    fetch(`https://api.buniyaad.pk/products/withDetail/${this.state.search}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
     })
       .then(response => response.json())
       .then(res => {
-        console.log(JSON.stringify(res.data));
+        this.setState({data: res.data, showSpinner:false});
       });
   }
 
+  backAction = () => {
+    this.props.navigation.pop();
+    return true;
+  };
+
   componentDidMount() {
-    fetch('https://api.buniyaad.pk/categories/get', {
-      headers: {
-        token: `bearer ${this.state.retailerData.token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(res => {
-        this.setState({data: res.data,showSpinner:false});
-      });
+    this.getProductsBySearch();
+    BackHandler.addEventListener('hardwareBackPress', this.backAction);
+  }
 
-
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backAction);
   }
 
   render() {
     return (
       <Container style={styles.containerStyle}>
         <FlatList
-         
+          columnWrapperStyle={{justifyContent: 'space-evenly'}}
           ListHeaderComponent={
             <>
-              <Text style={styles.labelStyle}>Categories</Text>
               {this.state.showSpinner && (
                 <Spinner color={'black'}/>
                )}
+              <Text style={styles.labelStyle}>
+                found {this.state.data.length} results for " {this.state.search}{' '}
+                "
+              </Text>
             </>
           }
           data={this.state.data}
-          renderItem={item => this.categoryCardComponent(item)}
+          numColumns={2}
+          renderItem={item => this.allProductsItemComponent(item)}
         />
 
         <Footer>
@@ -101,9 +105,7 @@ export default class Categories extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Home', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Home');
               }}>
               <Icon name="home" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Home</Label>
@@ -169,24 +171,42 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#ffab03',
   },
+  searchInputStyle: {
+    alignSelf: 'center',
+    margin: 10,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  searchViewStyle: {
+    backgroundColor: '#FAB624',
+  },
+  bannerStyle: {
+    marginTop: 10,
+    alignSelf: 'center',
+    height: 100,
+    width: 300,
+  },
   labelStyle: {
     marginTop: 50,
     marginBottom: 10,
     fontWeight: 'bold',
     color: '#737070',
-    alignSelf: 'center',
-    fontSize: 30,
   },
-  categoryCardStyle: {
-    marginLeft: 20,
+  recommendedStyle: {
+    marginLeft: 10,
     borderRadius: 5,
-    height: 200,
-    marginRight:20,
-    marginRight:20,
+    height: 250,
+    width: 150,
+    justifyContent: 'space-between',
+  },
+  allStyle: {
+    borderRadius: 5,
+    height: 250,
+    width: 150,
     justifyContent: 'space-between',
   },
   imageStyle: {
     height: 150,
-    
+    minWidth: 150,
   },
 });

@@ -12,6 +12,7 @@ import Otp from './components/otp';
 import Setpin from './components/setpin';
 import Pin from './components/pin';
 import NotVerified from './components/notVerified';
+import Search from './components/search';
 
 const Stack = createNativeStackNavigator();
 
@@ -69,6 +70,16 @@ export default function App() {
           component={Pin}
           options={{
             title: 'Pin darj karein',
+            headerStyle: {
+              backgroundColor: '#FAB624',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Search"
+          component={Search}
+          options={{
+            title: 'Search',
             headerStyle: {
               backgroundColor: '#FAB624',
             },
