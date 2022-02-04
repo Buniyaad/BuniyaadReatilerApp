@@ -36,11 +36,13 @@ export default class Login extends React.Component {
     retailerData: this.props.route.params.data,
     data: [],
     showSpinner:true,
+    showModalSpinner:false,
     product:[],
     modalVisible:false,
-    prices:[],
+    productPrices:[],
     price:'',
     total:0,
+    pricesFound:false,
   };
 
 
@@ -97,9 +99,12 @@ export default class Login extends React.Component {
 
   //get all prices
  async  getPrices() {
+   
+   if(this.state.productPrices.length===0){
+    this.setState({showModalSpinner:true})
     let prices=this.state.product.Price
     let priceArr=[]
-    console.log("prices are:", prices)
+    //console.log("prices are:", prices)
     for(let i=0; i<prices.length; i++){
       await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
       headers: {
@@ -107,16 +112,35 @@ export default class Login extends React.Component {
       },
     })
       .then(response => response.json())
-      .then(res => { priceArr.push(res.data)})
-      .then(console.log(JSON.stringify(priceArr)))
+      .then(res => { res.data===null?null:priceArr.push(res.data)})
+      
     }
+    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false})
+    //console.log(JSON.stringify(this.state.productPrices))
+   }
     
   }
 
+  //calculate total for a product
   calculateTotal(qty){
-    let total= qty > 0? parseInt(qty)*parseInt(this.state.price.price):0
+   if(qty>0 && this.state.pricesFound){
+      let compasrisonPrice=this.state.productPrices;
+    let selectedPrice=0;
+    console.log(compasrisonPrice);
+    //this.getPrices()
+
+    for(let i=0; i<compasrisonPrice.length; i++){
+      if(parseInt(qty) > parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
+        selectedPrice=compasrisonPrice[i]
+        //this.setState({price:compasrisonPrice[i]})
+      }
+    }
+    let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
+    console.log("selected price:",this.state.price)
+     this.setState({total:total,price:selectedPrice})
+   }
+   else{this.setState({total:0})}
     
-     this.setState({total:total})
   }
 
   //handle back button function
@@ -212,7 +236,7 @@ export default class Login extends React.Component {
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            this.setState({modalVisible:false});
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false});
           }}
         >
           <View >
@@ -220,7 +244,7 @@ export default class Login extends React.Component {
             
             <Button
               transparent
-              onPress={() => this.setState({modalVisible:false})}>
+              onPress={() => this.setState({modalVisible:false,productPrices:[]})}>
               <Icon name='close-circle-outline' color='#737070' style={{fontSize:30}}/>
             </Button>
 
@@ -249,10 +273,15 @@ export default class Login extends React.Component {
               onPress={() => this.setState({modalVisible:false})}>
               <Icon name='remove-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
-
-            <Input keyboardType='numeric' onChangeText={(text)=>this.calculateTotal(text)}
-             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}/>
             
+            {this.state.showModalSpinner && (
+                <Spinner color={'black'}/>
+               )}
+           
+            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' onChangeText={(text)=>this.calculateTotal(text)}
+             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}
+             onPressIn={()=>{this.getPrices()}}/>
+            )}
             <Button
               transparent
               onPress={() => this.setState({modalVisible:false})}>
@@ -280,7 +309,7 @@ export default class Login extends React.Component {
         </Modal>
 
 
-
+    {/*Footer starts here*/ }
         <Footer>
           <FooterTab style={styles.footerStyle}>
             <Button

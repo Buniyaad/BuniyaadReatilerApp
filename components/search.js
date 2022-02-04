@@ -7,9 +7,11 @@ import {
   View,
   Alert,
   BackHandler,
+  Modal,
 } from 'react-native';
 import {
   Badge,
+  Body,
   Container,
   Card,
   Item,
@@ -30,10 +32,17 @@ export default class Login extends React.Component {
     retailerData: this.props.route.params.data,
     data: [],
     showSpinner:true,
+    showModalSpinner:false,
+    product:[],
+    modalVisible:false,
+    productPrices:[],
+    price:'',
+    total:0,
+    pricesFound:false,
   };
 
   allProductsItemComponent = itemData => (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})}>
       <Card style={styles.allStyle}>
         <Image
           style={itemData.item.Image === '' ? null : styles.imageStyle}
@@ -51,6 +60,51 @@ export default class Login extends React.Component {
     </TouchableOpacity>
   );
 
+   //get all prices
+ async  getPrices() {
+   
+  if(this.state.productPrices.length===0){
+   this.setState({showModalSpinner:true})
+   let prices=this.state.product.Price
+   let priceArr=[]
+   //console.log("prices are:", prices)
+   for(let i=0; i<prices.length; i++){
+     await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+     headers: {
+       token: `bearer ${this.state.retailerData.token}`,
+     },
+   })
+     .then(response => response.json())
+     .then(res => { res.data===null?null:priceArr.push(res.data)})
+     
+   }
+   this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false})
+   //console.log(JSON.stringify(this.state.productPrices))
+  }
+   
+ }
+
+ //calculate total for a product
+ calculateTotal(qty){
+  if(qty>0 && this.state.pricesFound){
+     let compasrisonPrice=this.state.productPrices;
+   let selectedPrice=0;
+   console.log(compasrisonPrice);
+   //this.getPrices()
+
+   for(let i=0; i<compasrisonPrice.length; i++){
+     if(parseInt(qty) > parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
+       selectedPrice=compasrisonPrice[i]
+       //this.setState({price:compasrisonPrice[i]})
+     }
+   }
+   let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
+   console.log("selected price:",this.state.price)
+    this.setState({total:total,price:selectedPrice})
+  }
+  else{this.setState({total:0})}
+   
+ }
   
  // get search results
   getProductsBySearch() {
@@ -89,16 +143,96 @@ export default class Login extends React.Component {
               {this.state.showSpinner && (
                 <Spinner color={'black'}/>
                )}
-              <Text style={styles.labelStyle}>
-                found {this.state.data.length} results for " {this.state.search}{' '}
-                "
-              </Text>
+             {!this.state.showSpinner &&(
+             <Text style={styles.labelStyle}>
+                found {this.state.data.length} results for " {this.state.search} "
+             </Text>)} 
             </>
           }
           data={this.state.data}
           numColumns={2}
           renderItem={item => this.allProductsItemComponent(item)}
         />
+
+        
+        {/*View product pop up */ }
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false});
+          }}
+        >
+          <View >
+            <View style={styles.modalView}>
+            
+            <Button
+              transparent
+              onPress={() => this.setState({modalVisible:false,productPrices:[]})}>
+              <Icon name='close-circle-outline' color='#737070' style={{fontSize:30}}/>
+            </Button>
+
+           <Image
+            style={this.state.product.Image === '' ? null : styles.imageModalStyle}
+            source={
+              this.state.product.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: this.state.product.Image}
+            }
+           />
+
+          <Body>
+            
+            <Text style={{fontSize:30}}>{this.state.product.Title}</Text>
+            <Text>{this.state.product.Description}</Text>
+
+          <Card style={{flexDirection:'row'}}>
+
+            <Label style={{alignItems:'center',marginHorizontal:10,marginTop:10}}>
+              <Text >Quantity</Text>
+            </Label>
+
+            <Button
+              transparent
+              onPress={() => this.setState({modalVisible:false})}>
+              <Icon name='remove-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+            </Button>
+            
+            {this.state.showModalSpinner && (
+                <Spinner color={'black'}/>
+               )}
+           
+            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' onChangeText={(text)=>this.calculateTotal(text)}
+             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}
+             onPressIn={()=>{this.getPrices()}}/>
+            )}
+            <Button
+              transparent
+              onPress={() => this.setState({modalVisible:false})}>
+              <Icon name='add-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+            </Button>
+          </Card>
+
+          <Card style={{width:400,flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={{fontSize:30}}>{this.state.price.price}</Text>
+            <Text>Per :{this.state.price.min}</Text>
+          </Card>
+
+          <Text style={{fontSize:30}}>TOTAL:{this.state.total}</Text>
+
+
+         </Body>
+
+          <Button full style={styles.fullBtnStyle} onPress={()=>this.getPrices()}>
+            <Text>ADD TO CART</Text>
+          </Button>
+            </View>
+          
+          
+          </View>
+        </Modal>
+
 
         <Footer>
           <FooterTab style={styles.footerStyle}>
@@ -171,6 +305,28 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#ffab03',
   },
+  fullBtnStyle:{
+    backgroundColor: '#ffab03',
+    borderRadius:10,
+    marginBottom:20,
+  },
+  modalView: {
+    marginTop:10,
+    height:"100%",
+    width:'100%',
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding:10,
+    alignItems:'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
   searchInputStyle: {
     alignSelf: 'center',
     margin: 10,
@@ -208,5 +364,13 @@ const styles = StyleSheet.create({
   imageStyle: {
     height: 150,
     minWidth: 150,
+  },
+  imageModalStyle: {
+    marginLeft:10,
+    marginRight:10,
+    height: 200,
+    width: '100%',
+    borderRadius:10,
+    
   },
 });
