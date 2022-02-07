@@ -42,6 +42,7 @@ export default class Login extends React.Component {
     productPrices:[],
     price:'',
     total:0,
+    quantity:'',
     pricesFound:false,
   };
 
@@ -65,7 +66,7 @@ export default class Login extends React.Component {
   );
 
   allProductsItemComponent = itemData => (
-    <TouchableOpacity onPress={()=>this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})}>
+    <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.allStyle}>
         <Image
           style={itemData.item.Image === '' ? null : styles.imageStyle}
@@ -98,8 +99,10 @@ export default class Login extends React.Component {
   }
 
   //get all prices
- async  getPrices() {
-   
+ async  getPrices(itemData) {
+
+  await this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})
+
    if(this.state.productPrices.length===0){
     this.setState({showModalSpinner:true})
     let prices=this.state.product.Price
@@ -123,6 +126,8 @@ export default class Login extends React.Component {
 
   //calculate total for a product
   calculateTotal(qty){
+  this.setState({quantity:qty})
+
    if(qty>0 && this.state.pricesFound){
       let compasrisonPrice=this.state.productPrices;
     let selectedPrice=0;
@@ -130,7 +135,7 @@ export default class Login extends React.Component {
     //this.getPrices()
 
     for(let i=0; i<compasrisonPrice.length; i++){
-      if(parseInt(qty) > parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
+      if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
         selectedPrice=compasrisonPrice[i]
         //this.setState({price:compasrisonPrice[i]})
       }
@@ -140,6 +145,36 @@ export default class Login extends React.Component {
      this.setState({total:total,price:selectedPrice})
    }
    else{this.setState({total:0})}
+    
+  }
+
+  increaseQty(){
+    let qty=this.state.quantity;
+    
+    if(qty>0){
+     qty=parseInt(qty)+100
+     this.calculateTotal(qty)
+     console.log(qty)
+     this.setState({quantity:qty.toString()})
+    
+    }
+    else{
+      qty=100
+      this.calculateTotal(qty)
+      this.setState({quantity:qty.toString()})
+    }
+  }
+
+  decreaseQty(){
+    let qty=this.state.quantity;
+    
+    if(qty>100){
+    qty=parseInt(qty)-100
+    this.calculateTotal(qty)
+    console.log(qty)
+    this.setState({quantity:qty.toString()})
+    
+    }
     
   }
 
@@ -236,7 +271,7 @@ export default class Login extends React.Component {
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            this.setState({modalVisible:false,productPrices:[],pricesFound:false});
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''});
           }}
         >
           <View >
@@ -244,7 +279,7 @@ export default class Login extends React.Component {
             
             <Button
               transparent
-              onPress={() => this.setState({modalVisible:false,productPrices:[]})}>
+              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})}>
               <Icon name='close-circle-outline' color='#737070' style={{fontSize:30}}/>
             </Button>
 
@@ -262,7 +297,7 @@ export default class Login extends React.Component {
             <Text style={{fontSize:30}}>{this.state.product.Title}</Text>
             <Text>{this.state.product.Description}</Text>
 
-          <Card style={{flexDirection:'row'}}>
+          <Card style={{flexDirection:'row',justifyContent:'space-around'}}>
 
             <Label style={{alignItems:'center',marginHorizontal:10,marginTop:10}}>
               <Text >Quantity</Text>
@@ -270,7 +305,7 @@ export default class Login extends React.Component {
 
             <Button
               transparent
-              onPress={() => this.setState({modalVisible:false})}>
+              onPress={()=>this.decreaseQty()}>
               <Icon name='remove-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
             
@@ -278,28 +313,32 @@ export default class Login extends React.Component {
                 <Spinner color={'black'}/>
                )}
            
-            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' onChangeText={(text)=>this.calculateTotal(text)}
-             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}
-             onPressIn={()=>{this.getPrices()}}/>
+            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity} onChangeText={(text)=>this.calculateTotal(text)}
+             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}/>
             )}
+
             <Button
               transparent
-              onPress={() => this.setState({modalVisible:false})}>
+              onPress={()=>this.increaseQty()}>
               <Icon name='add-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
           </Card>
 
-          <Card style={{width:400,flexDirection:'row',justifyContent:'space-between'}}>
-            <Text style={{fontSize:30}}>{this.state.price.price}</Text>
-            <Text>Per :{this.state.price.min}</Text>
+          <Card style={{flex:1,justifyContent:'space-around'}}>
+            <View style={{flexDirection:'row',width:'100%',justifyContent:'space-around'}}>
+             <Text style={{fontSize:30}}>price :{this.state.price.price}</Text>
+             <Text style={{fontSize:30}}>Per :{this.state.price.min}</Text>
+            </View>
+            
+            <Text style={{fontSize:30,alignSelf:'center'}}>TOTAL:{this.state.total}</Text>
           </Card>
 
-          <Text style={{fontSize:30}}>TOTAL:{this.state.total}</Text>
+          
 
 
          </Body>
 
-          <Button full style={styles.fullBtnStyle} onPress={()=>this.getPrices()}>
+          <Button full style={styles.fullBtnStyle}>
             <Text>ADD TO CART</Text>
           </Button>
             </View>
