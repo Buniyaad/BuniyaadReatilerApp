@@ -18,10 +18,11 @@ import {
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 
+
 export default class Account extends React.Component {
   state = {
     data: [],
-    retailerData: this.props.route.params.data,
+    retailerData: '',
   };
   render() {
     return (
@@ -35,9 +36,7 @@ export default class Account extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Home', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Home');
               }}>
               <Icon name="home" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Home</Label>
@@ -46,9 +45,7 @@ export default class Account extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Categories', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Categories');
               }}>
               <Icon name="grid" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Categories</Label>
@@ -59,9 +56,7 @@ export default class Account extends React.Component {
               badge
               vertical
               onPress={() => {
-                this.props.navigation.navigate('Cart', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Cart');
               }}>
               <Badge warning>
                 <Text>1</Text>
@@ -73,9 +68,7 @@ export default class Account extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Account', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Account');
               }}>
               <Icon name="person" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Account</Label>

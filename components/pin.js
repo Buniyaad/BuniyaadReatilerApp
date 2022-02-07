@@ -10,6 +10,7 @@ import {
 } from 'native-base';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Icon from 'react-native-ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Pin extends React.Component {
   state = {
@@ -22,6 +23,15 @@ export default class Pin extends React.Component {
     showPin:false,
     showError:false,
   };
+
+  async storeData(value){
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('test', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
 
   //call api to authenticte pin
   check_pin() {
@@ -52,12 +62,15 @@ export default class Pin extends React.Component {
     }
     if (this.state.data.checkUser.Verified === true) {
       console.log('you have permission');
+      this.storeData(this.state.data);
       this.props.navigation.navigate('Home',{data: this.state.data});
     } else {
       console.log('you dont have permission');
       this.props.navigation.navigate('NotVerified');
     }
   }
+
+ 
 
   componentDidMount(){
     Clipboard.setString('');

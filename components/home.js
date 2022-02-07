@@ -7,6 +7,7 @@ import {
   View,
   Alert,
   BackHandler,
+  ToastAndroid,
   Modal
 } from 'react-native';
 import {
@@ -26,14 +27,16 @@ import {
   Label,
   Left,
   Right,
+  Root,
   Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Login extends React.Component {
   state = {
     search: '',
-    retailerData: this.props.route.params.data,
+    retailerData: '',
     data: [],
     showSpinner:true,
     showModalSpinner:false,
@@ -43,9 +46,22 @@ export default class Login extends React.Component {
     price:'',
     total:0,
     quantity:'',
+    cart:[],
     pricesFound:false,
   };
 
+  async getData(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('test')
+      this.setState({retailerData:JSON.parse(jsonValue)})
+      this.getAllProducts()
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      console.log("this is async data: ",JSON.parse(jsonValue))
+      
+    } catch(e) {
+      // error reading value
+    }
+  }
 
   //product card components
   recommendedProductsItemComponent = itemData => (
@@ -178,6 +194,60 @@ export default class Login extends React.Component {
     
   }
 
+  post_cart(){
+    fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
+      method: 'POST',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      token: `bearer ${this.state.retailerData.token}`,
+      },
+      body: JSON.stringify({
+          "userId":this.state.retailerData.checkUser._id,
+          "products":this.state.cart,
+      })
+     }).then((response)=>response.json())
+     .then(data=>console.log(data))
+  }
+
+  handle_Cart(){
+    fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        if(res.data===false){
+          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+          this.state.cart.push(product);
+          console.log("new cart is: ",this.state.cart)
+          this.post_cart();
+        }
+        else{
+          
+         fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res=>{
+        let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+        this.state.cart.push(product);
+        this.state.cart.push(res.data.products)  
+        console.log(this.state.cart)
+        //this.state.cart.push(product);
+          
+          this.post_cart();
+        
+      })
+        }
+      });
+
+      ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+  }
+
   //handle back button function
   backAction = () => {
     Alert.alert('Close the Application?', [
@@ -192,7 +262,10 @@ export default class Login extends React.Component {
   };
 
   componentDidMount() {
-    this.getAllProducts();
+    this.getData();
+    
+    
+    console.log("this is state data",this.state.retailerData)
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
 
@@ -338,7 +411,8 @@ export default class Login extends React.Component {
 
          </Body>
 
-          <Button full style={styles.fullBtnStyle}>
+          <Button full style={styles.fullBtnStyle} onPress={()=> this.handle_Cart()}>
+
             <Text>ADD TO CART</Text>
           </Button>
             </View>
@@ -349,14 +423,12 @@ export default class Login extends React.Component {
 
 
     {/*Footer starts here*/ }
-        <Footer>
+    <Footer>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Home', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Home');
               }}>
               <Icon name="home" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Home</Label>
@@ -365,9 +437,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Categories', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Categories');
               }}>
               <Icon name="grid" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Categories</Label>
@@ -378,9 +448,7 @@ export default class Login extends React.Component {
               badge
               vertical
               onPress={() => {
-                this.props.navigation.navigate('Cart', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Cart');
               }}>
               <Badge warning>
                 <Text>1</Text>
@@ -392,9 +460,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Account', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Account');
               }}>
               <Icon name="person" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Account</Label>

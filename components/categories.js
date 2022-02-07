@@ -25,13 +25,27 @@ import {
   Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Categories extends React.Component {
   state = {
     data: [],
-    retailerData: this.props.route.params.data,
+    retailerData:'',
     showSpinner:true,
   };
+
+  async getData(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('test')
+      this.setState({retailerData:JSON.parse(jsonValue)})
+      this.getCategories();
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      console.log("this is async data: ",JSON.parse(jsonValue))
+      
+    } catch(e) {
+      // error reading value
+    }
+  }
 
   categoryCardComponent = itemData => (
     <TouchableOpacity onPress={() => this.getCategoryById(itemData.item._id)}>
@@ -53,6 +67,20 @@ export default class Categories extends React.Component {
     </TouchableOpacity>
   );
 
+  //get all category names and images
+  getCategories(){
+    fetch('https://api.buniyaad.pk/categories/get', {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.setState({data: res.data,showSpinner:false});
+      });
+  }
+
+  //get specific category to search
   getCategoryById(id) {
     fetch(`https://api.buniyaad.pk/categories/getById/${id}`, {
       headers: {
@@ -66,15 +94,7 @@ export default class Categories extends React.Component {
   }
 
   componentDidMount() {
-    fetch('https://api.buniyaad.pk/categories/get', {
-      headers: {
-        token: `bearer ${this.state.retailerData.token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(res => {
-        this.setState({data: res.data,showSpinner:false});
-      });
+    this.getData()
 
 
   }
@@ -101,9 +121,7 @@ export default class Categories extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Home', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Home');
               }}>
               <Icon name="home" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Home</Label>
@@ -112,9 +130,7 @@ export default class Categories extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Categories', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Categories');
               }}>
               <Icon name="grid" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Categories</Label>
@@ -125,9 +141,7 @@ export default class Categories extends React.Component {
               badge
               vertical
               onPress={() => {
-                this.props.navigation.navigate('Cart', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Cart');
               }}>
               <Badge warning>
                 <Text>1</Text>
@@ -139,9 +153,7 @@ export default class Categories extends React.Component {
             <Button
               transparent
               onPress={() => {
-                this.props.navigation.navigate('Account', {
-                  data: this.state.retailerData,
-                });
+                this.props.navigation.navigate('Account');
               }}>
               <Icon name="person" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Account</Label>
