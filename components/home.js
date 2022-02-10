@@ -40,7 +40,7 @@ export default class Login extends React.Component {
     data: [],
     showSpinner:true,
     showModalSpinner:false,
-    product:[],
+    product:'',
     modalVisible:false,
     productPrices:[],
     price:'',
@@ -49,6 +49,17 @@ export default class Login extends React.Component {
     cart:[],
     pricesFound:false,
   };
+
+  async storeCart(value){
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('cart', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
+
+
 
   async getData(){
     try {
@@ -155,6 +166,11 @@ export default class Login extends React.Component {
         selectedPrice=compasrisonPrice[i]
         //this.setState({price:compasrisonPrice[i]})
       }
+      else if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && compasrisonPrice[i].max==='')
+      {
+        selectedPrice=compasrisonPrice[i]
+      }
+      
     }
     let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
     console.log("selected price:",this.state.price)
@@ -194,6 +210,14 @@ export default class Login extends React.Component {
     
   }
 
+  checkProductInCart(cart,product){
+    console.log("old array",cart)
+     cart=cart.filter(cartProduct=> cartProduct.productId != product.productId)
+     console.log("updated array",cart)
+     
+     return cart
+  }
+
   post_cart(){
     fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
       method: 'POST',
@@ -211,6 +235,8 @@ export default class Login extends React.Component {
   }
 
   handle_Cart(){
+    //check if cart is created first
+    this.setState({cart:[]})
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
@@ -219,13 +245,15 @@ export default class Login extends React.Component {
       .then(response => response.json())
       .then(res => {
         if(res.data===false){
+          //if cart was empty add first product
           let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
           this.state.cart.push(product);
           console.log("new cart is: ",this.state.cart)
           this.post_cart();
+          this.storeCart(this.state.cart)
         }
         else{
-          
+          //add product to existing cart
          fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
@@ -233,14 +261,19 @@ export default class Login extends React.Component {
     })
       .then(response => response.json())
       .then(res=>{
+       // console.log("postman cart:",res.data.products)
         let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+        let resCart=this.checkProductInCart(res.data.products,product)
         this.state.cart.push(product);
-        this.state.cart.push(res.data.products)  
-        console.log(this.state.cart)
+        console.log("local cart",this.state.cart)
+        Array.prototype.push.apply(this.state.cart,resCart); 
+        //this.state.cart.concat(res.data.products) 
+        //console.log("concatenated",this.state.cart) 
+        //console.log(this.state.cart)
         //this.state.cart.push(product);
           
           this.post_cart();
-        
+          this.storeCart(this.state.cart)
       })
         }
       });
@@ -250,14 +283,15 @@ export default class Login extends React.Component {
 
   //handle back button function
   backAction = () => {
-    Alert.alert('Close the Application?', [
+    /*Alert.alert('Close the Application?', [
       {
         text: 'Cancel',
         onPress: () => null,
         style: 'cancel',
       },
       {text: 'YES', onPress: () => BackHandler.exitApp()},
-    ]);
+    ]);*/
+    BackHandler.exitApp()
     return true;
   };
 

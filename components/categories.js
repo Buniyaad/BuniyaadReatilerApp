@@ -34,6 +34,8 @@ export default class Categories extends React.Component {
     showSpinner:true,
   };
 
+
+
   async getData(){
     try {
       const jsonValue = await AsyncStorage.getItem('test')
@@ -95,7 +97,6 @@ export default class Categories extends React.Component {
 
   componentDidMount() {
     this.getData()
-
 
   }
 
