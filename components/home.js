@@ -45,6 +45,7 @@ export default class Login extends React.Component {
     productPrices:[],
     price:'',
     total:0,
+    minQuantity:'',
     quantity:'',
     cart:[],
     pricesFound:false,
@@ -59,6 +60,15 @@ export default class Login extends React.Component {
     }
   }
 
+  async getCart(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('cart')
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+ 
+    } catch(e) {
+      // error reading value
+    }
+  }
 
 
   async getData(){
@@ -76,17 +86,19 @@ export default class Login extends React.Component {
 
   //product card components
   recommendedProductsItemComponent = itemData => (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.recommendedStyle}>
-        <Image
-          style={styles.imageStyle}
-          source={{
-            uri: 'https://buniyaad-images.s3.ap-southeast-1.amazonaws.com/9137167.jpg',
-          }}
+      <Image
+          style={itemData.item.Image === '' ? null : styles.imageStyle}
+          source={
+            itemData.item.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: itemData.item.Image}
+          }
         />
-        <Text>{itemData.item.title}</Text>
+        <Text>{itemData.item.Title}</Text>
         <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
-          {itemData.item.price}
+          {itemData.item.MinPrice.price}
         </Text>
       </Card>
     </TouchableOpacity>
@@ -145,7 +157,10 @@ export default class Login extends React.Component {
       .then(res => { res.data===null?null:priceArr.push(res.data)})
       
     }
-    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false})
+    
+    let minQTY =this.getMinQty(priceArr);
+    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:minQTY,minQuantity:minQTY})
+    this.calculateTotal(minQTY)
     //console.log(JSON.stringify(this.state.productPrices))
    }
     
@@ -155,7 +170,7 @@ export default class Login extends React.Component {
   calculateTotal(qty){
   this.setState({quantity:qty})
 
-   if(qty>0 && this.state.pricesFound){
+   if(qty>=parseInt(this.state.minQuantity) && this.state.pricesFound){
       let compasrisonPrice=this.state.productPrices;
     let selectedPrice=0;
     console.log(compasrisonPrice);
@@ -180,35 +195,45 @@ export default class Login extends React.Component {
     
   }
 
+  getMinQty(prices){
+    let minQTY=0
+    prices.sort(function (a, b) {
+      return a.min - b.min
+  })
+  return prices[0].min
+  }
+
   increaseQty(){
     let qty=this.state.quantity;
     
-    if(qty>0){
+    if(qty>=parseInt(this.state.minQuantity)){
      qty=parseInt(qty)+100
      this.calculateTotal(qty)
      console.log(qty)
-     this.setState({quantity:qty.toString()})
+     this.setState({quantity:qty})
     
     }
     else{
-      qty=100
+      qty=this.state.minQuantity
       this.calculateTotal(qty)
-      this.setState({quantity:qty.toString()})
+      this.setState({quantity:qty})
     }
   }
 
   decreaseQty(){
     let qty=this.state.quantity;
     
-    if(qty>100){
+    if(qty>parseInt(this.state.minQuantity)){
     qty=parseInt(qty)-100
     this.calculateTotal(qty)
     console.log(qty)
-    this.setState({quantity:qty.toString()})
+    this.setState({quantity:qty})
     
     }
     
   }
+
+ 
 
   checkProductInCart(cart,product){
     console.log("old array",cart)
@@ -217,6 +242,8 @@ export default class Login extends React.Component {
      
      return cart
   }
+
+
 
   post_cart(){
     fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
@@ -275,23 +302,30 @@ export default class Login extends React.Component {
           this.post_cart();
           this.storeCart(this.state.cart)
       })
+      .then(()=>{
+            this.setState({modalVisible:false})
+            ToastAndroid.show("Added to cart", ToastAndroid.SHORT)})
         }
       });
 
-      ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+      
   }
 
   //handle back button function
   backAction = () => {
-    /*Alert.alert('Close the Application?', [
-      {
-        text: 'Cancel',
-        onPress: () => null,
-        style: 'cancel',
-      },
-      {text: 'YES', onPress: () => BackHandler.exitApp()},
-    ]);*/
-    BackHandler.exitApp()
+    Alert.alert(
+      "Close?",
+      "press OK to leave the App",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => BackHandler.exitApp() }
+      ]
+    );
+    //BackHandler.exitApp()
     return true;
   };
 
@@ -420,7 +454,7 @@ export default class Login extends React.Component {
                 <Spinner color={'black'}/>
                )}
            
-            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity} onChangeText={(text)=>this.calculateTotal(text)}
+            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity.toString()} onChangeText={(text)=>this.calculateTotal(text)}
              style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}/>
             )}
 
@@ -445,7 +479,8 @@ export default class Login extends React.Component {
 
          </Body>
 
-          <Button full style={styles.fullBtnStyle} onPress={()=> this.handle_Cart()}>
+          <Button full style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
+          ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
 
             <Text>ADD TO CART</Text>
           </Button>

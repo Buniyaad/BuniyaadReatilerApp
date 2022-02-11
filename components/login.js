@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image} from 'react-native';
+import {StyleSheet, Image, ToastAndroid} from 'react-native';
 import {
   Container,
   Form,
@@ -75,9 +75,13 @@ export default class Login extends React.Component {
   body: JSON.stringify({
     "contactNo":this.state.phoneno,
   })
-}).then((response)=>response.json())
-.then(data=>this.setState({isRegistered:data.data}))
-.then(()=> this.check_registered());
+})
+ .then((response)=>response.json())
+ .then(data=>this.setState({isRegistered:data.data}))
+ .then(()=> this.check_registered())
+ .catch(error => {this.setState({showSpinner:false,showBtn:true})
+   ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+   });
   }
 
   componentDidMount() {

@@ -12,6 +12,7 @@ import {
   Header,
   Footer,
   FooterTab,
+  Spinner,
   Tabs,
   Tab,
   Input,
@@ -28,7 +29,9 @@ export default class Cart extends React.Component {
     products:[],
     cart:[],
     combinedList:[],
+    showSpinner:false,
     total:'',
+    
   };
 
 
@@ -100,6 +103,7 @@ export default class Cart extends React.Component {
 
   async getProducts() {
 
+    this.setState({showSpinner:true})
   for(let i=0;i<this.state.cart.length;i++){
     await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.cart[i].productId}`, {
       headers: {
@@ -111,7 +115,9 @@ export default class Cart extends React.Component {
   }
 
        const mergedArray = this.state.products.map(t1 => ({...t1, ...this.state.cart.find(t2 => t2.productId === t1._id)}))
-      this.setState({combinedList:mergedArray})
+      this.setState({combinedList:mergedArray,showSpinner:false})
+
+
     }
 
 
@@ -132,6 +138,7 @@ export default class Cart extends React.Component {
       this.getProducts()
       this.calculateTotal()
       
+      
     }
 
     
@@ -145,13 +152,19 @@ export default class Cart extends React.Component {
   render() {
     return (
       <Container style={styles.containerStyle}>
-  
+        <Text style={styles.labelStyle}>Cart</Text>
+
         <FlatList
+        ListHeaderComponent={<>
+          {this.state.showSpinner && (
+                <Spinner color={'black'}/>
+               )}
+        </>}
           data={this.state.combinedList}
           renderItem={item => this.cartItemsComponent(item)}
         />
         
-        <Text>{this.state.total}</Text>
+        <Text style={{fontSize:30,alignSelf:'center',margin:20}}>Total: {this.state.total}</Text>
 
         <Footer>
          
@@ -224,5 +237,15 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     height:50,
     alignItems:'center',
+    margin:10,
+    padding:10,
+  },
+  labelStyle: {
+    marginTop: 50,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    color: '#737070',
+    alignSelf: 'center',
+    fontSize: 30,
   },
 });
