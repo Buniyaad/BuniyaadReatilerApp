@@ -27,7 +27,6 @@ import {
   Label,
   Left,
   Right,
-  Root,
   Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
@@ -83,6 +82,10 @@ export default class Login extends React.Component {
       // error reading value
     }
   }
+
+    
+
+
 
   //product card components
   recommendedProductsItemComponent = itemData => (
@@ -278,6 +281,7 @@ export default class Login extends React.Component {
           console.log("new cart is: ",this.state.cart)
           this.post_cart();
           this.storeCart(this.state.cart)
+          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
         }
         else{
           //add product to existing cart
@@ -301,10 +305,10 @@ export default class Login extends React.Component {
           
           this.post_cart();
           this.storeCart(this.state.cart)
+          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
+          ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
       })
-      .then(()=>{
-            this.setState({modalVisible:false})
-            ToastAndroid.show("Added to cart", ToastAndroid.SHORT)})
+   
         }
       });
 
@@ -412,7 +416,7 @@ export default class Login extends React.Component {
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''});
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false});
           }}
         >
           <View >
@@ -420,7 +424,7 @@ export default class Login extends React.Component {
             
             <Button
               transparent
-              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})}>
+              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
               <Icon name='close-circle-outline' color='#737070' style={{fontSize:30}}/>
             </Button>
 
