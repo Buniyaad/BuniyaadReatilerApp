@@ -48,6 +48,7 @@ export default class Login extends React.Component {
     quantity:'',
     cart:[],
     pricesFound:false,
+    btnDisabled:false,
   };
 
   async storeCart(value){
@@ -267,7 +268,7 @@ export default class Login extends React.Component {
 
   handle_Cart(){
     //check if cart is created first
-    this.setState({cart:[]})
+    this.setState({cart:[],btnDisabled:true})
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
@@ -306,7 +307,7 @@ export default class Login extends React.Component {
           
           this.post_cart();
           this.storeCart(this.state.cart)
-          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
+          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
           ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
       })
    
@@ -485,7 +486,7 @@ export default class Login extends React.Component {
 
          </Body>
 
-          <Button full style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
+          <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
           ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
 
             <Text>ADD TO CART</Text>

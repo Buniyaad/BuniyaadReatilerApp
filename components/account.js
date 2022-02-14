@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, FlatList,TouchableOpacity} from 'react-native';
+import {StyleSheet, Image, FlatList,TouchableOpacity,Modal,View} from 'react-native';
 import {
   Badge,
   Body,
@@ -26,17 +26,31 @@ export default class Account extends React.Component {
   state = {
     data: [],
     retailerData:'',
+    modalVisible:false,
+    orderDetails:[],
+    products:[],
+    combinedList:[],
   };
 
   orderHistoryItemsComponent = itemData => (
-    <TouchableOpacity onPress={()=>alert("coming soon")}>
+    <TouchableOpacity onPress={()=>this.getProducts(itemData)}>
       <Card>
       
         <Text>order id: {itemData.item._id}</Text>
-        <Text>date: {itemData.item.date}</Text>
+        <Text>date: {new Date(itemData.item.date).toDateString()}</Text>
         <Text>status: {itemData.item.status}</Text>
       </Card>
     </TouchableOpacity>
+  );
+
+  cartItemsComponent = itemData => (
+      <Card style={styles.cartCardStyle}>
+      
+        <Text>{itemData.item.Title}</Text>
+        <Text>qty:{itemData.item.quantity}</Text>
+        <Text>total:{itemData.item.sellingprice}</Text>
+      </Card>
+    
   );
 
   async getData(){
@@ -66,6 +80,28 @@ export default class Account extends React.Component {
           //console.log(JSON.stringify(res.data));
         });
     }
+
+
+    async getProducts(itemData) {
+
+      await this.setState({modalVisible:true,orderDetails:itemData.item})
+      // console.log("tester :",this.state.orderDetails.products[0].productId)
+    for(let i=0;i<this.state.orderDetails.products.length;i++){
+      await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res => { res.data===null?null:this.state.products.push(res.data)})
+    }
+  
+         const mergedArray = this.state.products.map(t1 => ({...t1, ...this.state.orderDetails.products.find(t2 => t2.productId === t1._id)}))
+         this.setState({combinedList:mergedArray})
+        console.log("jdn",mergedArray)
+  
+  
+      }
 
   componentDidMount(){
     this.getData();
@@ -99,6 +135,31 @@ export default class Account extends React.Component {
         />
         )}
  
+
+          {/*View order details pop up */ }
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.setState({modalVisible:false,combinedlist:[],products:[]});
+          }}
+        >
+          <View >
+            <View style={styles.modalView}>
+            
+            <FlatList
+        ListHeaderComponent={<>
+          <Text>Products</Text>
+        </>}
+          data={this.state.combinedList}
+          renderItem={item => this.cartItemsComponent(item)}
+        />
+            </View>
+          
+          
+          </View>
+        </Modal>
           
      
 
@@ -167,13 +228,32 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#ffab03',
   },
-  phoneInputStyle: {
-    marginTop: 20,
-    alignSelf: 'center',
-    marginLeft: 20,
-    marginRight: 20,
-    backgroundColor: 'white',
-    borderRadius: 15,
+  cartCardStyle: {
+    flexDirection:'row',
+    justifyContent:'space-between',
+    height:50,
+    alignItems:'center',
+    margin:10,
+    padding:10,
+    width:'90%',
   },
+  modalView: {
+    marginTop:10,
+    height:"100%",
+    width:'100%',
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding:10,
+    alignItems:'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+
  
 });
