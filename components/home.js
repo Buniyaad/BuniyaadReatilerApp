@@ -262,6 +262,7 @@ export default class Login extends React.Component {
       })
      }).then((response)=>response.json())
      .then(data=>console.log(data))
+     
   }
 
   handle_Cart(){
@@ -314,6 +315,7 @@ export default class Login extends React.Component {
 
       
   }
+
 
   //handle back button function
   backAction = () => {

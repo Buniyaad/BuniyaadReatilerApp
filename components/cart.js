@@ -318,6 +318,48 @@ export default class Cart extends React.Component {
       
   }
 
+  post_order(){
+    if(this.state.cart.length>0){
+      // filler for selling price
+      let cart=this.state.cart
+      cart.forEach(function (element) {
+        element.sellingprice = parseInt(element.total)/parseInt(element.quantity);
+      });
+      
+      console.log(cart)
+
+      fetch(`https://api.buniyaad.pk/orders/add/${this.state.retailerData.checkUser._id}`, {
+      method: 'POST',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      token: `bearer ${this.state.retailerData.token}`,
+      },
+      body: JSON.stringify({
+          "userId":this.state.retailerData.checkUser._id,
+          "products":this.state.cart,
+          "amount":this.state.cartTotal,
+          "date":new Date(),
+      })
+     }).then((response)=>response.json())
+     .then(data=>console.log(data))
+     .then(()=>{
+      this.setState({productPrices:[],pricesFound:false,total:0,quantity:''
+      ,combinedList:[],products:[],cart:[],cartTotal:0})
+           this.post_cart();
+           this.storeCart(this.state.cart)
+           this.getCart();
+           this.getProducts()
+      ToastAndroid.show("order has been placed", ToastAndroid.SHORT)
+     })
+
+     
+
+    }else{
+      alert("can't place orders, cart is empty")
+    }
+  }
+
     
  
   componentDidMount(){
@@ -343,7 +385,7 @@ export default class Cart extends React.Component {
         
         <Text style={{fontSize:30,alignSelf:'center',margin:20}}>Total: {this.state.cartTotal}</Text>
 
-        <Button full style={[styles.fullBtnStyle,{margin:10}]} onPress={()=> alert("coming soon")}>
+        <Button full style={[styles.fullBtnStyle,{margin:10}]} onPress={()=> this.post_order()}>
 
             <Text>Place Order</Text>
           </Button>
