@@ -13,6 +13,7 @@ import Setpin from './components/setpin';
 import Pin from './components/pin';
 import NotVerified from './components/notVerified';
 import Search from './components/search';
+import CategoriesSearch from './components/categoriesSearch'
 
 const Stack = createNativeStackNavigator();
 
@@ -80,6 +81,16 @@ export default function App() {
           component={Search}
           options={{
             title: 'Search',
+            headerStyle: {
+              backgroundColor: '#FAB624',
+            },
+          }}
+        />
+         <Stack.Screen
+          name="CategoriesSearch"
+          component={CategoriesSearch}
+          options={{
+            title: 'Products by category',
             headerStyle: {
               backgroundColor: '#FAB624',
             },

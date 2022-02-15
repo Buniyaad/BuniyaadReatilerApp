@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   labelStyle: {
-    marginTop: 50,
+    marginTop: 100,
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',

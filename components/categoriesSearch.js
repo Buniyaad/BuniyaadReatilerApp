@@ -7,15 +7,13 @@ import {
   View,
   Alert,
   BackHandler,
+  Modal,
   ToastAndroid,
-  Modal
 } from 'react-native';
 import {
   Badge,
   Body,
   Container,
-  Content,
-  CardItem,
   Card,
   Item,
   Button,
@@ -25,21 +23,19 @@ import {
   Text,
   Input,
   Label,
-  Left,
-  Right,
   Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default class Login extends React.Component {
+export default class CategoriesSearch extends React.Component {
   state = {
-    search: '',
+    categoryId: this.props.route.params.id,
     retailerData: '',
     data: [],
     showSpinner:true,
     showModalSpinner:false,
-    product:'',
+    product:[],
     modalVisible:false,
     productPrices:[],
     price:'',
@@ -49,7 +45,6 @@ export default class Login extends React.Component {
     cart:[],
     pricesFound:false,
     btnDisabled:false,
-    refresh:false,
   };
 
   async storeCart(value){
@@ -71,12 +66,11 @@ export default class Login extends React.Component {
     }
   }
 
-
   async getData(){
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
-      this.getAllProducts()
+      this.getProductsBySearch();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",JSON.parse(jsonValue))
       
@@ -85,33 +79,9 @@ export default class Login extends React.Component {
     }
   }
 
-    
-
-
-
-  //product card components
-  recommendedProductsItemComponent = itemData => (
-    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
-      <Card style={styles.recommendedStyle}>
-      <Image
-          style={itemData.item.Image === '' ? null : styles.imageStyle}
-          source={
-            itemData.item.Image === ''
-              ? require('./assets/logo.png')
-              : {uri: itemData.item.Image}
-          }
-        />
-        <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
-        <Text style={{color: '#FAB624',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
-          Rs. {itemData.item.MinPrice.price}
-        </Text>
-      </Card>
-    </TouchableOpacity>
-  );
-
   allProductsItemComponent = itemData => (
     <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
-      <Card style={styles.allStyle}>
+        <Card style={styles.allStyle}>
       <Image
           style={itemData.item.Image === '' ? null : styles.imageStyle}
           source={
@@ -128,220 +98,206 @@ export default class Login extends React.Component {
     </TouchableOpacity>
   );
 
-  //get Sab Samaan products
-  getAllProducts() {
-    fetch(`https://api.buniyaad.pk/products`, {
-      headers: {
-        token: `bearer ${this.state.retailerData.token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(res => {
-        this.setState({data: res.data,showSpinner:false});
-        //console.log(JSON.stringify(res.data));
-      });
-  }
-
+  
   //get all prices
- async  getPrices(itemData) {
+  async  getPrices(itemData) {
 
-  await this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})
-
-   if(this.state.productPrices.length===0){
-    this.setState({showModalSpinner:true})
-    let prices=this.state.product.Price
-    let priceArr=[]
-    //console.log("prices are:", prices)
-    for(let i=0; i<prices.length; i++){
-      await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
-      headers: {
-        token: `bearer ${this.state.retailerData.token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(res => { res.data===null?null:priceArr.push(res.data)})
-      
-    }
-    
-    let minQTY =this.getMinQty(priceArr);
-    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
-    this.calculateTotal(this.state.price.min)
-    //console.log(JSON.stringify(this.state.productPrices))
-   }
-    
-  }
-
-  //calculate total for a product
-  calculateTotal(qty){
-  this.setState({quantity:qty})
-
-   if(qty>=parseInt(this.state.minQuantity) && this.state.pricesFound){
-      let compasrisonPrice=this.state.productPrices;
-    let selectedPrice=0;
-    console.log(compasrisonPrice);
-    //this.getPrices()
-
-    for(let i=0; i<compasrisonPrice.length; i++){
-      if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
-        selectedPrice=compasrisonPrice[i]
-        //this.setState({price:compasrisonPrice[i]})
-      }
-      else if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && compasrisonPrice[i].max==='')
-      {
-        selectedPrice=compasrisonPrice[i]
-      }
-      
-    }
-    let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
-    console.log("selected price:",this.state.price)
-     this.setState({total:total,price:selectedPrice})
-   }
-   else{this.setState({total:0})}
-    
-  }
-
-  getMinQty(prices){
-    let minQTY=0
-    prices.sort(function (a, b) {
-      return a.min - b.min
-  })
-  return prices[0].min
-  }
-
-  increaseQty(){
-    let qty=this.state.quantity;
-    
-    if(qty>=parseInt(this.state.minQuantity)){
-     qty=parseInt(qty)+100
-     this.calculateTotal(qty)
-     console.log(qty)
-     this.setState({quantity:qty})
-    
-    }
-    else{
-      qty=this.state.minQuantity
-      this.calculateTotal(qty)
-      this.setState({quantity:qty})
-    }
-  }
-
-  decreaseQty(){
-    let qty=this.state.quantity;
-    
-    if(qty>parseInt(this.state.minQuantity)){
-    qty=parseInt(qty)-100
-    this.calculateTotal(qty)
-    console.log(qty)
-    this.setState({quantity:qty})
-    
-    }
-    
-  }
-
- 
-
-  checkProductInCart(cart,product){
-    console.log("old array",cart)
-     cart=cart.filter(cartProduct=> cartProduct.productId != product.productId)
-     console.log("updated array",cart)
-     
-     return cart
-  }
-
-
-
-  post_cart(){
-    fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
-      method: 'POST',
-      headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      token: `bearer ${this.state.retailerData.token}`,
-      },
-      body: JSON.stringify({
-          "userId":this.state.retailerData.checkUser._id,
-          "products":this.state.cart,
+    await this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})
+  
+     if(this.state.productPrices.length===0){
+      this.setState({showModalSpinner:true})
+      let prices=this.state.product.Price
+      let priceArr=[]
+      //console.log("prices are:", prices)
+      for(let i=0; i<prices.length; i++){
+        await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
       })
-     }).then((response)=>response.json())
-     .then(data=>console.log(data))
+        .then(response => response.json())
+        .then(res => { res.data===null?null:priceArr.push(res.data)})
+        
+      }
+      
+      let minQTY =this.getMinQty(priceArr);
+      this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:minQTY,minQuantity:minQTY})
+      this.calculateTotal(minQTY)
+      //console.log(JSON.stringify(this.state.productPrices))
+     }
+      
+    }
+  
+    //calculate total for a product
+    calculateTotal(qty){
+    this.setState({quantity:qty})
+  
+     if(qty>=parseInt(this.state.minQuantity) && this.state.pricesFound){
+        let compasrisonPrice=this.state.productPrices;
+      let selectedPrice=0;
+      console.log(compasrisonPrice);
+      //this.getPrices()
+  
+      for(let i=0; i<compasrisonPrice.length; i++){
+        if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
+          selectedPrice=compasrisonPrice[i]
+          //this.setState({price:compasrisonPrice[i]})
+        }
+        else if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && compasrisonPrice[i].max==='')
+        {
+          selectedPrice=compasrisonPrice[i]
+        }
+        
+      }
+      let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
+      console.log("selected price:",this.state.price)
+       this.setState({total:total,price:selectedPrice})
+     }
+     else{this.setState({total:0})}
+      
+    }
+  
+    getMinQty(prices){
+      let minQTY=0
+      prices.sort(function (a, b) {
+        return a.min - b.min
+    })
+    return prices[0].min
+    }
+  
+    increaseQty(){
+      let qty=this.state.quantity;
+      
+      if(qty>=parseInt(this.state.minQuantity)){
+       qty=parseInt(qty)+100
+       this.calculateTotal(qty)
+       console.log(qty)
+       this.setState({quantity:qty})
+      
+      }
+      else{
+        qty=this.state.minQuantity
+        this.calculateTotal(qty)
+        this.setState({quantity:qty})
+      }
+    }
+  
+    decreaseQty(){
+      let qty=this.state.quantity;
+      
+      if(qty>parseInt(this.state.minQuantity)){
+      qty=parseInt(qty)-100
+      this.calculateTotal(qty)
+      console.log(qty)
+      this.setState({quantity:qty})
+      
+      }
+      
+    }
+  
+   
+  
+    checkProductInCart(cart,product){
+      console.log("old array",cart)
+       cart=cart.filter(cartProduct=> cartProduct.productId != product.productId)
+       console.log("updated array",cart)
+       
+       return cart
+    }
+  
+  
+  
+    post_cart(){
+      fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
+        method: 'POST',
+        headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        token: `bearer ${this.state.retailerData.token}`,
+        },
+        body: JSON.stringify({
+            "userId":this.state.retailerData.checkUser._id,
+            "products":this.state.cart,
+        })
+       }).then((response)=>response.json())
+       .then(data=>console.log(data))
+       
+    }
+  
+    handle_Cart(){
+      //check if cart is created first
+      this.setState({cart:[],btnDisabled:true})
+      fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res => {
+          if(res.data===false){
+            //if cart was empty add first product
+            let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+            this.state.cart.push(product);
+            console.log("new cart is: ",this.state.cart)
+            this.post_cart();
+            this.storeCart(this.state.cart)
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
+          }
+          else{
+            //add product to existing cart
+           fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res=>{
+         // console.log("postman cart:",res.data.products)
+          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+          let resCart=this.checkProductInCart(res.data.products,product)
+          this.state.cart.push(product);
+          console.log("local cart",this.state.cart)
+          Array.prototype.push.apply(this.state.cart,resCart); 
+          //this.state.cart.concat(res.data.products) 
+          //console.log("concatenated",this.state.cart) 
+          //console.log(this.state.cart)
+          //this.state.cart.push(product);
+            
+            this.post_cart();
+            this.storeCart(this.state.cart)
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
+            ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+        })
      
-  }
-
-  handle_Cart(){
-    //check if cart is created first
-    this.setState({cart:[],btnDisabled:true})
-    fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
+          }
+        });
+  
+        
+    }
+  
+  
+    // get search results
+  getProductsBySearch() {
+    fetch(`https://api.buniyaad.pk/categories/GetProducts/${this.state.categoryId}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
     })
       .then(response => response.json())
       .then(res => {
-        if(res.data===false){
-          //if cart was empty add first product
-          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
-          this.state.cart.push(product);
-          console.log("new cart is: ",this.state.cart)
-          this.post_cart();
-          this.storeCart(this.state.cart)
-          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
-        }
-        else{
-          //add product to existing cart
-         fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
-      headers: {
-        token: `bearer ${this.state.retailerData.token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(res=>{
-       // console.log("postman cart:",res.data.products)
-        let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
-        let resCart=this.checkProductInCart(res.data.products,product)
-        this.state.cart.push(product);
-        console.log("local cart",this.state.cart)
-        Array.prototype.push.apply(this.state.cart,resCart); 
-        //this.state.cart.concat(res.data.products) 
-        //console.log("concatenated",this.state.cart) 
-        //console.log(this.state.cart)
-        //this.state.cart.push(product);
-          
-          this.post_cart();
-          this.storeCart(this.state.cart)
-          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
-          ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
-      })
-   
-        }
+        this.setState({data: res.data, showSpinner:false});
       });
-
-      
   }
 
-
-  //handle back button function
   backAction = () => {
-    Alert.alert(
-      "Close?",
-      "press OK to leave the App",
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => BackHandler.exitApp() }
-      ]
-    );
-    //BackHandler.exitApp()
+    this.setState({search:''})
+    this.props.navigation.pop();
     return true;
   };
 
   componentDidMount() {
-    this.getData();
+    this.getData()
     
-    
-    console.log("this is state data",this.state.retailerData)
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
 
@@ -352,63 +308,17 @@ export default class Login extends React.Component {
   render() {
     return (
       <Container style={styles.containerStyle}>
-        <Header style={styles.headerStyle}>
-          <Left>
-            <Image source={require('./assets/logosmall.png')} />
-          </Left>
-
-          <Right>
-            <Icon name="notifications" />
-          </Right>
-        </Header>
-
-        <View style={styles.searchViewStyle}>
-          <Item rounded style={styles.searchInputStyle}>
-            <Label style={{marginLeft:10}}>
-              <Icon name="search" />
-            </Label>
-            <Input
-              placeholder="search"
-              onChangeText={text => this.setState({search: text})}
-              returnKeyType='search'
-              onSubmitEditing={() =>
-                this.state.search == ''
-                  ? null
-                  : this.props.navigation.navigate('Search', {
-                      data: this.state.retailerData,
-                      search: this.state.search,
-                    })
-              }
-            />
-          </Item>
-        </View>
-
-        {/*set aap keh liye as header to sab samaan */}
-
         <FlatList
           columnWrapperStyle={{justifyContent: 'space-evenly'}}
-          refreshing={this.state.refresh}
-          onRefresh={()=>this.getAllProducts()}
           ListHeaderComponent={
             <>
-               {this.state.showSpinner && (
+              {this.state.showSpinner && (
                 <Spinner color={'black'}/>
                )}
-              <Card style={styles.bannerStyle}>
-                <Image source={require('./assets/logo.png')} />
-              </Card>
-
-              <View>
-                <Text style={styles.labelStyle}> AAP KEH LIYE</Text>
-                <FlatList
-                  horizontal={true}
-                  data={this.state.data}
-                  renderItem={item =>
-                    this.recommendedProductsItemComponent(item)
-                  }
-                />
-              </View>
-              <Text style={styles.labelStyle}> SAB SAMAAN</Text>
+             {!this.state.showSpinner &&(
+             <Text style={styles.labelStyle}>
+                found {this.state.data.length} results
+             </Text>)} 
             </>
           }
           data={this.state.data}
@@ -416,8 +326,8 @@ export default class Login extends React.Component {
           renderItem={item => this.allProductsItemComponent(item)}
         />
 
-        {/*View product pop up */ }
-        <Modal
+           {/*View product pop up */ }
+           <Modal
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
@@ -501,8 +411,7 @@ export default class Login extends React.Component {
         </Modal>
 
 
-    {/*Footer starts here*/ }
-    <Footer>
+        <Footer>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
@@ -546,7 +455,7 @@ export default class Login extends React.Component {
             </Button>
           </FooterTab>
         </Footer>
-      </Container>
+     </Container>
     );
   }
 }
@@ -591,8 +500,7 @@ const styles = StyleSheet.create({
   },
   searchInputStyle: {
     alignSelf: 'center',
-    margin:10,
-    marginLeft:10,
+    margin: 10,
     backgroundColor: 'white',
     borderRadius: 10,
   },
@@ -600,35 +508,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAB624',
   },
   bannerStyle: {
-    marginTop: 20,
+    marginTop: 10,
     alignSelf: 'center',
     height: 100,
-    width: '95%',
-    borderRadius:10,
-
+    width: 300,
   },
   labelStyle: {
     marginTop: 50,
     marginBottom: 10,
-    fontWeight:'bold',
+    fontWeight: 'bold',
     color: '#737070',
-    marginLeft:10,
   },
   recommendedStyle: {
     marginLeft: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     height: 250,
-    width: 175,
-    
-  
-    
+    width: 150,
+    justifyContent: 'space-between',
   },
   allStyle: {
-    
     borderRadius: 10,
     height: 250,
     width: 175,
-
   },
   imageStyle: {
     height:'60%',
@@ -641,7 +542,7 @@ const styles = StyleSheet.create({
     marginRight:10,
     height: 200,
     width: '100%',
-   
+    borderRadius:10,
     
   },
 });

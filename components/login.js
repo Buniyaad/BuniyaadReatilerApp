@@ -108,6 +108,11 @@ export default class Login extends React.Component {
             style={styles.logoStyle}
             source={require('./assets/logo.png')}
           />
+
+          <Image
+            style={{height:200,width:200,marginTop:50, alignSelf:'center'}}
+            source={{uri:'https://s3-alpha-sig.figma.com/img/9a7c/b540/b889255794869b2f6c4df338a66d4c02?Expires=1646006400&Signature=DUMAwLe3YEHDMhJD0TdT6H-K-uGPW9NFOiJ6zlrXg0w5G1enw5nXaLQXkux1sFemO1DzhWudNftk5elpbOm45UyvZr582skb~jfFlxbjFVToa-4S7-Kt8hghN~RcOdqvo1ydG-zkt8EEMmVyWSamcICWFbj7wWujeJ9BMc-9i8AVZFb6L3VhEU9IbG4mo-9-yUvJRVF2tumaB4GsUz3tqw3ZeQHvwbKwzpdMoNmWMHsVXMgjFF8HLNZG6UHimr9w6EzKuikKwoi7nn858vCEyRGC6IwpZLoQAD2VVHINkzOsJH5DpceG2w6EkaPGDuH~1CiHBIVTpbsOL~TbpTnArQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA'}}
+          />
           <Text style={styles.txt}>Mobile number darj karein!</Text>
 
           <Item style={styles.phoneInputStyle} inlineLabel>
@@ -159,7 +164,6 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   txt: {
-    marginTop: 200,
     alignSelf: 'center',
     fontWeight: 'bold',
     color: '#303030',

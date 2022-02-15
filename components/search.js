@@ -80,9 +80,9 @@ export default class Login extends React.Component {
   }
 
   allProductsItemComponent = itemData => (
-    <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
+    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.allStyle}>
-        <Image
+      <Image
           style={itemData.item.Image === '' ? null : styles.imageStyle}
           source={
             itemData.item.Image === ''
@@ -90,9 +90,9 @@ export default class Login extends React.Component {
               : {uri: itemData.item.Image}
           }
         />
-        <Text>{itemData.item.Title}</Text>
-        <Text style={{color: '#FAB624', fontWeight: 'bold'}}>
-          {itemData.item.MinPrice.price}
+        <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
+        <Text style={{color: '#FAB624',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
+          Rs. {itemData.item.MinPrice.price}
         </Text>
       </Card>
     </TouchableOpacity>
@@ -527,14 +527,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   allStyle: {
-    borderRadius: 5,
+    borderRadius: 10,
     height: 250,
-    width: 150,
-    justifyContent: 'space-between',
+    width: 175,
   },
   imageStyle: {
-    height: 150,
+    height:'60%',
     minWidth: 150,
+    borderTopRightRadius:10,
+    borderTopLeftRadius:10,
   },
   imageModalStyle: {
     marginLeft:10,

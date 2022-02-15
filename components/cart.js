@@ -50,9 +50,9 @@ export default class Cart extends React.Component {
     <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.cartCardStyle}>
       
-        <Text>{itemData.item.Title}</Text>
-        <Text>qty:{itemData.item.quantity}</Text>
-        <Text>total:{itemData.item.total}</Text>
+        <Text style={{width:'40%'}} numberOfLines={1}>{itemData.item.Title}</Text>
+        <Text style={{width:'25%'}}>qty:{itemData.item.quantity}</Text>
+        <Text style={{width:'25%'}}>total:{itemData.item.total}</Text>
         <Button transparent style={{alignSelf:'center'}} onPress={()=>this.removeProduct(itemData.item)}>
             <Icon name='close-circle-outline' color='red' style={{fontSize:30}}/>
           </Button>

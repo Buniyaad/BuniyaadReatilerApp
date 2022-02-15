@@ -50,7 +50,9 @@ export default class Categories extends React.Component {
   }
 
   categoryCardComponent = itemData => (
-    <TouchableOpacity onPress={() => this.getCategoryById(itemData.item._id)}>
+    <TouchableOpacity onPress={() => this.props.navigation.navigate('CategoriesSearch', {
+      id:itemData.item._id
+    })}>
       <Card style={styles.categoryCardStyle}>
         <Image
           style={styles.imageStyle}

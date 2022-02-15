@@ -30,6 +30,7 @@ export default class Account extends React.Component {
     orderDetails:[],
     products:[],
     combinedList:[],
+    refresh:false,
   };
 
   orderHistoryItemsComponent = itemData => (
@@ -131,6 +132,8 @@ export default class Account extends React.Component {
          
            </>}
            data={this.state.data}
+           refreshing={this.state.refresh}
+          onRefresh={()=>this.getOrderHistory()}
            renderItem={item => this.orderHistoryItemsComponent(item)}
         />
         )}
