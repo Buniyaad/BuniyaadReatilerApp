@@ -50,6 +50,7 @@ export default class Login extends React.Component {
     pricesFound:false,
     btnDisabled:false,
     refresh:false,
+    cartCount:'',
   };
 
   async storeCart(value){
@@ -64,7 +65,8 @@ export default class Login extends React.Component {
   async getCart(){
     try {
       const jsonValue = await AsyncStorage.getItem('cart')
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
+      jsonValue != null ? this.setState({cartCount:JSON.parse(jsonValue).length}) : null;
+    
  
     } catch(e) {
       // error reading value
@@ -309,6 +311,7 @@ export default class Login extends React.Component {
           this.post_cart();
           this.storeCart(this.state.cart)
           this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
+          this.getCart()
           ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
       })
    
@@ -338,8 +341,13 @@ export default class Login extends React.Component {
   };
 
   componentDidMount() {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({search:''});
+      this.getCart();
+    });
+
     this.getData();
-    
+    this.getCart();    
     
     console.log("this is state data",this.state.retailerData)
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
@@ -347,6 +355,7 @@ export default class Login extends React.Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backAction);
+    this._unsubscribe();
   }
 
   render() {
@@ -369,6 +378,7 @@ export default class Login extends React.Component {
             </Label>
             <Input
               placeholder="search"
+              value={this.state.search}
               onChangeText={text => this.setState({search: text})}
               returnKeyType='search'
               onSubmitEditing={() =>
@@ -526,16 +536,20 @@ export default class Login extends React.Component {
               transparent
               badge
               vertical
+              style={{marginTop:this.state.cartCount===0? 10:0}}
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
+           
+           {this.state.cartCount != '' && (
               <Badge warning>
-                <Text>1</Text>
+                <Text>{this.state.cartCount}</Text>
               </Badge>
+              )}
               <Icon name="cart" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Cart</Label>
             </Button>
-
+            
             <Button
               transparent
               onPress={() => {
@@ -555,6 +569,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
+    backgroundColor:'#faf9f7',
   },
   headerStyle: {
     backgroundColor: '#FAB624',

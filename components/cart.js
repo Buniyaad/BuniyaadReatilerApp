@@ -50,9 +50,9 @@ export default class Cart extends React.Component {
     <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.cartCardStyle}>
       
-        <Text style={{width:'40%'}} numberOfLines={1}>{itemData.item.Title}</Text>
-        <Text style={{width:'25%'}}>qty:{itemData.item.quantity}</Text>
-        <Text style={{width:'25%'}}>total:{itemData.item.total}</Text>
+        <Text style={{width:'45%'}} numberOfLines={1}>{itemData.item.Title}</Text>
+        <Text style={{width:'25%'}}>{itemData.item.quantity}</Text>
+        <Text style={{width:'25%'}}>{itemData.item.total}</Text>
         <Button transparent style={{alignSelf:'center'}} onPress={()=>this.removeProduct(itemData.item)}>
             <Icon name='close-circle-outline' color='red' style={{fontSize:30}}/>
           </Button>
@@ -375,6 +375,12 @@ export default class Cart extends React.Component {
       <Container style={styles.containerStyle}>
         <Text style={styles.labelStyle}>Cart</Text>
 
+        <View style={styles.headingStyle}>
+          <Text style={[styles.cartLabelStyle,{width:'45%'}]}>Product</Text>
+          <Text style={[styles.cartLabelStyle,{width:'25%'}]}>qty</Text>
+          <Text style={[styles.cartLabelStyle,{width:'25%'}]}>total</Text>
+        </View>
+
         <FlatList
         ListHeaderComponent={<>
           {this.state.showSpinner && (
@@ -500,14 +506,9 @@ export default class Cart extends React.Component {
 
             <Button
               transparent
-              badge
-              vertical
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
-              <Badge warning>
-                <Text>1</Text>
-              </Badge>
               <Icon name="cart" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Cart</Label>
             </Button>
@@ -531,6 +532,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
+    backgroundColor:'#faf9f7',
   },
   headerStyle: {
     backgroundColor: '#FAB624',
@@ -545,19 +547,31 @@ const styles = StyleSheet.create({
   },
   cartCardStyle: {
     flexDirection:'row',
-    justifyContent:'space-between',
+    borderRadius:10,
+    alignItems:'center',
+    margin:10,
+    padding:10,
+  },
+  headingStyle:{
+    flexDirection:'row',
     height:50,
     alignItems:'center',
     margin:10,
     padding:10,
   },
   labelStyle: {
-    marginTop: 50,
-    marginBottom: 10,
+    marginTop: 10,
+    marginBottom: 20,
     fontWeight: 'bold',
     color: '#737070',
     alignSelf: 'center',
     fontSize: 30,
+  },
+  cartLabelStyle: {
+    fontWeight: 'bold',
+    color: '#737070',
+    alignSelf: 'center',
+    fontSize:20,
   },
   fullBtnStyle:{
     backgroundColor: '#ffab03',

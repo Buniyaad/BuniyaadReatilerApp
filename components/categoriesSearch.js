@@ -464,6 +464,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
+    backgroundColor:'#faf9f7',
   },
   headerStyle: {
     backgroundColor: '#FAB624',

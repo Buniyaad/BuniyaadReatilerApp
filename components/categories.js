@@ -64,6 +64,7 @@ export default class Categories extends React.Component {
             fontWeight: 'bold',
             textAlign: 'center',
             fontSize: 25,
+            marginBottom:10,
           }}>
           {itemData.item.Name}
         </Text>
@@ -141,14 +142,9 @@ export default class Categories extends React.Component {
 
             <Button
               transparent
-              badge
-              vertical
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
-              <Badge warning>
-                <Text>1</Text>
-              </Badge>
               <Icon name="cart" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Cart</Label>
             </Button>
@@ -172,6 +168,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
+    backgroundColor:'#faf9f7',
   },
   headerStyle: {
     backgroundColor: '#FAB624',
@@ -185,8 +182,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffab03',
   },
   labelStyle: {
-    marginTop: 50,
-    marginBottom: 10,
+    marginTop: 10,
+    marginBottom: 20,
     fontWeight: 'bold',
     color: '#737070',
     alignSelf: 'center',
@@ -194,7 +191,7 @@ const styles = StyleSheet.create({
   },
   categoryCardStyle: {
     marginLeft: 20,
-    borderRadius: 5,
+    borderRadius: 10,
     height: 200,
     marginRight:20,
     marginRight:20,
@@ -202,6 +199,8 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     height: 150,
+    borderTopRightRadius:10,
+    borderTopLeftRadius:10,
     
   },
 });

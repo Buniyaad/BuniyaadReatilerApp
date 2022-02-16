@@ -188,14 +188,9 @@ export default class Account extends React.Component {
 
             <Button
               transparent
-              badge
-              vertical
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
-              <Badge warning>
-                <Text>1</Text>
-              </Badge>
               <Icon name="cart" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Cart</Label>
             </Button>
@@ -219,6 +214,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
+    backgroundColor:'#faf9f7',
   },
   headerStyle: {
     backgroundColor: '#FAB624',
