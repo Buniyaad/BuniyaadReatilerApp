@@ -32,6 +32,7 @@ import {
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export default class Login extends React.Component {
   state = {
     search: '',
@@ -132,6 +133,7 @@ export default class Login extends React.Component {
 
   //get Sab Samaan products
   getAllProducts() {
+    this.setState({refresh:true})
     fetch(`https://api.buniyaad.pk/products`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
@@ -139,7 +141,7 @@ export default class Login extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        this.setState({data: res.data,showSpinner:false});
+        this.setState({data: res.data,showSpinner:false,refresh:false});
         //console.log(JSON.stringify(res.data));
       });
   }
@@ -272,6 +274,8 @@ export default class Login extends React.Component {
   handle_Cart(){
     //check if cart is created first
     this.setState({cart:[],btnDisabled:true})
+    ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
@@ -287,6 +291,7 @@ export default class Login extends React.Component {
           this.post_cart();
           this.storeCart(this.state.cart)
           this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
+          this.getCart()
         }
         else{
           //add product to existing cart
@@ -297,22 +302,17 @@ export default class Login extends React.Component {
     })
       .then(response => response.json())
       .then(res=>{
-       // console.log("postman cart:",res.data.products)
+      
         let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
         let resCart=this.checkProductInCart(res.data.products,product)
         this.state.cart.push(product);
         console.log("local cart",this.state.cart)
         Array.prototype.push.apply(this.state.cart,resCart); 
-        //this.state.cart.concat(res.data.products) 
-        //console.log("concatenated",this.state.cart) 
-        //console.log(this.state.cart)
-        //this.state.cart.push(product);
-          
           this.post_cart();
           this.storeCart(this.state.cart)
           this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
           this.getCart()
-          ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+          
       })
    
         }
@@ -324,6 +324,8 @@ export default class Login extends React.Component {
 
   //handle back button function
   backAction = () => {
+
+    console.log(this.props.navigation.state)
     Alert.alert(
       "Close?",
       "press OK to leave the App",
@@ -363,9 +365,13 @@ export default class Login extends React.Component {
       <Container style={styles.containerStyle}>
         <Header style={styles.headerStyle}>
           <Left>
-            <Image source={require('./assets/logosmall.png')} />
+            
           </Left>
 
+          <Body style={{alignItems:'center'}}>
+          <Image source={require('./assets/logosmall.png')} />
+          </Body>
+          
           <Right>
             <Icon name="notifications" />
           </Right>
@@ -569,7 +575,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
-    backgroundColor:'#faf9f7',
+    backgroundColor:'FBFCFF',
   },
   headerStyle: {
     backgroundColor: '#FAB624',
@@ -633,7 +639,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderRadius: 10,
     height: 250,
-    width: 175,
+    width: 150,
     
   
     

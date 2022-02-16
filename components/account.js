@@ -70,6 +70,7 @@ export default class Account extends React.Component {
 
     //get order history
     getOrderHistory() {
+      this.setState({refresh:true})
       fetch(`https://api.buniyaad.pk/orders/history/${this.state.retailerData.checkUser._id}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -77,7 +78,7 @@ export default class Account extends React.Component {
       })
         .then(response => response.json())
         .then(res => {
-          this.setState({data: res.data});
+          this.setState({data: res.data,refresh:false});
           //console.log(JSON.stringify(res.data));
         });
     }

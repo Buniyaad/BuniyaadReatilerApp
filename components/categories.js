@@ -4,6 +4,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  BackHandler,
   View,
 } from 'react-native';
 import {
@@ -60,11 +61,14 @@ export default class Categories extends React.Component {
         />
         <Text
           style={{
-            color: '#FAB624',
+            color: 'black',
+            backgroundColor:'#FAB624',
             fontWeight: 'bold',
             textAlign: 'center',
             fontSize: 25,
-            marginBottom:10,
+            height:50,
+            borderBottomRightRadius:10,
+            borderBottomLeftRadius:10
           }}>
           {itemData.item.Name}
         </Text>
@@ -98,8 +102,11 @@ export default class Categories extends React.Component {
       });
   }
 
+
+
   componentDidMount() {
     this.getData()
+    
 
   }
 

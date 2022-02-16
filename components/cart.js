@@ -267,6 +267,7 @@ export default class Cart extends React.Component {
    handle_Cart(){
     //check if cart is created first
     this.setState({cart:[],btnDisabled:true})
+    ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
@@ -310,7 +311,7 @@ export default class Cart extends React.Component {
         ,combinedList:[],products:[],cart:[],cartTotal:0,btnDisabled:false})
           this.getCart();
           this.getProducts()
-          ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+          
       })
    
         }
