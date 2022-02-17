@@ -369,11 +369,11 @@ export default class Login extends React.Component {
           </Left>
 
           <Body style={{alignItems:'center',width:'80%'}}>
-          <Image style={{alignSelf:'flex-end',height:50,width:'100%'}}source={require('./assets/logoTitle.png')} />
+          <Image style={{marginLeft:100,marginTop:10,height:50,width:'100%'}}source={require('./assets/logoTitle.png')} />
           </Body>
           
-          <Right style={{width:'20%'}}>
-            <Icon name="notifications" />
+          <Right style={{width:'20%',marginTop:10}}>
+            <Icon color='black' name="notifications" />
           </Right>
         </Header>
 
@@ -448,8 +448,9 @@ export default class Login extends React.Component {
             
             <Button
               transparent
+              style={{margin:10}}
               onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
-              <Icon name='close-circle-outline' color='#737070' style={{fontSize:30}}/>
+              <Icon name='close-circle-outline' color='#737070' style={{fontSize:35}}/>
             </Button>
 
            <Image
@@ -466,7 +467,7 @@ export default class Login extends React.Component {
             <Text style={{fontSize:30}}>{this.state.product.Title}</Text>
             <Text>{this.state.product.Description}</Text>
 
-          <Card style={{flexDirection:'row',justifyContent:'space-around'}}>
+          <Card style={{flexDirection:'row',justifyContent:'space-around',width:'100%',borderRadius:10}}>
 
             <Label style={{alignItems:'center',marginHorizontal:10,marginTop:10}}>
               <Text >Quantity</Text>
@@ -475,7 +476,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='remove-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
             </Button>
             
             {this.state.showModalSpinner && (
@@ -489,11 +490,11 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='add-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
             </Button>
           </Card>
 
-          <Card style={{flex:1,justifyContent:'space-around'}}>
+          <Card style={{flex:1,justifyContent:'space-around',borderRadius:10,width:'95%'}}>
             <View style={{flexDirection:'row',width:'100%',justifyContent:'space-around'}}>
              <Text style={{fontSize:30}}>price :{this.state.price.price}</Text>
              <Text style={{fontSize:30}}>Per :{this.state.price.min}</Text>
@@ -544,7 +545,7 @@ export default class Login extends React.Component {
               transparent
               badge
               vertical
-              style={{marginTop:this.state.cartCount===0? 10:0}}
+              style={{marginTop:this.state.cartCount===0? 0:-10}}
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
@@ -593,7 +594,9 @@ const styles = StyleSheet.create({
   fullBtnStyle:{
     backgroundColor: '#ffab03',
     borderRadius:10,
-    marginBottom:20,
+    marginBottom:30,
+    marginTop:10,
+    height:50,
   },
   modalView: {
     marginTop:10,
@@ -664,6 +667,7 @@ const styles = StyleSheet.create({
   imageModalStyle: {
     marginLeft:10,
     marginRight:10,
+    borderRadius:10,
     height: 200,
     width: '100%',
    

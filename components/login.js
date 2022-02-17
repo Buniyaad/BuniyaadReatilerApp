@@ -131,7 +131,7 @@ export default class Login extends React.Component {
         <Content>
           <Image
             style={styles.logoStyle}
-            source={require('./assets/logo.png')}
+            source={require('./assets/logoTitle.png')}
           />
 
        
@@ -192,6 +192,8 @@ const styles = StyleSheet.create({
   logoStyle: {
     alignSelf: 'center',
     marginTop: 100,
+    width:250,
+    height:75
   },
   txt: {
     alignSelf: 'center',

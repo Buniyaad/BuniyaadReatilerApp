@@ -600,9 +600,11 @@ const styles = StyleSheet.create({
     fontSize:20,
   },
   fullBtnStyle:{
-    backgroundColor: '#FFC000',
+    backgroundColor: '#ffab03',
     borderRadius:10,
-    marginBottom:20,
+    marginBottom:30,
+    marginTop:10,
+    
   },
   modalView: {
     marginTop:10,
