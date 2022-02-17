@@ -91,7 +91,7 @@ export default class Login extends React.Component {
           }
         />
         <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
-        <Text style={{color: '#FAB624',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
+        <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
           Rs. {itemData.item.MinPrice.price}
         </Text>
       </Card>
@@ -368,7 +368,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='remove-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
             
             {this.state.showModalSpinner && (
@@ -382,7 +382,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='add-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
           </Card>
 
@@ -412,7 +412,7 @@ export default class Login extends React.Component {
         </Modal>
 
 
-        <Footer>
+        <Footer style={{height:70}}>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
@@ -434,14 +434,9 @@ export default class Login extends React.Component {
 
             <Button
               transparent
-              badge
-              vertical
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
-              <Badge warning>
-                <Text>1</Text>
-              </Badge>
               <Icon name="cart" style={{color: '#737070'}} />
               <Label style={{color: '#737070'}}>Cart</Label>
             </Button>
@@ -467,7 +462,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerStyle: {
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
   },
   footerStyle: {
     backgroundColor: 'white',
@@ -506,7 +501,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   searchViewStyle: {
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
   },
   bannerStyle: {
     marginTop: 10,

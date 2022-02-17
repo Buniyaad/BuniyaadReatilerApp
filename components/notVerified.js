@@ -21,7 +21,7 @@ export default class NotVerified extends React.Component{
                 routes: [{ name: 'Login' }]
            })}>
               <Text
-                style={{color: '#FAB624', fontWeight: 'bold', fontSize: 20}}>
+                style={{color: '#FFC000', fontWeight: 'bold', fontSize: 20}}>
                 Back to Login
               </Text>
             </Button>
@@ -36,7 +36,7 @@ export default class NotVerified extends React.Component{
 const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
     flex:1,
   },
   logoStyle: {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   inputlabelStyle: {
     borderRightWidth: 1,
-    borderRightColor: '#FAB624',
+    borderRightColor: '#FFC000',
   },
   btnStyle: {
     marginTop: 30,

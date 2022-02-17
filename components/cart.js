@@ -46,16 +46,32 @@ export default class Cart extends React.Component {
   };
 
 
-  cartItemsComponent = itemData => (
+ /* cartItemsComponent = itemData => (
     <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.cartCardStyle}>
       
         <Text style={{width:'45%'}} numberOfLines={1}>{itemData.item.Title}</Text>
-        <Text style={{width:'25%'}}>{itemData.item.quantity}</Text>
-        <Text style={{width:'25%'}}>{itemData.item.total}</Text>
+        <Text style={{width:'25%'}}>{ itemData.item.quantity}</Text>
+        <Text style={{width:'25%'}}>Rs.{itemData.item.total}</Text>
         <Button transparent style={{alignSelf:'center'}} onPress={()=>this.removeProduct(itemData.item)}>
             <Icon name='close-circle-outline' color='red' style={{fontSize:30}}/>
           </Button>
+      </Card>
+    </TouchableOpacity>
+  );*/
+
+  cartItemsComponent = itemData => (
+    <TouchableOpacity onPress={()=>this.getPrices(itemData)}>
+      <Card style={styles.cartCardStyle}>
+      
+        <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+        <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>quantity: { itemData.item.quantity}</Text>
+        <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>Rs.{itemData.item.total}</Text>
+        <Button transparent style={{width:'10%',alignSelf:'center'}} onPress={()=>this.removeProduct(itemData.item)}>
+            <Icon name='close-circle-outline' color='red' style={{fontSize:35,marginTop:-20}}/>
+          </Button>
+        </View>
       </Card>
     </TouchableOpacity>
   );
@@ -376,12 +392,8 @@ export default class Cart extends React.Component {
       <Container style={styles.containerStyle}>
         <Text style={styles.labelStyle}>Cart</Text>
 
-        <View style={styles.headingStyle}>
-          <Text style={[styles.cartLabelStyle,{width:'45%'}]}>Product</Text>
-          <Text style={[styles.cartLabelStyle,{width:'25%'}]}>qty</Text>
-          <Text style={[styles.cartLabelStyle,{width:'25%'}]}>total</Text>
-        </View>
-
+    
+       <Text style={styles.itemLabelStyle}>ITEMS</Text>    
         <FlatList
         ListHeaderComponent={<>
           {this.state.showSpinner && (
@@ -391,13 +403,17 @@ export default class Cart extends React.Component {
           data={this.state.combinedList}
           renderItem={item => this.cartItemsComponent(item)}
         />
+      
         
-        <Text style={{fontSize:30,alignSelf:'center',margin:20}}>Total: {this.state.cartTotal}</Text>
-
-        <Button full style={[styles.fullBtnStyle,{margin:10}]} onPress={()=> this.post_order()}>
-
+        <Card style={{borderRadius:10,margin:20,width:'100%',alignSelf:'center'}}>
+         <Text style={{fontSize:30,alignSelf:'center',margin:20}}>Total: {this.state.cartTotal}</Text>
+         <Button full style={[styles.fullBtnStyle,{margin:10}]} onPress={()=> this.post_order()}>
             <Text>Place Order</Text>
           </Button>
+        </Card>
+        
+
+       
 
          {/*View product pop up */ }
                <Modal
@@ -440,7 +456,7 @@ export default class Cart extends React.Component {
             <Button
               transparent
               onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='remove-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
             
             {this.state.showModalSpinner && (
@@ -454,7 +470,7 @@ export default class Cart extends React.Component {
             <Button
               transparent
               onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='add-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
           </Card>
 
@@ -484,7 +500,7 @@ export default class Cart extends React.Component {
         </Modal>
 
        {/*footer starts here*/}
-        <Footer>
+        <Footer style={{height:70}}>
          
           <FooterTab style={styles.footerStyle}>
             <Button
@@ -536,7 +552,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#faf9f7',
   },
   headerStyle: {
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
   },
   footerStyle: {
     backgroundColor: 'white',
@@ -547,10 +563,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffab03',
   },
   cartCardStyle: {
-    flexDirection:'row',
+  
     borderRadius:10,
-    alignItems:'center',
-    margin:10,
+    justifyContent:'space-around',
+    marginLeft:10,
+    marginRight:10,
+    height:100,
     padding:10,
   },
   headingStyle:{
@@ -559,6 +577,13 @@ const styles = StyleSheet.create({
     alignItems:'center',
     margin:10,
     padding:10,
+  },
+  itemLabelStyle: {
+    marginTop: 50,
+    marginBottom: 10,
+    fontWeight:'bold',
+    color: '#737070',
+    marginLeft:10,
   },
   labelStyle: {
     marginTop: 10,
@@ -575,7 +600,7 @@ const styles = StyleSheet.create({
     fontSize:20,
   },
   fullBtnStyle:{
-    backgroundColor: '#ffab03',
+    backgroundColor: '#FFC000',
     borderRadius:10,
     marginBottom:20,
   },

@@ -30,7 +30,7 @@ export default class Login extends React.Component {
     Animated.timing(this.state.fadeAnim, {
       toValue: 0,
       duration: 1000,
-      delay:5000,
+      delay:2000,
       useNativeDriver: true
     }).start(()=>{
       Animated.timing(this.state.fadeAnim, {
@@ -66,7 +66,7 @@ export default class Login extends React.Component {
    
   // check if complete phone num is entered then show next btn
   handle_phoneno(text) {
-    this.setState({phoneno: text});
+    this.setState({phoneno: text.replace(/[^0-9]/g, '')});
     if (text.length === 11) {
       this.setState({showBtn: true});
     } else {
@@ -165,7 +165,7 @@ export default class Login extends React.Component {
               style={styles.btnStyle}
               onPress={() => this.handle_loginbtn()}>
               <Text
-                style={{color: '#FAB624', fontWeight: 'bold', fontSize: 20}}>
+                style={{color: '#FFC000', fontWeight: 'bold', fontSize: 20}}>
                 Next
               </Text>
             </Button>
@@ -183,7 +183,7 @@ export default class Login extends React.Component {
 const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
     flex:1,
   },
   contentStyle:{
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   inputlabelStyle: {
     borderRightWidth: 1,
-    borderRightColor: '#FAB624',
+    borderRightColor: '#FFC000',
   },
   btnStyle: {
     marginTop: 30,

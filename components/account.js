@@ -121,10 +121,8 @@ export default class Account extends React.Component {
            <FlatList
           ListHeaderComponent={<>
                 
-            <Card>
-            <CardItem header>
-              <Text>Retailer: </Text>
-            </CardItem>
+            <Card style={styles.retailerCardStyle}>
+            <Text>Retailer: </Text>
             <Text>Shop: {this.state.retailerData.checkUser.ShopName}</Text>
             <Text>Retailer Name: {this.state.retailerData.checkUser.Name}</Text>
             <Text>Address: {this.state.retailerData.checkUser.ShopAddress}</Text>
@@ -167,7 +165,7 @@ export default class Account extends React.Component {
           
      
 
-        <Footer>
+        <Footer style={{height:70}}>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
@@ -217,9 +215,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor:'#faf9f7',
   },
-  headerStyle: {
-    backgroundColor: '#FAB624',
-  },
   footerStyle: {
     backgroundColor: 'white',
   },
@@ -236,6 +231,14 @@ const styles = StyleSheet.create({
     margin:10,
     padding:10,
     width:'90%',
+  },
+
+  retailerCardStyle: {
+    height:150,
+    width:'90%',
+    borderRadius:10,
+    alignSelf:'center',
+    marginTop:50,
   },
   modalView: {
     marginTop:10,

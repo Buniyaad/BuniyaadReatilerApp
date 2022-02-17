@@ -52,7 +52,7 @@ export default function App() {
           options={{
             title: 'Mobile number darj karein',
             headerStyle: {
-              backgroundColor: '#FAB624',
+              backgroundColor: '#FFC000',
             },
           }}
         />
@@ -62,7 +62,7 @@ export default function App() {
           options={{
             title: 'Pin set karein',
             headerStyle: {
-              backgroundColor: '#FAB624',
+              backgroundColor: '#FFC000',
             },
           }}
         />
@@ -72,7 +72,7 @@ export default function App() {
           options={{
             title: 'Pin darj karein',
             headerStyle: {
-              backgroundColor: '#FAB624',
+              backgroundColor: '#FFC000',
             },
           }}
         />
@@ -82,7 +82,7 @@ export default function App() {
           options={{
             title: 'Search',
             headerStyle: {
-              backgroundColor: '#FAB624',
+              backgroundColor: '#FFC000',
             },
           }}
         />
@@ -92,7 +92,7 @@ export default function App() {
           options={{
             title: 'Products by category',
             headerStyle: {
-              backgroundColor: '#FAB624',
+              backgroundColor: '#FFC000',
             },
           }}
         />

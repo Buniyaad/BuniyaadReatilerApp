@@ -62,7 +62,7 @@ export default class Categories extends React.Component {
         <Text
           style={{
             color: 'black',
-            backgroundColor:'#FAB624',
+            backgroundColor:'#FFC000',
             fontWeight: 'bold',
             textAlign: 'center',
             fontSize: 25,
@@ -127,7 +127,7 @@ export default class Categories extends React.Component {
           renderItem={item => this.categoryCardComponent(item)}
         />
 
-        <Footer>
+        <Footer style={{height:70}}>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#faf9f7',
   },
   headerStyle: {
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
   },
   footerStyle: {
     backgroundColor: 'white',

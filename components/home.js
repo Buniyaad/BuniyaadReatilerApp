@@ -105,7 +105,7 @@ export default class Login extends React.Component {
           }
         />
         <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
-        <Text style={{color: '#FAB624',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
+        <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
           Rs. {itemData.item.MinPrice.price}
         </Text>
       </Card>
@@ -124,7 +124,7 @@ export default class Login extends React.Component {
           }
         />
         <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
-        <Text style={{color: '#FAB624',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
+        <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
           Rs. {itemData.item.MinPrice.price}
         </Text>
       </Card>
@@ -368,17 +368,20 @@ export default class Login extends React.Component {
             
           </Left>
 
-          <Body style={{alignItems:'center'}}>
-          <Image source={require('./assets/logosmall.png')} />
+          <Body style={{alignItems:'center',width:'80%'}}>
+          <Image style={{alignSelf:'flex-end',height:50,width:'100%'}}source={require('./assets/logoTitle.png')} />
           </Body>
           
-          <Right>
+          <Right style={{width:'20%'}}>
             <Icon name="notifications" />
           </Right>
         </Header>
 
         <View style={styles.searchViewStyle}>
-          <Item rounded style={styles.searchInputStyle}>
+          
+        </View>
+
+        <Item rounded style={styles.searchInputStyle}>
             <Label style={{marginLeft:10}}>
               <Icon name="search" />
             </Label>
@@ -397,7 +400,6 @@ export default class Login extends React.Component {
               }
             />
           </Item>
-        </View>
 
         {/*set aap keh liye as header to sab samaan */}
 
@@ -473,7 +475,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='remove-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
             
             {this.state.showModalSpinner && (
@@ -487,7 +489,7 @@ export default class Login extends React.Component {
             <Button
               transparent
               onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FAB624' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='add-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
             </Button>
           </Card>
 
@@ -518,7 +520,7 @@ export default class Login extends React.Component {
 
 
     {/*Footer starts here*/ }
-    <Footer>
+    <Footer style={{height:70}}>
           <FooterTab style={styles.footerStyle}>
             <Button
               transparent
@@ -578,7 +580,7 @@ const styles = StyleSheet.create({
     backgroundColor:'FBFCFF',
   },
   headerStyle: {
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
   },
   footerStyle: {
     backgroundColor: 'white',
@@ -612,13 +614,15 @@ const styles = StyleSheet.create({
   },
   searchInputStyle: {
     alignSelf: 'center',
-    margin:10,
-    marginLeft:10,
+    marginLeft:20,
+    marginRight:20,
     backgroundColor: 'white',
     borderRadius: 10,
+    marginTop:-20,
   },
   searchViewStyle: {
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
+    height:30,
   },
   bannerStyle: {
     marginTop: 20,

@@ -22,16 +22,17 @@ export default class Setpin extends React.Component{
         phoneno:this.props.route.params.phoneno,
         showSpinner:false,
         showPin:false,
+        msg:'',
     }
 
     check_pin(confirmpin){
        if(this.state.pin===confirmpin){
            console.log('pins matched');
-           this.setState({matched:true})
+           this.setState({matched:true, msg:''})
        }
        else{
            console.log('pins do not matched');
-           this.setState({matched:false})
+           this.setState({matched:false, msg:'Pins do not match'})
        }
     }
 
@@ -95,11 +96,12 @@ export default class Setpin extends React.Component{
             onCodeFilled={confirmpin => {
               console.log(confirmpin);
               this.check_pin(confirmpin);
+
             }}
           />
 
           <Button transparent style={{alignSelf:'center'}} onPress={()=>this.setState({showPin:!this.state.showPin})}>
-            <Icon name={this.state.showPin?'eye-off':'eye'} color='black'/>
+            <Icon name={this.state.showPin?'eye':'eye-off'} color='black'/>
           </Button>
 
              {this.state.matched && (
@@ -116,6 +118,8 @@ export default class Setpin extends React.Component{
           {this.state.showSpinner && (
             <Spinner color={'black'}/>
           )}
+
+          <Text style={styles.errorStyle}>{this.state.msg}</Text>
             </Content>
         </Container>
     )}
@@ -137,9 +141,14 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       
     },
+    errorStyle: {
+      marginTop: 20,
+      fontWeight: 'bold',
+      color:'red'
+    },
     phonenoStyle: {
       marginTop: 10,
-      color: '#FAB624',
+      color: '#FFC000',
       fontWeight: 'bold',
       fontSize: 20,
     },
@@ -147,19 +156,19 @@ const styles = StyleSheet.create({
       width: 90,
       height: 90,
       borderWidth: 1,
-      borderColor: '#FAB624',
+      borderColor: '#FFC000',
       fontSize: 40,
       textAlign: 'center',
       textAlignVertical: 'center',
       marginTop: 20,
       borderRadius: 10,
-      color: '#FAB624',
+      color: '#FFC000',
     },
     underlineStyleBase: {
       width: 60,
       height: 60,
       borderWidth: 5,
-      borderColor: '#FAB624',
+      borderColor: '#FFC000',
       fontSize: 20,
       borderRadius: 10,
       color: 'black',
@@ -171,7 +180,7 @@ const styles = StyleSheet.create({
     btnStyle: {
         marginTop: 20,
         alignSelf: 'center',
-        backgroundColor: '#FAB624',
+        backgroundColor: '#FFC000',
         paddingHorizontal: 20,
         borderRadius: 15,
       },

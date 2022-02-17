@@ -22,6 +22,7 @@ export default class Pin extends React.Component {
     showSpinner: false,
     showPin:false,
     showError:false,
+    msg:''
   };
 
   async storeData(value){
@@ -58,7 +59,8 @@ export default class Pin extends React.Component {
   //check whether user is verified
   check_Verified() {
     if (this.state.authenticated === false) {
-      this.setState({showSpinner:false,showError:true})
+      this.setState({showSpinner:false,msg:"Invalid pin"})
+     
     }
     if (this.state.data.checkUser.Verified === true) {
       console.log('you have permission');
@@ -100,11 +102,11 @@ export default class Pin extends React.Component {
             secureTextEntry={!this.state.showPin}
             clearInputs={this.state.enteredpin?false:true}
             codeInputHighlightStyle={styles.underlineStyleHighLighted}
-            onCodeFilled={() => this.setState({showBtn: true})}
+            onCodeFilled={() => this.setState({showBtn: true,msg:''})}
           />
 
           <Button transparent style={{alignSelf:'center'}} onPress={()=>this.setState({showPin:!this.state.showPin})}>
-            <Icon name={this.state.showPin?'eye-off':'eye'} color='black'/>
+            <Icon name={this.state.showPin?'eye':'eye-off'} color='black'/>
           </Button>
 
           {this.state.showBtn && (
@@ -115,7 +117,7 @@ export default class Pin extends React.Component {
             </Button>
           )}
 
-        {this.state.showError && <Text style={styles.errorStyle}>invalid pin</Text>}
+        <Text style={styles.errorStyle}>{this.state.msg}</Text>
 
           {this.state.showSpinner && <Spinner color={'black'} />}
         </Content>
@@ -146,7 +148,7 @@ const styles = StyleSheet.create({
   },
   phonenoStyle: {
     marginTop: 10,
-    color: '#FAB624',
+    color: '#FFC000',
     fontWeight: 'bold',
     fontSize: 20,
   },
@@ -154,19 +156,19 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderWidth: 1,
-    borderColor: '#FAB624',
+    borderColor: '#FFC000',
     fontSize: 40,
     textAlign: 'center',
     textAlignVertical: 'center',
     marginTop: 20,
     borderRadius: 10,
-    color: '#FAB624',
+    color: '#FFC000',
   },
   underlineStyleBase: {
     width: 60,
     height: 60,
     borderWidth: 5,
-    borderColor: '#FAB624',
+    borderColor: '#FFC000',
     fontSize: 20,
     borderRadius: 10,
     color: 'black',
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
   btnStyle: {
     marginTop: 20,
     alignSelf: 'center',
-    backgroundColor: '#FAB624',
+    backgroundColor: '#FFC000',
     paddingHorizontal: 20,
     borderRadius: 15,
   },
