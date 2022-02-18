@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, FlatList,TouchableOpacity,Modal,View} from 'react-native';
+import {StyleSheet, Image, FlatList,TouchableOpacity,Modal,View,BackHandler} from 'react-native';
 import {
   Badge,
   Body,
@@ -115,16 +115,48 @@ export default class Account extends React.Component {
   
          const mergedArray = this.state.products.map(t1 => ({...t1, ...this.state.orderDetails.products.find(t2 => t2.productId === t1._id)}))
          this.setState({combinedList:mergedArray})
-        console.log("jdn",mergedArray)
+        console.log("merged array",mergedArray)
   
   
       }
 
+        //handle back button function
+        backAction = () => {
+          let currentScreen=this.props.route.name
+          console.log(currentScreen)
+          if(currentScreen==="Home"){
+           Alert.alert(
+             "Close?",
+             "press OK to leave the App",
+             [
+               {
+                 text: "Cancel",
+                 onPress: () => console.log("Cancel Pressed"),
+                 style: "cancel"
+               },
+               { text: "OK", onPress: () => BackHandler.exitApp() }
+             ]
+           );
+          }
+          else{
+            this.props.navigation.navigate("Home");
+          }
+           
+           
+           //BackHandler.exitApp()
+           return true;
+         };
+
   componentDidMount(){
     this.getData();
-   ;
+    BackHandler.addEventListener('hardwareBackPress', this.backAction);
     
   }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backAction);
+  }
+
 
   render() {
     

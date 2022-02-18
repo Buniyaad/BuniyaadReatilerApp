@@ -324,8 +324,9 @@ export default class Login extends React.Component {
 
   //handle back button function
   backAction = () => {
-
-    console.log(this.props.navigation.state)
+   let currentScreen=this.props.route.name
+   console.log(currentScreen)
+   if(currentScreen==="Home"){
     Alert.alert(
       "Close?",
       "press OK to leave the App",
@@ -338,6 +339,12 @@ export default class Login extends React.Component {
         { text: "OK", onPress: () => BackHandler.exitApp() }
       ]
     );
+   }
+   else{
+     this.props.navigation.navigate("Home");
+   }
+    
+    
     //BackHandler.exitApp()
     return true;
   };
@@ -413,7 +420,17 @@ export default class Login extends React.Component {
                 <Spinner color={'black'}/>
                )}
               <Card style={styles.bannerStyle}>
-                <Image source={require('./assets/logo.png')} />
+                <View style={{width:'50%',justifyContent:'center',marginLeft:10}}>
+                <Text style={{fontWeight:'bold',fontSize:20}}>
+                  Buniyaad 
+                </Text>
+                <Text style={{color:'#FFC000',fontWeight:'bold',fontSize:20}}>
+                  Flash Sale!
+                </Text>
+                <Text style={{fontSize:10,textAlignVertical:'bottom',marginTop:10,fontWeight:'bold'}}>Upto 50% off</Text>
+                </View>
+                
+                <Image style={{width:'45%',height:'100%'}} source={require('./assets/Banner.jpg')} />
               </Card>
 
               <View>
@@ -630,10 +647,10 @@ const styles = StyleSheet.create({
   bannerStyle: {
     marginTop: 20,
     alignSelf: 'center',
-    height: 100,
+    padding:10,
     width: '95%',
     borderRadius:10,
-
+    flexDirection:'row'
   },
   labelStyle: {
     marginTop: 50,

@@ -102,12 +102,45 @@ export default class Categories extends React.Component {
       });
   }
 
+    //handle back button function
+    backAction = () => {
+      let currentScreen=this.props.route.name
+      console.log(currentScreen)
+      if(currentScreen==="Home"){
+       Alert.alert(
+         "Close?",
+         "press OK to leave the App",
+         [
+           {
+             text: "Cancel",
+             onPress: () => console.log("Cancel Pressed"),
+             style: "cancel"
+           },
+           { text: "OK", onPress: () => BackHandler.exitApp() }
+         ]
+       );
+      }
+      else{
+        this.props.navigation.navigate("Home");
+      }
+       
+       
+       //BackHandler.exitApp()
+       return true;
+     };
+
+
+
 
 
   componentDidMount() {
     this.getData()
-    
+    BackHandler.addEventListener('hardwareBackPress', this.backAction);
 
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backAction);
   }
 
   render() {
