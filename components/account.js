@@ -33,7 +33,7 @@ export default class Account extends React.Component {
     refresh:false,
   };
 
-  orderHistoryItemsComponent = itemData => (
+ /* orderHistoryItemsComponent = itemData => (
     <TouchableOpacity onPress={()=>this.getProducts(itemData)}>
       <Card>
       
@@ -42,16 +42,31 @@ export default class Account extends React.Component {
         <Text>status: {itemData.item.status}</Text>
       </Card>
     </TouchableOpacity>
+  );*/
+
+  orderHistoryItemsComponent = itemData => (
+    <TouchableOpacity onPress={()=>this.getProducts(itemData)}>
+      <Card style={styles.orderHistoryCardStyle}>
+      
+        <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>id: {itemData.item.orderId}</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+        <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>date: {new Date(itemData.item.date).toDateString()}</Text>
+        <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>status: {itemData.item.status}</Text>
+        </View>
+      </Card>
+    </TouchableOpacity>
   );
 
   cartItemsComponent = itemData => (
       <Card style={styles.cartCardStyle}>
       
-        <Text>{itemData.item.Title}</Text>
-        <Text>qty:{itemData.item.quantity}</Text>
-        <Text>total:{itemData.item.sellingprice}</Text>
+        <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+        <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>quantity: { itemData.item.quantity}</Text>
+        <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>Rs.{itemData.item.sellingprice}</Text>
+        </View>
       </Card>
-    
+
   );
 
   async getData(){
@@ -116,19 +131,27 @@ export default class Account extends React.Component {
     return (
       <Container style={styles.containerStyle}>
        
-  
+       <Text style={styles.labelStyle}>Account</Text>  
+
           {this.state.retailerData != '' && (
            <FlatList
           ListHeaderComponent={<>
-                
-            <Card style={styles.retailerCardStyle}>
-            <Text>Retailer: </Text>
-            <Text>Shop: {this.state.retailerData.checkUser.ShopName}</Text>
-            <Text>Retailer Name: {this.state.retailerData.checkUser.Name}</Text>
-            <Text>Address: {this.state.retailerData.checkUser.ShopAddress}</Text>
+
+          <Text style={styles.itemLabelStyle}>Retailer:</Text>   
+
+          <Card style={styles.retailerCardStyle}>
+              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
+                Shop: {this.state.retailerData.checkUser.ShopName}
+              </Text>
+              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
+                Retailer Name: {this.state.retailerData.checkUser.Name}
+              </Text>
+              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
+                Address: {this.state.retailerData.checkUser.ShopAddress}
+              </Text>
           </Card>
           
-         
+          <Text style={styles.itemLabelStyle}>Order History:</Text>          
            </>}
            data={this.state.data}
            refreshing={this.state.refresh}
@@ -223,22 +246,46 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#ffab03',
   },
-  cartCardStyle: {
-    flexDirection:'row',
-    justifyContent:'space-between',
-    height:50,
-    alignItems:'center',
-    margin:10,
+  orderHistoryCardStyle: {
+  
+    borderRadius:10,
+    justifyContent:'space-around',
+    marginLeft:10,
+    marginRight:10,
+    height:100,
     padding:10,
-    width:'90%',
   },
-
+  cartCardStyle: {
+  
+    borderRadius:10,
+    justifyContent:'space-around',
+    marginLeft:10,
+    marginRight:10,
+    height:100,
+    padding:10,
+    width:'80%',
+    alignSelf:'center'
+  },
+  labelStyle: {
+    marginTop: 10,
+    marginBottom: 20,
+    fontWeight: 'bold',
+    color: '#737070',
+    alignSelf: 'center',
+    fontSize: 30,
+  },
+  itemLabelStyle: {
+    marginTop: 50,
+    marginBottom: 10,
+    fontWeight:'bold',
+    color: '#737070',
+    marginLeft:10,
+  },
   retailerCardStyle: {
-    height:150,
+    padding:20,
     width:'90%',
     borderRadius:10,
     alignSelf:'center',
-    marginTop:50,
   },
   modalView: {
     marginTop:10,

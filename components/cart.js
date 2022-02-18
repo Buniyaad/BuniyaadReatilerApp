@@ -369,6 +369,7 @@ export default class Cart extends React.Component {
            this.storeCart(this.state.cart)
            this.getCart();
            this.getProducts()
+      this.send_sms();
       ToastAndroid.show("order has been placed", ToastAndroid.SHORT)
      })
 
@@ -378,6 +379,18 @@ export default class Cart extends React.Component {
       alert("can't place orders, cart is empty")
     }
   }
+
+    //send sms params: phoneno, otp
+    send_sms() {
+      const messagebody=encodeURIComponent(`Your order has been placed`)
+      console.log(messagebody)
+      let phoneno=`92${this.state.retailerData.checkUser.PhoneNumber.substring(1)}`
+      console.log(phoneno)
+  
+      fetch(
+        `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${phoneno}&type=English&message=${messagebody}`,
+      );
+    }
 
     
  

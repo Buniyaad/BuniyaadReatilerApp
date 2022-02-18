@@ -135,6 +135,8 @@ const styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
       textAlign: 'center',
+      marginLeft:10,
+      marginRight:10,
     },
     smallLabelStyle: {
       marginTop: 20,
