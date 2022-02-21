@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, ToastAndroid, Animated} from 'react-native';
+import {StyleSheet, Image, ToastAndroid, Animated,ImageBackground} from 'react-native';
 import {
   Container,
   Form,
@@ -22,17 +22,19 @@ export default class Login extends React.Component {
     isRegistered:false,
     showSpinner:false,
     fadeAnim: new Animated.Value(1),
+    switchImage:false,
   };
  
   //welcome animation
   fadeIn = () => {
-   
+   this.setState({switchImage:true})
     Animated.timing(this.state.fadeAnim, {
       toValue: 0,
       duration: 1000,
       delay:2000,
       useNativeDriver: true
     }).start(()=>{
+      this.setState({switchImage:false})
       Animated.timing(this.state.fadeAnim, {
         toValue: 1,
         duration: 1500,
@@ -127,21 +129,26 @@ export default class Login extends React.Component {
 
   render() {
     return (
+     
       <Container style={styles.containerStyle}>
+         <ImageBackground
+      style={{width:'100%',height:'100%'}}
+      tintColor='#C78E15'
+     source={{uri:'https://s3-alpha-sig.figma.com/img/74c8/1b77/a5860b618da8770a72034c819baaae15?Expires=1646611200&Signature=PKlBd85VHolrYVqR4HJLLooQIq2nkIXOAGTsAplGmQmbIMddPhVx1d93VPHL2-hRAHgpnlFdmdHB~NfWnlp3b-5EM7i9xkPox99Kopt7gmSTYN5zkQxw3iJ7yRAoa6~rpg-d4CPs~YWLBWfO64m0BmTZOfL~Dlm2QjczZJIaAURKjcfIeqqZMG5qTA0Dfr3FoJA78VSsqjgahvzHV~iQv17xLu1mcwknHqrciaveU7VPAj9oR3Nhx1zHw2CAiQa2kApNxoucLkQR6Af0AEA9EAmDaFu9sDvrWzGCdK8vFO80HiW0gJC8Kl3w8pQwvQgm2dSzZ2c3KQhVSgNzE13qNg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA'}}
+   >
         <Content>
+         
           <Image
             style={styles.logoStyle}
             source={require('./assets/logoTitle.png')}
-          />
-
-       
+          />       
             
-            <Animated.Image
+         <Animated.Image
             tintColor='white'
-            style={{opacity: this.state.fadeAnim,height:200,width:200,marginTop:50, alignSelf:'center'}}
-            source={{uri:'https://s3-alpha-sig.figma.com/img/9a7c/b540/b889255794869b2f6c4df338a66d4c02?Expires=1646006400&Signature=DUMAwLe3YEHDMhJD0TdT6H-K-uGPW9NFOiJ6zlrXg0w5G1enw5nXaLQXkux1sFemO1DzhWudNftk5elpbOm45UyvZr582skb~jfFlxbjFVToa-4S7-Kt8hghN~RcOdqvo1ydG-zkt8EEMmVyWSamcICWFbj7wWujeJ9BMc-9i8AVZFb6L3VhEU9IbG4mo-9-yUvJRVF2tumaB4GsUz3tqw3ZeQHvwbKwzpdMoNmWMHsVXMgjFF8HLNZG6UHimr9w6EzKuikKwoi7nn858vCEyRGC6IwpZLoQAD2VVHINkzOsJH5DpceG2w6EkaPGDuH~1CiHBIVTpbsOL~TbpTnArQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA'}}
-          />
-       
+            style={this.state.switchImage?{opacity: this.state.fadeAnim,height:35,width:250,marginBottom:65,marginTop:150, alignSelf:'center'}
+            :{opacity: this.state.fadeAnim,height:200,width:200,marginTop:50, alignSelf:'center'}}
+            source={this.state.switchImage? require("./assets/WELCOME!.png"):require("./assets/KhushAmdeed.png")}
+          />      
         
           <Text style={styles.txt}>Mobile number darj karein!</Text>
 
@@ -160,6 +167,8 @@ export default class Login extends React.Component {
             />
           </Item>
 
+        
+
           {this.state.showBtn && (
             <Button
               style={styles.btnStyle}
@@ -174,8 +183,11 @@ export default class Login extends React.Component {
           {this.state.showSpinner && (
             <Spinner color={'black'}/>
           )}
+          
         </Content>
+        </ImageBackground>
       </Container>
+  
     );
   }
 }
