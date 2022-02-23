@@ -13,7 +13,7 @@ import Setpin from './components/setpin';
 import Pin from './components/pin';
 import NotVerified from './components/notVerified';
 import Search from './components/search';
-import CategoriesSearch from './components/categoriesSearch'
+import CategoriesSearch from './components/categoriesSearch';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,7 +56,7 @@ export default function App() {
             },
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Setpin"
           component={Setpin}
           options={{
@@ -86,7 +86,7 @@ export default function App() {
             },
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="CategoriesSearch"
           component={CategoriesSearch}
           options={{

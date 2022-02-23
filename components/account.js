@@ -34,19 +34,8 @@ export default class Account extends React.Component {
     refresh:false,
   };
 
- /* orderHistoryItemsComponent = itemData => (
-    <TouchableOpacity onPress={()=>this.getProducts(itemData)}>
-      <Card>
-      
-        <Text>order id: {itemData.item._id}</Text>
-        <Text>date: {new Date(itemData.item.date).toDateString()}</Text>
-        <Text>status: {itemData.item.status}</Text>
-      </Card>
-    </TouchableOpacity>
-  );*/
-
   orderHistoryItemsComponent = itemData => (
-    <TouchableOpacity onPress={()=>this.getProducts(itemData)}>
+    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getProducts(itemData)}>
       <Card style={styles.orderHistoryCardStyle}>
       
         <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>id: {itemData.item.orderId}</Text>

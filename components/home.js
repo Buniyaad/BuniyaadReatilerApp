@@ -10,25 +10,8 @@ import {
   ToastAndroid,
   Modal
 } from 'react-native';
-import {
-  Badge,
-  Body,
-  Container,
-  Content,
-  CardItem,
-  Card,
-  Item,
-  Button,
-  Header,
-  Footer,
-  FooterTab,
-  Text,
-  Input,
-  Label,
-  Left,
-  Right,
-  Spinner,
-} from 'native-base';
+import {Badge,Body,Container,Content,CardItem,Card,Item,Button,Header,Footer,FooterTab,Text,Input,Label,Left,Right,Spinner}
+ from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -106,7 +89,7 @@ export default class Login extends React.Component {
         />
         <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
         <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
-          Rs. {itemData.item.MinPrice.price}
+          Rs. {itemData.item.MinPrice.price.toLocaleString("en-GB")}
         </Text>
       </Card>
     </TouchableOpacity>
@@ -125,7 +108,7 @@ export default class Login extends React.Component {
         />
         <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
         <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
-          Rs. {itemData.item.MinPrice.price}
+          Rs. {itemData.item.MinPrice.price.toLocaleString("en-GB")}
         </Text>
       </Card>
     </TouchableOpacity>
@@ -517,7 +500,7 @@ export default class Login extends React.Component {
              <Text style={{fontSize:30}}>Per :{this.state.price.min}</Text>
             </View>
             
-            <Text style={{fontSize:30,alignSelf:'center'}}>TOTAL:{this.state.total}</Text>
+            <Text style={{fontSize:30,alignSelf:'center'}}>Total: Rs.{this.state.total.toLocaleString("en-GB")}</Text>
           </Card>
 
           
@@ -665,15 +648,11 @@ const styles = StyleSheet.create({
     height: 250,
     width: 150,
     
-  
-    
   },
   allStyle: {
-    
     borderRadius: 10,
     height: 250,
     width: 175,
-
   },
   imageStyle: {
     height:'60%',
