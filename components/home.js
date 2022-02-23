@@ -545,7 +545,7 @@ export default class Login extends React.Component {
               onPress={() => {
                 this.props.navigation.navigate('Home');
               }}>
-              <Icon name="home" style={{color: '#737070'}} />
+              <Icon name="home" style={{color: '#FFC000'}} />
               <Label style={{color: '#737070'}}>Home</Label>
             </Button>
 
@@ -562,7 +562,7 @@ export default class Login extends React.Component {
               transparent
               badge
               vertical
-              style={{marginTop:this.state.cartCount===0? 0:-10}}
+              style={{marginTop:this.state.cartCount===0? 0:-17}}
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
     flex: 1,
-    backgroundColor:'FBFCFF',
+    backgroundColor:'#FBFCFF',
   },
   headerStyle: {
     backgroundColor: '#FFC000',

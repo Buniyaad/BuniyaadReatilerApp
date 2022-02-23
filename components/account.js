@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {StyleSheet, Image, FlatList,TouchableOpacity,Modal,View,BackHandler} from 'react-native';
+import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,Modal,View,BackHandler} from 'react-native';
 import {
   Badge,
   Body,
+  utton,
   Container,
   Content,
   Text,
@@ -98,7 +99,7 @@ export default class Account extends React.Component {
         });
     }
 
-
+   // get products of particular order
     async getProducts(itemData) {
 
       await this.setState({modalVisible:true,orderDetails:itemData.item})
@@ -120,8 +121,23 @@ export default class Account extends React.Component {
   
       }
 
+      // Logout 
+       logOut(){
+        Alert.alert(
+          "Log Out?",
+          "press OK to Log Out",
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+            { text: "OK", onPress: () => this.props.navigation.popToTop() }
+          ]
+        );
+       }
+
         //handle back button function
-        backAction = () => {
+      backAction = () => {
           let currentScreen=this.props.route.name
           console.log(currentScreen)
           if(currentScreen==="Home"){
@@ -162,7 +178,7 @@ export default class Account extends React.Component {
     
     return (
       <Container style={styles.containerStyle}>
-       
+      
        <Text style={styles.labelStyle}>Account</Text>  
 
           {this.state.retailerData != '' && (
@@ -178,7 +194,7 @@ export default class Account extends React.Component {
               <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
                 Retailer Name: {this.state.retailerData.checkUser.Name}
               </Text>
-              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
+              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={2}>
                 Address: {this.state.retailerData.checkUser.ShopAddress}
               </Text>
           </Card>
@@ -191,6 +207,12 @@ export default class Account extends React.Component {
            renderItem={item => this.orderHistoryItemsComponent(item)}
         />
         )}
+
+         
+       <Button full style={styles.fullBtnStyle} onPress={()=> this.logOut()}>
+
+<Text>LOG OUT</Text>
+</Button>
  
 
           {/*View order details pop up */ }
@@ -254,7 +276,7 @@ export default class Account extends React.Component {
               onPress={() => {
                 this.props.navigation.navigate('Account');
               }}>
-              <Icon name="person" style={{color: '#737070'}} />
+              <Icon name="person" style={{color: '#FFC000'}} />
               <Label style={{color: '#737070'}}>Account</Label>
             </Button>
           </FooterTab>
@@ -277,6 +299,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignSelf: 'center',
     backgroundColor: '#ffab03',
+  },
+  fullBtnStyle:{
+    backgroundColor: '#ffab03',
+    borderRadius:10,
+    margin:10,
+    
   },
   orderHistoryCardStyle: {
   

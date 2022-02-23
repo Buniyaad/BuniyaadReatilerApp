@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image,FlatList, TouchableOpacity,Modal,ToastAndroid,View, BackHandler} from 'react-native';
+import {Alert,StyleSheet, Image,FlatList, TouchableOpacity,Modal,ToastAndroid,View, BackHandler} from 'react-native';
 import {
   Badge,
   Body,
@@ -262,6 +262,20 @@ export default class Cart extends React.Component {
      return cart
   }
 
+  //Place Order prompt
+  placeOrder(){
+    Alert.alert(
+      "Place Order?",
+      "press OK to confirm Order",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => this.post_order()}
+      ]
+    );
+   }
 
 
   post_cart(){
@@ -451,7 +465,7 @@ export default class Cart extends React.Component {
         
         <Card style={{borderRadius:10,margin:20,width:'100%',alignSelf:'center'}}>
          <Text style={{fontSize:30,alignSelf:'center',margin:20}}>Total: {this.state.cartTotal}</Text>
-         <Button full style={[styles.fullBtnStyle,{margin:10}]} onPress={()=> this.post_order()}>
+         <Button full style={[styles.fullBtnStyle,{margin:10}]} onPress={()=> this.placeOrder()}>
             <Text>Place Order</Text>
           </Button>
         </Card>
@@ -570,7 +584,7 @@ export default class Cart extends React.Component {
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>
-              <Icon name="cart" style={{color: '#737070'}} />
+              <Icon name="cart" style={{color: '#FFC000'}} />
               <Label style={{color: '#737070'}}>Cart</Label>
             </Button>
 

@@ -176,7 +176,7 @@ export default class Categories extends React.Component {
               onPress={() => {
                 this.props.navigation.navigate('Categories');
               }}>
-              <Icon name="grid" style={{color: '#737070'}} />
+              <Icon name="grid" style={{color: '#FFC000'}} />
               <Label style={{color: '#737070'}}>Categories</Label>
             </Button>
 
