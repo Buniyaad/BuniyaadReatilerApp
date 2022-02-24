@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, View, TouchableOpacity,PermissionsAndroid,Alert, NativeSyntheticEvent,} from 'react-native';
+import {StyleSheet, Image, View, TouchableOpacity,ToastAndroid,PermissionsAndroid,Alert, NativeSyntheticEvent,} from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import {
   Container,
@@ -16,7 +16,7 @@ export default class Otp extends React.Component {
   state = {
     code: '',
     otp: this.generate_otp(),
-    timer: 30,
+    timer: 60,
     phoneno: `${this.props.route.params.phoneno}`,
     showResendBtn: false,
   };
@@ -36,7 +36,7 @@ export default class Otp extends React.Component {
 
   //send sms params: phoneno, otp
   send_sms() {
-    const messagebody=encodeURIComponent(`<#> Your passcode is: ${this.state.otp}\nonDlwvOi9qy`)
+    const messagebody=encodeURIComponent(`your buniyaad OTP code is: ${this.state.otp}\n7/T/23FErL1`)
     console.log(messagebody)
     let phoneno=`92${this.state.phoneno.substring(1)}`
     console.log(phoneno)
@@ -50,15 +50,19 @@ export default class Otp extends React.Component {
 
 
 
-  _onSmsListenerPressed = async () => {
+  async _onSmsListenerPressed(){
     try {
       const registered = await SmsRetriever.startSmsRetriever();
       if (registered) {
-         await SmsRetriever.addSmsListener(event => {
-          console.log(event.message);
-          
+        
+         SmsRetriever.addSmsListener(event => {
+          let otp= event.message.substring(27,31)
+          this.setState({code:otp})
+          console.log(otp)
+          this.check_otp(otp)
+          SmsRetriever.removeSmsListener();
         }); 
-        SmsRetriever.removeSmsListener();
+        
       }
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -72,6 +76,7 @@ export default class Otp extends React.Component {
   check_otp(code) {
     //console.log(code);
     if (parseInt(this.state.otp) === parseInt(code)) {
+      ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
       this.props.navigation.navigate('Setpin', {
         phoneno: this.props.route.params.phoneno,
       });
@@ -81,7 +86,7 @@ export default class Otp extends React.Component {
   // reset timer and send sms again on resesnd btn
   resend_sms() {
     if (this.state.timer === 0) {
-      this.setState({timer: 30});
+      this.setState({timer: 60});
       this.setTimer();
       this.send_sms();
     }
@@ -109,6 +114,7 @@ export default class Otp extends React.Component {
   componentWillUnmount() {
     // refresh timer
     clearInterval(this.interval);
+    SmsRetriever.removeSmsListener();
   }
 
   render() {

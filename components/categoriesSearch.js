@@ -511,8 +511,9 @@ const styles = StyleSheet.create({
     width: 300,
   },
   labelStyle: {
-    marginTop: 50,
+    marginTop: 20,
     marginBottom: 10,
+    marginLeft:10,
     fontWeight: 'bold',
     color: '#737070',
   },

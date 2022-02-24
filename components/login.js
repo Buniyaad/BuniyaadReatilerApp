@@ -112,6 +112,7 @@ export default class Login extends React.Component {
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({showSpinner:false,phoneno:''})
+      this.getPhoneNumber() 
     });
   
     this.fadeIn()
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     alignSelf: 'center',
     backgroundColor: 'white',
-    paddingHorizontal: 20,
+    padding:40,
     borderRadius: 15,
   },
 });
