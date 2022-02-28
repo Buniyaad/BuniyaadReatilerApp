@@ -14,7 +14,12 @@ import Pin from './components/pin';
 import NotVerified from './components/notVerified';
 import Search from './components/search';
 import CategoriesSearch from './components/categoriesSearch';
+import analytics from '@react-native-firebase/analytics';
+import { Mixpanel } from 'mixpanel-react-native';
 
+
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 const Stack = createNativeStackNavigator();
 
 export default function App() {

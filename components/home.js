@@ -16,6 +16,8 @@ import {Badge,Body,Container,Content,CardItem,Card,Item,Button,Header,Footer,Foo
  from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import analytics from '@react-native-firebase/analytics';
+import { Mixpanel } from 'mixpanel-react-native';
 
 
 export default class Login extends React.Component {
@@ -342,7 +344,6 @@ export default class Login extends React.Component {
 
     this.getData();
     this.getCart();    
-    
     console.log("this is state data",this.state.retailerData)
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
@@ -476,11 +477,11 @@ export default class Login extends React.Component {
           <Text style={{fontSize:30,fontWeight:'bold',color:'#FFC000'}}>{this.state.price.price}</Text>
           </View>
 
-           <Text style={{marginTop:10,color:'#737070'}} numberOfLines={2}>Product description to test the spacing of this modal component, lets see how it looks{/*this.state.product.Description*/}</Text>
+           <Text style={{color:'#737070'}} numberOfLines={2}>{this.state.product.Description}</Text>
            
 
               <Card style={{flexDirection:'row',justifyContent:'space-evenly',width:'100%',borderRadius:10
-           ,alignItems:'center',padding:10,marginTop:10}}>
+           ,alignItems:'center',padding:10,marginTop:20}}>
 
             <Label style={{alignItems:'center',marginRight:10,marginTop:10}}>
               <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Quantity</Text>
@@ -510,7 +511,7 @@ export default class Login extends React.Component {
            </Card>
 
 
-          <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:80,marginBottom:20,alignItems:'center'}}>
+          <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:70,marginBottom:20,alignItems:'center'}}>
            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
           <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.total.toLocaleString('en-GB')}</Text>
           </View>
@@ -524,81 +525,6 @@ export default class Login extends React.Component {
            </Button>
         
          
-
-          
-         {/*   <ImageBackground
-           imageStyle={{borderTopRightRadius:10, borderTopLeftRadius:10}}
-            style={this.state.product.Image === '' ? null : styles.imageModalStyle}
-            source={
-              this.state.product.Image === ''
-              ? require('./assets/logo.png')
-              : {uri: this.state.product.Image}
-            }
-           >
-               <Button
-              transparent
-              style={{marginLeft:10}}
-              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
-              <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
-            </Button>
-
-           </ImageBackground>
-
-          <Body>
-            
-            <Text style={{fontSize:30,marginTop:20,}}>{this.state.product.Title}</Text>
-            <Text>{this.state.product.Description}</Text>
-
-          <Card style={{flexDirection:'row',justifyContent:'space-around',width:'100%',borderRadius:10,flex:1
-           ,alignItems:'center'}}>
-
-            <Label style={{alignItems:'center',marginHorizontal:10,marginTop:10}}>
-              <Text >Quantity</Text>
-            </Label>
-
-            <Button
-              style={{alignSelf:'center'}}
-              transparent
-              onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
-            </Button>
-            
-            {this.state.showModalSpinner && (
-                <Spinner color={'black'}/>
-               )}
-           
-            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity.toString()} onChangeText={(text)=>this.calculateTotal(text)}
-             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}/>
-            )}
-
-            <Button
-              style={{alignSelf:'center'}}
-              transparent
-              onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
-            </Button>
-          </Card>
-
-          <Card style={{flex:1,justifyContent:'space-around',borderRadius:10,width:'95%'}}>
-            <View style={{flexDirection:'row',width:'100%',justifyContent:'space-around'}}>
-             <Text style={{fontSize:30}}>price :{this.state.price.price}</Text>
-             <Text style={{fontSize:30}}>Per :{this.state.price.min}</Text>
-            </View>
-            
-           
-          </Card>
-
-          
-
-
-         </Body>
-
-          <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
-          ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
-
-            <Text>ADD TO CART</Text>
-          </Button>
-          */}
             </View>
           
           
@@ -680,7 +606,7 @@ const styles = StyleSheet.create({
   fullBtnStyle:{
     backgroundColor: '#ffab03',
     borderRadius:10,
-    marginBottom:30,
+    marginBottom:40,
     marginTop:10,
     marginLeft:10,
     marginRight:10,

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632497335863",
+    "project_id": "buniyaad-retailer-app",
+    "storage_bucket": "buniyaad-retailer-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632497335863:android:953bab3627e1930bd5d9b2",
+        "android_client_info": {
+          "package_name": "com.buniyaadretailerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632497335863-8r9re6e142v0k5attt9a3f23nmkt5tci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ9SMSSoF59mhVi_0K5C82Mui9xyux_NI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632497335863-8r9re6e142v0k5attt9a3f23nmkt5tci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
