@@ -32,6 +32,9 @@ export default class Account extends React.Component {
     products:[],
     combinedList:[],
     refresh:false,
+    amount:'',
+    orderId:'',
+    status:'',
   };
 
   orderHistoryItemsComponent = itemData => (
@@ -49,7 +52,7 @@ export default class Account extends React.Component {
 
   cartItemsComponent = itemData => (
       <Card style={styles.cartCardStyle}>
-      
+         
         <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
         <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
         <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>quantity: { itemData.item.quantity}</Text>
@@ -91,8 +94,9 @@ export default class Account extends React.Component {
    // get products of particular order
     async getProducts(itemData) {
 
-      await this.setState({modalVisible:true,orderDetails:itemData.item})
-      // console.log("tester :",this.state.orderDetails.products[0].productId)
+      await this.setState({modalVisible:true,orderDetails:itemData.item,amount:itemData.item.amount,status:itemData.item.status,
+      orderId:itemData.item.orderId})
+       console.log("tester :",this.state.orderDetails)
     for(let i=0;i<this.state.orderDetails.products.length;i++){
       await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
         headers: {
@@ -217,12 +221,39 @@ export default class Account extends React.Component {
             <View style={styles.modalView}>
             
             <FlatList
+            style={{marginBottom:20}}
         ListHeaderComponent={<>
-          <Text>Products</Text>
+           <Button
+              transparent
+              style={{marginLeft:10}}
+              onPress={() => this.setState({modalVisible:false,combinedlist:[],products:[]})}>
+              <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
+            </Button>
+          <Text style={styles.labelStyle}>Order Details</Text>
+          <Text style={{alignSelf:'center',color:'#FFC000',fontWeight:'bold'}}>Order ID: {this.state.orderId}</Text>
+          {this.state.combinedList.length>0 &&(
+            <View style={{marginLeft:10,marginRight:10}}>
+              <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:50,alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
+            </View>
+
+            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>{this.state.status}</Text>
+            </View>
+            </View>
+             
+            
+          )}
+         
+         <Text style={styles.itemLabelStyle}>Items</Text>
         </>}
           data={this.state.combinedList}
           renderItem={item => this.cartItemsComponent(item)}
         />
+
+        
             </View>
           
           
@@ -305,15 +336,12 @@ const styles = StyleSheet.create({
     padding:10,
   },
   cartCardStyle: {
-  
-    borderRadius:10,
-    justifyContent:'space-around',
-    marginLeft:10,
-    marginRight:10,
-    height:100,
-    padding:10,
-    width:'80%',
-    alignSelf:'center'
+    borderRadius: 10,
+    justifyContent: 'space-around',
+    marginLeft: 10,
+    marginRight: 10,
+    height: 100,
+    padding: 10,
   },
   labelStyle: {
     marginTop: 10,
@@ -342,8 +370,6 @@ const styles = StyleSheet.create({
     width:'100%',
     backgroundColor: "white",
     borderRadius: 10,
-    padding:10,
-    alignItems:'center',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

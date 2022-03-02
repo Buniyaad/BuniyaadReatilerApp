@@ -155,6 +155,7 @@ export default class Login extends React.Component {
     }
     
     let minQTY =this.getMinQty(priceArr);
+    console.log(priceArr)
     this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
     this.calculateTotal(this.state.price.min)
     //console.log(JSON.stringify(this.state.productPrices))
@@ -299,6 +300,7 @@ export default class Login extends React.Component {
           this.storeCart(this.state.cart)
           this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
           this.getCart()
+          this.props.navigation.push('Cart')
           
       })
    
@@ -510,11 +512,13 @@ export default class Login extends React.Component {
             </Button>
            </Card>
 
-
-          <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:70,marginBottom:20,alignItems:'center'}}>
-           <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
-          <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.total.toLocaleString('en-GB')}</Text>
-          </View>
+          {!this.state.showModalSpinner &&(
+             <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:70,marginBottom:20,alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.total.toLocaleString('en-GB')}</Text>
+            </View>
+          )}
+         
 
            </View>
 
@@ -674,7 +678,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius:10,
   },
   imageModalStyle: {
-    flex:0.8,
+    flex:0.6,
     height: '100%',
     width: '100%',
     

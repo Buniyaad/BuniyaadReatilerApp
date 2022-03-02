@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Alert,StyleSheet,Image,FlatList,TouchableOpacity,Modal,ToastAndroid,View,BackHandler} from 'react-native';
+import {Alert,StyleSheet,Image,FlatList,TouchableOpacity,Modal,ToastAndroid,View,BackHandler,ImageBackground} from 'react-native';
 import { Badge,Body,Card,Container,Content,Text,Item,Button,Header,Footer,FooterTab,Spinner,Tabs,Tab,Input,Label} from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -420,6 +420,7 @@ export default class Cart extends React.Component {
           this.getProducts();
           this.send_sms();
           ToastAndroid.show('order has been placed', ToastAndroid.SHORT);
+          this.props.navigation.push('Account')
         });
     } else {
       alert("can't place orders, cart is empty");
@@ -517,118 +518,82 @@ export default class Cart extends React.Component {
           }}>
           <View>
             <View style={styles.modalView}>
-              <Button
-                transparent
-                onPress={() =>
-                  this.setState({
-                    modalVisible: false,
-                    productPrices: [],
-                    pricesFound: false,
-                  })
-                }>
-                <Icon
-                  name="close-circle-outline"
-                  color="#737070"
-                  style={{fontSize: 30}}
-                />
-              </Button>
+            <ImageBackground
+           imageStyle={{resizeMode:'contain'}}
+            style={this.state.product.Image === '' ? null : styles.imageModalStyle}
+            
+            source={
+              this.state.product.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: this.state.product.Image}
+            }
+           >
+               <Button
+              transparent
+              style={{marginLeft:10}}
+              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
+              <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
+            </Button>
 
-              <Image
-                style={
-                  this.state.product.Image === ''
-                    ? null
-                    : styles.imageModalStyle
-                }
-                source={
-                  this.state.product.Image === ''
-                    ? require('./assets/logo.png')
-                    : {uri: this.state.product.Image}
-                }
-              />
+           </ImageBackground>
 
-              <Body>
-                <Text style={{fontSize: 30}}>{this.state.product.Title}</Text>
-                <Text>{this.state.product.Description}</Text>
+           <View style={{flex:1,marginLeft:10,marginRight:10}}>
+           <Text style={{fontSize:30,marginTop:20}}>{this.state.product.Title}</Text>
 
-                <Card
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                  }}>
-                  <Label
-                    style={{
-                      alignItems: 'center',
-                      marginHorizontal: 10,
-                      marginTop: 10,
-                    }}>
-                    <Text>Quantity</Text>
-                  </Label>
+           <View style={{flexDirection:'row',alignItems:'center'}}>
+           <Text style={{fontSize:20,fontWeight:'bold',marginTop:10,color:'#FFC000'}}>Rs. </Text>
+          <Text style={{fontSize:30,fontWeight:'bold',color:'#FFC000'}}>{this.state.price.price}</Text>
+          </View>
 
-                  <Button transparent onPress={() => this.decreaseQty()}>
-                    <Icon
-                      name="remove-circle"
-                      color="#FFC000"
-                      style={{fontSize: 30, marginHorizontal: 10}}
-                    />
-                  </Button>
+           <Text style={{color:'#737070'}} numberOfLines={2}>{this.state.product.Description}</Text>
+           
 
-                  {this.state.showModalSpinner && <Spinner color={'black'} />}
+              <Card style={{flexDirection:'row',justifyContent:'space-evenly',width:'100%',borderRadius:10
+           ,alignItems:'center',padding:10,marginTop:20}}>
 
-                  {!this.state.showModalSpinner && (
-                    <Input
-                      keyboardType="numeric"
-                      value={this.state.quantity.toString()}
-                      onChangeText={text => this.calculateTotal(text)}
-                      style={{
-                        borderWidth: 0.5,
-                        borderRadius: 5,
-                        marginHorizontal: 10,
-                        borderColor: '#737070',
-                      }}
-                    />
-                  )}
+            <Label style={{alignItems:'center',marginRight:10,marginTop:10}}>
+              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Quantity</Text>
+            </Label>
 
-                  <Button transparent onPress={() => this.increaseQty()}>
-                    <Icon
-                      name="add-circle"
-                      color="#FFC000"
-                      style={{fontSize: 30, marginHorizontal: 10}}
-                    />
-                  </Button>
-                </Card>
+            <Button
+              style={{alignSelf:'center'}}
+              transparent
+              onPress={()=>this.decreaseQty()}>
+              <Icon name='remove-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
+            </Button>
+            
+            {this.state.showModalSpinner && (
+                <Spinner color={'black'}/>
+               )}
+           
+            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity.toString()} onChangeText={(text)=>this.calculateTotal(text)}
+             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070',textAlign:'center',fontSize:20,fontWeight:'bold'}}/>
+            )}
 
-                <Card style={{flex: 1, justifyContent: 'space-around'}}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      width: '100%',
-                      justifyContent: 'space-around',
-                    }}>
-                    <Text style={{fontSize: 30}}>
-                      price :{this.state.price.price}
-                    </Text>
-                    <Text style={{fontSize: 30}}>
-                      Per :{this.state.price.min}
-                    </Text>
-                  </View>
+            <Button
+              style={{alignSelf:'center'}}
+              transparent
+              onPress={()=>this.increaseQty()}>
+              <Icon name='add-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
+            </Button>
+           </Card>
 
-                  <Text style={{fontSize: 30, alignSelf: 'center'}}>
-                    TOTAL:{this.state.total.toLocaleString('en-GB')}
-                  </Text>
-                </Card>
-              </Body>
+          {!this.state.showModalSpinner &&(
+             <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:70,marginBottom:20,alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.total.toLocaleString('en-GB')}</Text>
+            </View>
+          )}
+         
 
-              <Button
-                full
-                disabled={this.state.btnDisabled}
-                style={styles.fullBtnStyle}
-                onPress={() => {
-                  this.state.quantity >= this.state.minQuantity
-                    ? this.handle_Cart()
-                    : ToastAndroid.show('invalid quantity', ToastAndroid.SHORT);
-                }}>
-                <Text>ADD TO CART</Text>
-              </Button>
+           </View>
+
+           <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
+           ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
+
+            <Text>ADD TO CART</Text>
+           </Button>
+        
             </View>
           </View>
         </Modal>
@@ -731,34 +696,36 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 20,
   },
-  fullBtnStyle: {
+  fullBtnStyle:{
     backgroundColor: '#ffab03',
-    borderRadius: 10,
-    marginBottom: 30,
-    marginTop: 10,
+    borderRadius:10,
+    marginBottom:40,
+    marginTop:10,
+    marginLeft:10,
+    marginRight:10,
+    height:50,
   },
   modalView: {
-    marginTop: 10,
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'white',
+    marginTop:10,
+    height:"100%",
+    width:'100%',
+    backgroundColor: "white",
     borderRadius: 10,
-    padding: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 2
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 5
   },
   imageModalStyle: {
-    marginLeft: 10,
-    marginRight: 10,
-    height: 200,
+    flex:0.6,
+    height: '100%',
     width: '100%',
-    borderRadius: 10,
+    
+   
+    
   },
 });

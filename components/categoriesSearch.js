@@ -9,6 +9,7 @@ import {
   BackHandler,
   Modal,
   ToastAndroid,
+  ImageBackground
 } from 'react-native';
 import {
   Badge,
@@ -267,7 +268,7 @@ export default class CategoriesSearch extends React.Component {
             this.post_cart();
             this.storeCart(this.state.cart)
             this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
-
+            this.props.navigation.push('Cart')
         })
      
           }
@@ -339,36 +340,48 @@ export default class CategoriesSearch extends React.Component {
           <View >
             <View style={styles.modalView}>
             
-            <Button
-              transparent
-              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
-              <Icon name='close-circle-outline' color='#737070' style={{fontSize:30}}/>
-            </Button>
-
-           <Image
+            <ImageBackground
+           imageStyle={{resizeMode:'contain'}}
             style={this.state.product.Image === '' ? null : styles.imageModalStyle}
+            
             source={
               this.state.product.Image === ''
               ? require('./assets/logo.png')
               : {uri: this.state.product.Image}
             }
-           />
+           >
+               <Button
+              transparent
+              style={{marginLeft:10}}
+              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
+              <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
+            </Button>
 
-          <Body>
-            
-            <Text style={{fontSize:30}}>{this.state.product.Title}</Text>
-            <Text>{this.state.product.Description}</Text>
+           </ImageBackground>
 
-          <Card style={{flexDirection:'row',justifyContent:'space-around'}}>
+           <View style={{flex:1,marginLeft:10,marginRight:10}}>
+           <Text style={{fontSize:30,marginTop:20}}>{this.state.product.Title}</Text>
 
-            <Label style={{alignItems:'center',marginHorizontal:10,marginTop:10}}>
-              <Text >Quantity</Text>
+           <View style={{flexDirection:'row',alignItems:'center'}}>
+           <Text style={{fontSize:20,fontWeight:'bold',marginTop:10,color:'#FFC000'}}>Rs. </Text>
+          <Text style={{fontSize:30,fontWeight:'bold',color:'#FFC000'}}>{this.state.price.price}</Text>
+          </View>
+
+           <Text style={{color:'#737070'}} numberOfLines={2}>{this.state.product.Description}</Text>
+           
+
+              <Card style={{flexDirection:'row',justifyContent:'space-evenly',width:'100%',borderRadius:10
+           ,alignItems:'center',padding:10,marginTop:20}}>
+
+            <Label style={{alignItems:'center',marginRight:10,marginTop:10}}>
+              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Quantity</Text>
             </Label>
 
             <Button
+              style={{alignSelf:'center'}}
               transparent
               onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='remove-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
             </Button>
             
             {this.state.showModalSpinner && (
@@ -376,35 +389,33 @@ export default class CategoriesSearch extends React.Component {
                )}
            
             {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity.toString()} onChangeText={(text)=>this.calculateTotal(text)}
-             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070'}}/>
+             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070',textAlign:'center',fontSize:20,fontWeight:'bold'}}/>
             )}
 
             <Button
+              style={{alignSelf:'center'}}
               transparent
               onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FFC000' style={{fontSize:30,marginHorizontal:10}}/>
+              <Icon name='add-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
             </Button>
-          </Card>
+           </Card>
 
-          <Card style={{flex:1,justifyContent:'space-around'}}>
-            <View style={{flexDirection:'row',width:'100%',justifyContent:'space-around'}}>
-             <Text style={{fontSize:30}}>price :{this.state.price.price}</Text>
-             <Text style={{fontSize:30}}>Per :{this.state.price.min}</Text>
+          {!this.state.showModalSpinner &&(
+             <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:70,marginBottom:20,alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.total.toLocaleString('en-GB')}</Text>
             </View>
-            
-            <Text style={{fontSize:30,alignSelf:'center'}}>TOTAL:{this.state.total.toLocaleString("en-GB")}</Text>
-          </Card>
+          )}
+         
 
-          
+           </View>
 
-
-         </Body>
-
-          <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
-          ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
+           <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
+           ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
 
             <Text>ADD TO CART</Text>
-          </Button>
+           </Button>
+        
             </View>
           
           
@@ -476,7 +487,11 @@ const styles = StyleSheet.create({
   fullBtnStyle:{
     backgroundColor: '#ffab03',
     borderRadius:10,
-    marginBottom:20,
+    marginBottom:40,
+    marginTop:10,
+    marginLeft:10,
+    marginRight:10,
+    height:50,
   },
   modalView: {
     marginTop:10,
@@ -484,8 +499,6 @@ const styles = StyleSheet.create({
     width:'100%',
     backgroundColor: "white",
     borderRadius: 10,
-    padding:10,
-    alignItems:'center',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -536,11 +549,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius:10,
   },
   imageModalStyle: {
-    marginLeft:10,
-    marginRight:10,
-    height: 200,
+    flex:0.6,
+    height: '100%',
     width: '100%',
-    borderRadius:10,
+    
+   
     
   },
 });
