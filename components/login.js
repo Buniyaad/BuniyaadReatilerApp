@@ -12,12 +12,15 @@ import {
   Spinner,
 } from 'native-base';
 import SmsRetriever from 'react-native-sms-retriever';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
 export default class Login extends React.Component {
   state = {
     phoneno: '',
+    data:'',
+    authenticated:false,
     showBtn: false,
     isRegistered:false,
     showSpinner:false,
@@ -25,6 +28,15 @@ export default class Login extends React.Component {
     switchImage:false,
   };
  
+  async storeData(value){
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('test', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
+
   //welcome animation
   fadeIn = () => {
    this.setState({switchImage:true})
@@ -80,7 +92,8 @@ export default class Login extends React.Component {
   check_registered() {
     if(this.state.isRegistered===true){
       //alert("User exists")
-      this.props.navigation.navigate('Pin', {phoneno: this.state.phoneno})
+      //this.props.navigation.navigate('Pin', {phoneno: this.state.phoneno})
+      this.handle_registered()
     }
     else{
       this.props.navigation.navigate('Otp', {phoneno: this.state.phoneno});
@@ -109,14 +122,48 @@ export default class Login extends React.Component {
    });
   }
 
+  handle_registered() {
+    console.log(this.state.phoneno)
+    this.setState({showSpinner: true, showBtn: false});
+    fetch('https://api.buniyaad.pk/auth/login', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contactNo: this.state.phoneno,
+        //pin: this.state.enteredpin,
+      }),
+    })
+      .then(response => response.json())
+      .then(data =>
+        this.setState({data: data.data, authenticated: !data.error}),
+      ).then(() => console.log(this.state))
+      .then(() => this.check_Verified());
+  }
+
+    //check whether user is verified
+    check_Verified() {
+     
+      if (this.state.data.checkUser.Verified === true) {
+        console.log('you have permission',this.state.data);
+        this.storeData(this.state.data);
+        this.props.navigation.navigate('Home',{data: this.state.data});
+      } else {
+        console.log('you dont have permission');
+        this.props.navigation.navigate('NotVerified');
+      }
+    }
+
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({showSpinner:false,phoneno:''})
       this.getPhoneNumber() 
+      this.fadeIn()
     });
   
-    this.fadeIn()
-   this.getPhoneNumber() 
+
   
     
   }

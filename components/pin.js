@@ -46,7 +46,7 @@ export default class Pin extends React.Component {
       },
       body: JSON.stringify({
         contactNo: this.state.phoneno,
-        pin: this.state.enteredpin,
+        //pin: this.state.enteredpin,
       }),
     })
       .then(response => response.json())

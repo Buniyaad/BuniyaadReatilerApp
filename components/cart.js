@@ -373,6 +373,8 @@ export default class Cart extends React.Component {
   }
 
   post_order() {
+    var orderId='';
+
     if (this.state.cart.length > 0) {
       // filler for selling price
       let cart = this.state.cart;
@@ -402,7 +404,7 @@ export default class Cart extends React.Component {
         },
       )
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => orderId=data.data._id)
         .then(() => {
           this.setState({
             productPrices: [],
@@ -420,12 +422,29 @@ export default class Cart extends React.Component {
           this.getProducts();
           this.send_sms();
           ToastAndroid.show('order has been placed', ToastAndroid.SHORT);
-          this.props.navigation.push('Account')
+          //this.getOrderById(orderId)
+          //this.props.navigation.push('Account',{showLatestOrder: true})
         });
     } else {
       alert("can't place orders, cart is empty");
     }
   }
+
+ getOrderById(orderId){
+    console.log("Order id is:",orderId)
+    
+    fetch(`https://api.buniyaad.pk/orders/getById/${orderId}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        
+        console.log(JSON.stringify(res.data));
+      });
+  }
+
 
   //send sms params: phoneno, otp
   send_sms() {
@@ -465,6 +484,7 @@ export default class Cart extends React.Component {
   componentDidMount() {
     this.getData();
     this.getCart();
+    this.getOrderById('622080c1e8979958fa23ba63')
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
 

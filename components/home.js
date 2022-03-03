@@ -53,7 +53,7 @@ export default class Login extends React.Component {
   async getCart(){
     try {
       const jsonValue = await AsyncStorage.getItem('cart')
-      jsonValue != null ? this.setState({cartCount:JSON.parse(jsonValue).length}) : null;
+      jsonValue != null ? this.setState({cartCount:JSON.parse(jsonValue).length}) : this.setState({cartCount:0});
     
  
     } catch(e) {
@@ -310,6 +310,36 @@ export default class Login extends React.Component {
       
   }
 
+  /*
+  updateCart(){
+        //check if cart is created first
+        this.setState({cart:[],btnDisabled:true})
+        ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+    
+        fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
+          headers: {
+            token: `bearer ${this.state.retailerData.token}`,
+          },
+        })
+          .then(response => response.json())
+          .then(res => {
+            if(res.data===true){
+                   //add product to existing cart
+             fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
+              headers: {
+                token: `bearer ${this.state.retailerData.token}`,
+              },
+            })
+              .then(response => response.json())
+              .then(res=>{
+              
+                console.log("cart is: ",res.data)                
+                })
+              }
+             
+            });
+    } */ 
+
 
   //handle back button function
   backAction = () => {
@@ -345,7 +375,7 @@ export default class Login extends React.Component {
     });
 
     this.getData();
-    this.getCart();    
+    //this.getCart();    
     console.log("this is state data",this.state.retailerData)
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
@@ -561,7 +591,7 @@ export default class Login extends React.Component {
               transparent
               badge
               vertical
-              style={{marginTop:this.state.cartCount===0? 0:-17}}
+              style={{marginTop:this.state.cartCount===0 ? 0:-17}}
               onPress={() => {
                 this.props.navigation.navigate('Cart');
               }}>

@@ -77,9 +77,7 @@ export default class Otp extends React.Component {
     //console.log(code);
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
-      this.props.navigation.navigate('Setpin', {
-        phoneno: this.props.route.params.phoneno,
-      });
+      this.handle_register();
     }
   }
 
@@ -91,6 +89,24 @@ export default class Otp extends React.Component {
       this.send_sms();
     }
   }
+
+  // register User
+  handle_register(){
+   
+      fetch('https://api.buniyaad.pk/auth/register', {
+        method: 'POST',
+        headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+      "contactNo":this.state.phoneno,
+    
+      })
+    }).then((response)=>response.json())
+     .then(data=> console.log(data.data))
+    .then(() => this.props.navigation.navigate('NotVerified'));
+        }
 
   componentDidMount() {
     // send sms and set timer

@@ -18,6 +18,7 @@ import {
   Label,
   Card,
   CardItem,
+  Spinner,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,6 +36,7 @@ export default class Account extends React.Component {
     amount:'',
     orderId:'',
     status:'',
+    showSpinner:false
   };
 
   orderHistoryItemsComponent = itemData => (
@@ -95,7 +97,7 @@ export default class Account extends React.Component {
     async getProducts(itemData) {
 
       await this.setState({modalVisible:true,orderDetails:itemData.item,amount:itemData.item.amount,status:itemData.item.status,
-      orderId:itemData.item.orderId})
+      orderId:itemData.item.orderId,showSpinner:true})
        console.log("tester :",this.state.orderDetails)
     for(let i=0;i<this.state.orderDetails.products.length;i++){
       await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
@@ -108,7 +110,7 @@ export default class Account extends React.Component {
     }
   
          const mergedArray = this.state.products.map(t1 => ({...t1, ...this.state.orderDetails.products.find(t2 => t2.productId === t1._id)}))
-         this.setState({combinedList:mergedArray})
+         this.setState({combinedList:mergedArray,showSpinner:false})
         console.log("merged array",mergedArray)
   
   
@@ -231,6 +233,7 @@ export default class Account extends React.Component {
             </Button>
           <Text style={styles.labelStyle}>Order Details</Text>
           <Text style={{alignSelf:'center',color:'#FFC000',fontWeight:'bold'}}>Order ID: {this.state.orderId}</Text>
+
           {this.state.combinedList.length>0 &&(
             <View style={{marginLeft:10,marginRight:10}}>
               <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:50,alignItems:'center'}}>
@@ -248,6 +251,9 @@ export default class Account extends React.Component {
           )}
          
          <Text style={styles.itemLabelStyle}>Items</Text>
+         {this.state.showSpinner && (
+                <Spinner color={'black'}/>
+               )}
         </>}
           data={this.state.combinedList}
           renderItem={item => this.cartItemsComponent(item)}

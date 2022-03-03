@@ -46,7 +46,8 @@ export default class Setpin extends React.Component{
   },
   body: JSON.stringify({
     "contactNo":this.state.phoneno,
-    "pin":this.state.pin,
+    
+    
   })
 }).then((response)=>response.json())
 .then(data=> console.log(data.data))
