@@ -741,7 +741,10 @@ export default class Cart extends React.Component {
           renderItem={item => this.orderItemsComponent(item)}
          />
 
-        
+           <Button full style={styles.fullBtnStyle} onPress={()=> {this.props.navigation.push('Home')}}>
+
+            <Text>Continue Shopping</Text>
+           </Button>        
             </View>
           
           

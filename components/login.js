@@ -163,7 +163,7 @@ export default class Login extends React.Component {
       if (this.state.data.checkUser.Verified === true) {
         //console.log('you have permission',this.state.data);
         this.storeData(this.state.data);
-       // this.sendToken();
+        this.sendToken();
         this.props.navigation.navigate('Home',{data: this.state.data});
       } else {
         console.log('you dont have permission');
@@ -175,24 +175,24 @@ export default class Login extends React.Component {
     sendToken(){
      console.log("Retailer Data is:",this.state.retailerData)
      console.log("Token is ",this.state.data.token)
-     fetch(`https://api.buniyaad.pk/users/update/622099611d7c9740b13c315a}`, {
+     fetch(`https://api.buniyaad.pk/users/update/${this.state.retailerData._id}`, {
       method: 'PUT',
       headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      token: `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMjA5OTYxMWQ3Yzk3NDBiMTNjMzE1YSIsImNvbnRhY3RObyI6IjAwMDAwMDAwMDAwIiwiZW1haWwiOiJidW5peWFhZEBnbWFpbC5jb20iLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjQ2MzcwMDQ2LCJleHAiOjE2NDY5NzQ4NDZ9.G7c4cA6s65GA2y_CdI6-i_wKlIduYX4jzYfCV4FJjWU`,
+      token: `bearer ${this.state.data.token}`,
       },
       body: JSON.stringify({
-        "Name":"John Michel",
-        "Email":"buniyaad@gmail.com",
-        "PhoneNumber":"03180000098",
-        "ShopAddress":"karachi",
-        "ShopName":"Imtiaz Store",
-        "CNIC":"123-456",
-        "Verified":true,
-        "AreaId":"1111",
-        "IntrustCategory": "Hello",
-        "token":"1234",
+        "Name":this.state.retailerData.Name,
+        "Email":this.state.retailerData.Email,
+        "PhoneNumber":this.state.retailerData.PhoneNumber,
+        "ShopAddress":this.state.retailerData.ShopAddress,
+        "ShopName":this.state.retailerData.ShopName,
+        "CNIC":this.state.retailerData.CNIC,
+        "Verified":this.state.retailerData.Verified,
+        "AreaId":this.state.retailerData.AreaId,
+        "IntrustCategory":this.state.retailerData.IntrustCategory,
+        "token":this.state.FCMtoken,
       })
      }).then((response)=>response.json())
      .then(data=>console.log("results:", data))
