@@ -39,6 +39,25 @@ export default class Login extends React.Component {
     }
   }
 
+  async getData(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('test')
+     // this.setState({retailerData:jsonValue != null ? JSON.parse(jsonValue) : null})
+     console.log("this is async data: ",JSON.parse(jsonValue))
+     if(JSON.parse(jsonValue) === null){
+      console.log("Retailer is  empty ")
+      this.getPhoneNumber() 
+    }
+    else{ this.props.navigation.navigate("Home")}
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      
+      
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+
   async getToken(){
     try {
       const jsonValue = await AsyncStorage.getItem('token')
@@ -74,6 +93,8 @@ export default class Login extends React.Component {
   fadeOut = () => {
     
   };
+
+ 
   
   // check available phone number on device
   getPhoneNumber = async () => {
@@ -199,19 +220,20 @@ export default class Login extends React.Component {
     }
 
   componentDidMount() {
+   
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({showSpinner:false,phoneno:''})
-      this.getPhoneNumber() 
+      this.getData()
       this.getToken();
-      this.fadeIn()
+      this.fadeIn();
+      
     });
-    
+   
   }
 
 
   componentWillUnmount() {
     this._unsubscribe();
-    
     
   }
 

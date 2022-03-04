@@ -39,6 +39,8 @@ export default class Account extends React.Component {
     showSpinner:false
   };
 
+ 
+
   orderHistoryItemsComponent = itemData => (
     <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getProducts(itemData)}>
       <Card style={styles.orderHistoryCardStyle}>
@@ -75,6 +77,15 @@ export default class Account extends React.Component {
       
     } catch(e) {
       // error reading value
+    }
+  }
+
+  async storeData(){
+    try {
+      
+     await AsyncStorage.clear();
+    } catch (e) {
+      // saving error
     }
   }
 
@@ -126,7 +137,10 @@ export default class Account extends React.Component {
               text: "Cancel",
               style: "cancel"
             },
-            { text: "OK", onPress: () => this.props.navigation.popToTop() }
+            { text: "OK", onPress: () => {
+              this.storeData()
+              this.props.navigation.replace("Login")
+             }}
           ]
         );
        }

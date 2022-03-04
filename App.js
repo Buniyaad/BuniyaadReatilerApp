@@ -22,7 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
 const Stack = createNativeStackNavigator();
-
+var data=''
 
   
 
@@ -42,13 +42,16 @@ export default function App() {
 
 
 
+
+
    useEffect(() => {
     storeToken();
+   
   }, []);
 
 
   return (
-    <NavigationContainer>
+    <NavigationContainer>    
       <Stack.Navigator>
         <Stack.Screen
           name="Login"
@@ -131,6 +134,8 @@ export default function App() {
           options={{headerShown: false}}
         />
       </Stack.Navigator>
+      
+      
     </NavigationContainer>
   );
 }
