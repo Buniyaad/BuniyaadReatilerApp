@@ -23,6 +23,12 @@ export default class Cart extends React.Component {
     quantity: '',
     pricesFound: false,
     btnDisabled: false,
+    amount:'',
+    orderId:'',
+    status:'',
+    orderDetails:[],
+    orderModalVisible:false,
+    orderCombinedList:[],
   };
 
 
@@ -69,6 +75,18 @@ export default class Cart extends React.Component {
       </Card>
     </TouchableOpacity>
   );
+
+  orderItemsComponent = itemData => (
+    <Card style={styles.cartCardStyle}>
+       
+      <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+      <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+      <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>quantity: { itemData.item.quantity}</Text>
+      <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>Rs.{itemData.item.sellingprice}</Text>
+      </View>
+    </Card>
+
+);
 
   async storeCart(value) {
     try {
@@ -372,6 +390,7 @@ export default class Cart extends React.Component {
       });
   }
 
+  // Order Starts here
   post_order() {
     var orderId='';
 
@@ -422,7 +441,7 @@ export default class Cart extends React.Component {
           this.getProducts();
           this.send_sms();
           ToastAndroid.show('order has been placed', ToastAndroid.SHORT);
-          //this.getOrderById(orderId)
+          this.getOrderById(orderId)
           //this.props.navigation.push('Account',{showLatestOrder: true})
         });
     } else {
@@ -440,10 +459,34 @@ export default class Cart extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        
-        console.log(JSON.stringify(res.data));
+         this.getOrderProducts(res.data)
+       console.log(JSON.stringify("Order details:",res.data));
       });
   }
+
+    // get products of  order
+    async getOrderProducts(itemData) {
+
+      await this.setState({orderModalVisible:true,orderDetails:itemData,amount:itemData.amount,status:itemData.status,
+      orderId:itemData.orderId})
+       console.log("tester :",this.state.orderDetails)
+
+       for(let i=0;i<this.state.orderDetails.products.length;i++){
+        await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
+          headers: {
+            token: `bearer ${this.state.retailerData.token}`,
+          },
+        })
+          .then(response => response.json())
+          .then(res => { res.data===null?null:this.state.products.push(res.data)})
+      }
+    
+           const mergedArray = this.state.products.map(t1 => ({...t1, ...this.state.orderDetails.products.find(t2 => t2.productId === t1._id)}))
+           this.setState({orderCombinedList:mergedArray,showSpinner:false})
+          console.log("merged array",mergedArray)
+  
+  
+      }
 
 
   //send sms params: phoneno, otp
@@ -484,7 +527,7 @@ export default class Cart extends React.Component {
   componentDidMount() {
     this.getData();
     this.getCart();
-    this.getOrderById('622080c1e8979958fa23ba63')
+   // this.getOrderById('622080c1e8979958fa23ba63')
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
   }
 
@@ -615,6 +658,63 @@ export default class Cart extends React.Component {
            </Button>
         
             </View>
+          </View>
+        </Modal>
+
+                 {/*View order details pop up */ }
+                 <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.orderModalVisible}
+          onRequestClose={() => {
+            this.setState({orderModalVisible:false,orderCombinedlist:[],products:[]});
+          }}
+        >
+          <View >
+            <View style={styles.modalView}>
+             
+            
+            <FlatList
+            style={{marginBottom:20}}
+        ListHeaderComponent={<>
+           <Button
+              transparent
+              style={{marginLeft:10}}
+              onPress={() => this.setState({orderModalVisible:false,orderCombinedlist:[],products:[]})}>
+              <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
+            </Button>
+          <Text style={styles.labelStyle}>Order Details</Text>
+          <Text style={{alignSelf:'center',color:'#FFC000',fontWeight:'bold'}}>Order ID: {this.state.orderId}</Text>
+
+          {this.state.combinedList.length>0 &&(
+            <View style={{marginLeft:10,marginRight:10}}>
+              <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:50,alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
+            </View>
+
+            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>{this.state.status}</Text>
+            </View>
+            </View>
+             
+            
+          )}
+         
+         <Text style={styles.itemLabelStyle}>Items</Text>
+         {this.state.showSpinner && (
+                <Spinner color={'black'}/>
+               )}
+        </>}
+          data={this.state.orderCombinedList}
+          renderItem={item => this.orderItemsComponent(item)}
+         />
+
+        
+            </View>
+          
+          
           </View>
         </Modal>
 

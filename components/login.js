@@ -24,8 +24,10 @@ export default class Login extends React.Component {
     showBtn: false,
     isRegistered:false,
     showSpinner:false,
+    retailerData:'',
     fadeAnim: new Animated.Value(1),
     switchImage:false,
+    FCMtoken:'',
   };
  
   async storeData(value){
@@ -34,6 +36,18 @@ export default class Login extends React.Component {
       await AsyncStorage.setItem('test', jsonValue)
     } catch (e) {
       // saving error
+    }
+  }
+
+  async getToken(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('token')
+      console.log("this is token ", JSON.parse(jsonValue))
+      jsonValue != null ? this.setState({FCMtoken:JSON.parse(jsonValue)}) :null;
+    
+ 
+    } catch(e) {
+      // error reading value
     }
   }
 
@@ -122,6 +136,7 @@ export default class Login extends React.Component {
    });
   }
 
+  // if user is registered
   handle_registered() {
     console.log(this.state.phoneno)
     this.setState({showSpinner: true, showBtn: false});
@@ -133,13 +148,12 @@ export default class Login extends React.Component {
       },
       body: JSON.stringify({
         contactNo: this.state.phoneno,
-        //pin: this.state.enteredpin,
       }),
     })
       .then(response => response.json())
       .then(data =>
-        this.setState({data: data.data, authenticated: !data.error}),
-      ).then(() => console.log(this.state))
+        this.setState({data: data.data, retailerData: data.data.checkUser, authenticated: !data.error}),
+      ).then(() => console.log("here ",this.state))
       .then(() => this.check_Verified());
   }
 
@@ -147,8 +161,9 @@ export default class Login extends React.Component {
     check_Verified() {
      
       if (this.state.data.checkUser.Verified === true) {
-        console.log('you have permission',this.state.data);
+        //console.log('you have permission',this.state.data);
         this.storeData(this.state.data);
+       // this.sendToken();
         this.props.navigation.navigate('Home',{data: this.state.data});
       } else {
         console.log('you dont have permission');
@@ -156,15 +171,40 @@ export default class Login extends React.Component {
       }
     }
 
+    // post token 
+    sendToken(){
+     console.log("Retailer Data is:",this.state.retailerData)
+     console.log("Token is ",this.state.data.token)
+     fetch(`https://api.buniyaad.pk/users/update/622099611d7c9740b13c315a}`, {
+      method: 'PUT',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      token: `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMjA5OTYxMWQ3Yzk3NDBiMTNjMzE1YSIsImNvbnRhY3RObyI6IjAwMDAwMDAwMDAwIiwiZW1haWwiOiJidW5peWFhZEBnbWFpbC5jb20iLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjQ2MzcwMDQ2LCJleHAiOjE2NDY5NzQ4NDZ9.G7c4cA6s65GA2y_CdI6-i_wKlIduYX4jzYfCV4FJjWU`,
+      },
+      body: JSON.stringify({
+        "Name":"John Michel",
+        "Email":"buniyaad@gmail.com",
+        "PhoneNumber":"03180000098",
+        "ShopAddress":"karachi",
+        "ShopName":"Imtiaz Store",
+        "CNIC":"123-456",
+        "Verified":true,
+        "AreaId":"1111",
+        "IntrustCategory": "Hello",
+        "token":"1234",
+      })
+     }).then((response)=>response.json())
+     .then(data=>console.log("results:", data))
+    }
+
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({showSpinner:false,phoneno:''})
       this.getPhoneNumber() 
+      this.getToken();
       this.fadeIn()
     });
-  
-
-  
     
   }
 
