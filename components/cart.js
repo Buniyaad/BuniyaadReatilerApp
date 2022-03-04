@@ -469,7 +469,10 @@ export default class Cart extends React.Component {
 
       await this.setState({orderModalVisible:true,orderDetails:itemData,amount:itemData.amount,status:itemData.status,
       orderId:itemData.orderId})
-       console.log("tester :",this.state.orderDetails)
+       console.log("tester :",this.state.orderDetails.products)
+
+       // Sending email here
+       this.send_email();
 
        for(let i=0;i<this.state.orderDetails.products.length;i++){
         await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
@@ -501,6 +504,33 @@ export default class Cart extends React.Component {
     fetch(
       `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${phoneno}&type=English&message=${messagebody}`,
     );
+  }
+
+  //send email 
+  send_email(){
+
+    fetch(
+      `https://api.buniyaad.pk/email/sendEmail/order`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+        body: JSON.stringify({
+          amount:this.state.amount,
+          status:this.state.status,
+          orderId:this.state.orderId,
+          date: new Date(),
+          retailername:this.state.retailerData.checkUser.Name,
+          count:this.state.orderDetails.products.length,
+
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log("email resp: ",data));
   }
 
   //handle back button function
@@ -686,7 +716,7 @@ export default class Cart extends React.Component {
           <Text style={styles.labelStyle}>Order Details</Text>
           <Text style={{alignSelf:'center',color:'#FFC000',fontWeight:'bold'}}>Order ID: {this.state.orderId}</Text>
 
-          {this.state.combinedList.length>0 &&(
+          {this.state.orderCombinedList.length>0 &&(
             <View style={{marginLeft:10,marginRight:10}}>
               <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:50,alignItems:'center'}}>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
