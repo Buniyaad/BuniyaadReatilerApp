@@ -14,6 +14,7 @@ import Pin from './components/pin';
 import NotVerified from './components/notVerified';
 import Search from './components/search';
 import CategoriesSearch from './components/categoriesSearch';
+import OtpLogin from './components/otpLogin'
 import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -81,6 +82,16 @@ export default function App() {
         <Stack.Screen
           name="Otp"
           component={Otp}
+          options={{
+            title: 'Mobile number darj karein',
+            headerStyle: {
+              backgroundColor: '#FFC000',
+            },
+          }}
+        />
+             <Stack.Screen
+          name="OtpLogin"
+          component={OtpLogin}
           options={{
             title: 'Mobile number darj karein',
             headerStyle: {

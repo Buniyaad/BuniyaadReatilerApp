@@ -39,6 +39,7 @@ export default class Login extends React.Component {
     btnDisabled:false,
     refresh:false,
     cartCount:'',
+    interestedData:[]
   };
 
   async storeCart(value){
@@ -67,6 +68,7 @@ export default class Login extends React.Component {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
       this.getAllProducts()
+      this.getInterestProducts()
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",JSON.parse(jsonValue))
       
@@ -81,6 +83,26 @@ export default class Login extends React.Component {
 
   //product card components
   recommendedProductsItemComponent = itemData => (
+    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
+      <Card style={styles.recommendedStyle}>
+      <Image
+          style={itemData.item.Image === '' ? null : styles.imageStyle}
+          source={
+            itemData.item.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: itemData.item.Image}
+          }
+        />
+        <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
+        <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
+          Rs. {itemData.item.MinPrice.price.toLocaleString("en-GB")}
+        </Text>
+      </Card>
+    </TouchableOpacity>
+  );
+
+  
+   interestProductsItemComponent = itemData => (
     <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
       <Card style={styles.recommendedStyle}>
       <Image
@@ -132,6 +154,20 @@ export default class Login extends React.Component {
         //console.log(JSON.stringify(res.data));
       });
   }
+
+    //get Khaas Aap Keh Liye products
+    getInterestProducts() {
+      this.setState({refresh:true})
+      fetch(`https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res => {
+          this.setState({interestedData: res.data, showSpinner:false});
+        });
+    }
 
   //get all prices
  async  getPrices(itemData) {
@@ -461,6 +497,20 @@ export default class Login extends React.Component {
                   }
                 />
               </View>
+
+              {this.state.interestedData.length>0 && (
+              <View>
+                <Text style={styles.labelStyle}> KHAAS AAP KEH LIYE</Text>
+                <FlatList
+                  horizontal={true}
+                  data={this.state.interestedData}
+                  renderItem={item =>
+                    this.interestProductsItemComponent(item)
+                  }
+                />
+              </View>)}
+                             
+
               <Text style={styles.labelStyle}> SAB SAMAAN</Text>
             </>
           }

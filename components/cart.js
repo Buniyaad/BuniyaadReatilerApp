@@ -29,6 +29,8 @@ export default class Cart extends React.Component {
     orderDetails:[],
     orderModalVisible:false,
     orderCombinedList:[],
+    latestProduct:'',
+    suggestedProductsData:[]
   };
 
 
@@ -75,6 +77,26 @@ export default class Cart extends React.Component {
       </Card>
     </TouchableOpacity>
   );
+
+  recommendedProductsItemComponent = itemData => (
+    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
+      <Card style={styles.recommendedStyle}>
+      <Image
+          style={itemData.item.Image === '' ? null : styles.imageStyle}
+          source={
+            itemData.item.Image === ''
+              ? require('./assets/logo.png')
+              : {uri: itemData.item.Image}
+          }
+        />
+        <Text numberOfLines={2} style={{height:'20%',marginLeft:10,marginTop:5}}>{itemData.item.Title}</Text>
+        <Text style={{color: '#FFC000',height:'20%',marginLeft:10,fontWeight:'bold',fontSize:20,marginBottom:15}}>
+          Rs. {itemData.item.MinPrice.price.toLocaleString("en-GB")}
+        </Text>
+      </Card>
+    </TouchableOpacity>
+  );
+
 
   orderItemsComponent = itemData => (
     <Card style={styles.cartCardStyle}>
@@ -124,6 +146,7 @@ export default class Cart extends React.Component {
 
   async getProducts() {
     this.setState({showSpinner: true});
+    
     for (let i = 0; i < this.state.cart.length; i++) {
       await fetch(
         `https://api.buniyaad.pk/products/getByPId/${this.state.cart[i].productId}`,
@@ -144,6 +167,8 @@ export default class Cart extends React.Component {
       ...this.state.cart.find(t2 => t2.productId === t1._id),
     }));
     this.setState({combinedList: mergedArray, showSpinner: false});
+
+    this.getSuggestedProducts()
   }
 
   calculateCartTotal() {
@@ -279,6 +304,22 @@ export default class Cart extends React.Component {
     console.log('updated array', cart);
 
     return cart;
+  }
+
+  getSuggestedProducts(){
+    let id=this.state.cart[0].productId
+    console.log("latest is:",this.state.cart[0])
+    console.log(id)
+    fetch(`https://api.buniyaad.pk/carts/suggestedProducts/UserId/${id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.setState({suggestedProductsData: res.data});
+        console.log("suggested: ",res.data)
+      });
   }
 
   //Place Order prompt

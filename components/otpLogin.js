@@ -9,7 +9,7 @@ import {
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SmsRetriever from 'react-native-sms-retriever';
 import SmsListener from 'react-native-android-sms-listener'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default class Otp extends React.Component {
@@ -17,9 +17,19 @@ export default class Otp extends React.Component {
     code: '',
     otp: this.generate_otp(),
     timer: 60,
+    data:`${this.props.route.params.data}`,
     phoneno: `${this.props.route.params.phoneno}`,
     showResendBtn: false,
   };
+
+ async storeData(value){
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('test', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
 
   //otp timer
   setTimer() {
@@ -77,7 +87,9 @@ export default class Otp extends React.Component {
     //console.log(code);
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
-      this.handle_register();
+      
+      this.props.navigation.push('Home')
+      //this.handle_register();
     }
   }
 
@@ -90,7 +102,7 @@ export default class Otp extends React.Component {
     }
   }
 
-  check
+  /* 
   // register User
   handle_register(){
    
@@ -108,6 +120,7 @@ export default class Otp extends React.Component {
      .then(data=> console.log(data.data))
     .then(() => this.props.navigation.navigate('NotVerified'));
         }
+    */
 
   componentDidMount() {
     // send sms and set timer
@@ -116,10 +129,9 @@ export default class Otp extends React.Component {
     Clipboard.setString('');
     this.setTimer();
     this._onSmsListenerPressed()
-  
-
-   
+    
   }
+ 
 
   componentDidUpdate() {
     // stop timer interval on count down 0
