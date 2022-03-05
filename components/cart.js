@@ -29,8 +29,8 @@ export default class Cart extends React.Component {
     orderDetails:[],
     orderModalVisible:false,
     orderCombinedList:[],
-    latestProduct:'',
-    suggestedProductsData:[]
+    suggestedProductsData:[],
+    isSuggested:false,
   };
 
 
@@ -79,7 +79,7 @@ export default class Cart extends React.Component {
   );
 
   recommendedProductsItemComponent = itemData => (
-    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getPrices(itemData)}>
+    <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getSuggestedPrices(itemData)}>
       <Card style={styles.recommendedStyle}>
       <Image
           style={itemData.item.Image === '' ? null : styles.imageStyle}
@@ -146,7 +146,7 @@ export default class Cart extends React.Component {
 
   async getProducts() {
     this.setState({showSpinner: true});
-    
+    this.getSuggestedProducts()
     for (let i = 0; i < this.state.cart.length; i++) {
       await fetch(
         `https://api.buniyaad.pk/products/getByPId/${this.state.cart[i].productId}`,
@@ -168,7 +168,7 @@ export default class Cart extends React.Component {
     }));
     this.setState({combinedList: mergedArray, showSpinner: false});
 
-    this.getSuggestedProducts()
+    
   }
 
   calculateCartTotal() {
@@ -191,6 +191,52 @@ export default class Cart extends React.Component {
     this.calculateCartTotal();
   }
 
+  getSuggestedProducts(){
+  
+    fetch(`https://api.buniyaad.pk/carts/suggestedProducts/UserId/${this.state.retailerData.checkUser._id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.setState({suggestedProductsData: res.data});
+        console.log("suggested: ",res.data)
+      });
+  }
+
+  //get all prices
+  async  getSuggestedPrices(itemData) {
+
+    await this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice,isSuggested:true})
+  
+     if(this.state.productPrices.length===0){
+      this.setState({showModalSpinner:true})
+      let prices=this.state.product.Price
+      let priceArr=[]
+      //console.log("prices are:", prices)
+      for(let i=0; i<prices.length; i++){
+        await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res => { res.data===null?null:priceArr.push(res.data)})
+        
+      }
+      
+      let minQTY =this.getMinQty(priceArr);
+     // console.log(priceArr)
+      this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
+      this.calculateTotal(this.state.price.min)
+      console.log("Suggested prod item:",itemData.item);
+      //console.log(JSON.stringify(this.state.productPrices))
+     }
+      
+    }
+  
+
   // view product start here
   
   //get all prices
@@ -200,7 +246,7 @@ export default class Cart extends React.Component {
       product: itemData.item,
       price: itemData.item.MinPrice,
     });
-
+   
     if (this.state.productPrices.length === 0) {
       this.setState({showModalSpinner: true});
       let prices = this.state.product.Price;
@@ -220,7 +266,7 @@ export default class Cart extends React.Component {
 
       let minQTY = this.getMinQty(priceArr);
       let qty = itemData.item.quantity;
-      console.log(itemData.item);
+     // console.log(itemData.item);
       await this.setState({
         productPrices: priceArr,
         pricesFound: true,
@@ -306,21 +352,6 @@ export default class Cart extends React.Component {
     return cart;
   }
 
-  getSuggestedProducts(){
-    let id=this.state.cart[0].productId
-    console.log("latest is:",this.state.cart[0])
-    console.log(id)
-    fetch(`https://api.buniyaad.pk/carts/suggestedProducts/UserId/${id}`, {
-      headers: {
-        token: `bearer ${this.state.retailerData.token}`,
-      },
-    })
-      .then(response => response.json())
-      .then(res => {
-        this.setState({suggestedProductsData: res.data});
-        console.log("suggested: ",res.data)
-      });
-  }
 
   //Place Order prompt
   placeOrder() {
@@ -370,7 +401,7 @@ export default class Cart extends React.Component {
         if (res.data === false) {
           //if cart was empty add first product
           let product = {
-            productId: this.state.product.productId,
+            productId: this.state.isSuggested?this.state.product._id:this.state.product.productId,
             quantity: this.state.quantity,
             total: this.state.total,
           };
@@ -402,7 +433,7 @@ export default class Cart extends React.Component {
             .then(response => response.json())
             .then(res => {
               let product = {
-                productId: this.state.product.productId,
+                productId: this.state.isSuggested?this.state.product._id:this.state.product.productId,
                 quantity: this.state.quantity,
                 total: this.state.total,
               };
@@ -423,6 +454,7 @@ export default class Cart extends React.Component {
                 cart: [],
                 cartTotal: 0,
                 btnDisabled: false,
+                isSuggested:false,
               });
               this.getCart();
               this.getProducts();
@@ -618,6 +650,21 @@ export default class Cart extends React.Component {
           }
           data={this.state.combinedList}
           renderItem={item => this.cartItemsComponent(item)}
+          ListFooterComponent={
+            <>
+              {this.state.suggestedProductsData.length>0 && (
+              <View>
+                <Text style={styles.itemLabelStyle}> MILTA JULTA SAMAAN</Text>
+                <FlatList
+                  horizontal={true}
+                  data={this.state.suggestedProductsData}
+                  renderItem={item =>
+                    this.recommendedProductsItemComponent(item)
+                  }
+                />
+              </View>)}
+            </>
+          }
         />
 
         <Card
@@ -862,6 +909,13 @@ const styles = StyleSheet.create({
     height: 100,
     padding: 10,
   },
+  recommendedStyle: {
+    marginLeft: 10,
+    borderRadius: 10,
+    height: 250,
+    width: 150,
+    
+  },
   headingStyle: {
     flexDirection: 'row',
     height: 50,
@@ -913,6 +967,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
+  },
+  imageStyle: {
+    height:'60%',
+    minWidth: 150,
+    borderTopRightRadius:10,
+    borderTopLeftRadius:10,
   },
   imageModalStyle: {
     flex:0.6,
