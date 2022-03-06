@@ -533,7 +533,7 @@ export default class Cart extends React.Component {
       .then(response => response.json())
       .then(res => {
          this.getOrderProducts(res.data)
-       console.log(JSON.stringify("Order details:",res.data));
+      // console.log(JSON.stringify("Order details:",res.data));
       });
   }
 
@@ -542,7 +542,7 @@ export default class Cart extends React.Component {
 
       await this.setState({orderModalVisible:true,orderDetails:itemData,amount:itemData.amount,status:itemData.status,
       orderId:itemData.orderId})
-       console.log("tester :",this.state.orderDetails.products)
+       console.log("tester :",this.state.orderDetails)
 
        // Sending email here
        this.send_email();
@@ -562,6 +562,28 @@ export default class Cart extends React.Component {
           console.log("merged array",mergedArray)
   
   
+      }
+
+      cancelOrder(){
+        console.log("order Id: ",this.state.orderDetails._id," Products: ",this.state.orderDetails.products)
+        fetch(`https://api.buniyaad.pk/orders/update/${this.state.orderDetails._id}`, {
+      method: 'PUT',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      token: `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjNlOTM5ZTEyMmRlMmU1YmE0MjFlNCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0NjU2MzY2MywiZXhwIjoxNjQ3MTY4NDYzfQ.zraXWi8OPe6wn-LcFtbhpEurG-afTTB8cOMx_REExzA`,
+      },
+      body: JSON.stringify({
+          "status":"Cancelled",
+          "products":this.state.orderDetails.products,
+      })
+     }).then((response)=>response.json())
+     .then(data=>{console.log(data)
+      ToastAndroid.show('order has been cancelled', ToastAndroid.SHORT);
+      this.setState({orderModalVisible:false})
+      
+     })
+         
       }
 
 
@@ -829,10 +851,12 @@ export default class Cart extends React.Component {
           renderItem={item => this.orderItemsComponent(item)}
          />
 
-           <Button full style={styles.fullBtnStyle} onPress={()=> {this.props.navigation.push('Home')}}>
+          <Button full style={styles.fullBtnStyle} onPress={()=> {this.cancelOrder()}}>
 
-            <Text>Continue Shopping</Text>
-           </Button>        
+          <Text>Cancel</Text>
+          </Button> 
+
+            
             </View>
           
           

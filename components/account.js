@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,Modal,View,BackHandler} from 'react-native';
+import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,ToastAndroid,Modal,View,BackHandler} from 'react-native';
 import {
   Badge,
   Body,
@@ -126,6 +126,28 @@ export default class Account extends React.Component {
   
   
       }
+
+
+      cancelOrder(){
+        console.log("order Id: ",this.state.orderDetails._id," Products: ",this.state.orderDetails.products)
+        fetch(`https://api.buniyaad.pk/orders/update/${this.state.orderDetails._id}`, {
+      method: 'PUT',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      token: `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjNlOTM5ZTEyMmRlMmU1YmE0MjFlNCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0NjU2MzY2MywiZXhwIjoxNjQ3MTY4NDYzfQ.zraXWi8OPe6wn-LcFtbhpEurG-afTTB8cOMx_REExzA`,
+      },
+      body: JSON.stringify({
+          "status":"Cancelled",
+          "products":this.state.orderDetails.products,
+      })
+     }).then((response)=>response.json())
+     .then(data=>{console.log(data)
+      ToastAndroid.show('order has been cancelled', ToastAndroid.SHORT);
+      this.setState({modalVisible:false})
+      
+     })
+    }
 
       // Logout 
        logOut(){
@@ -273,7 +295,13 @@ export default class Account extends React.Component {
           renderItem={item => this.cartItemsComponent(item)}
         />
 
-        
+       {this.state.status==='Processing' &&(
+          <Button full style={styles.fullCancelBtnStyle} onPress={()=> {this.cancelOrder()}}>
+
+          <Text>Cancel</Text>
+          </Button> 
+       )}
+       
             </View>
           
           
@@ -345,6 +373,15 @@ const styles = StyleSheet.create({
     borderRadius:10,
     margin:10,
     
+  },
+  fullCancelBtnStyle:{
+    backgroundColor: '#ffab03',
+    borderRadius:10,
+    marginBottom:40,
+    marginTop:10,
+    marginLeft:10,
+    marginRight:10,
+    height:50,
   },
   orderHistoryCardStyle: {
   

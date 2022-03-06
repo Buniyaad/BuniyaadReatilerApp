@@ -61,7 +61,7 @@ export default class Login extends React.Component {
   async getToken(){
     try {
       const jsonValue = await AsyncStorage.getItem('token')
-      console.log("this is token ", JSON.parse(jsonValue))
+      console.log("this is FCM token ", JSON.parse(jsonValue))
       jsonValue != null ? this.setState({FCMtoken:JSON.parse(jsonValue)}) :null;
     
  
@@ -196,7 +196,7 @@ export default class Login extends React.Component {
     // post token 
     sendToken(){
      console.log("Retailer Data is:",this.state.retailerData)
-     console.log("Token is ",this.state.data.token)
+    // console.log("Token is ",this.state.data.token)
      fetch(`https://api.buniyaad.pk/users/update/${this.state.retailerData._id}`, {
       method: 'PUT',
       headers: {

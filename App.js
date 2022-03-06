@@ -35,7 +35,7 @@ export default function App() {
     try {
       const jsonValue = JSON.stringify(token)
       await AsyncStorage.setItem('token', jsonValue)
-      console.log("token: ",jsonValue)
+      console.log("FCM token: ",jsonValue)
     } catch (e) {
       // saving error
     }
