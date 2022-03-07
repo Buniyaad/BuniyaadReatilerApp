@@ -13,7 +13,7 @@ import {
 } from 'native-base';
 import SmsRetriever from 'react-native-sms-retriever';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import messaging from '@react-native-firebase/messaging';
 
 
 export default class Login extends React.Component {
@@ -27,13 +27,25 @@ export default class Login extends React.Component {
     retailerData:'',
     fadeAnim: new Animated.Value(1),
     switchImage:false,
-    FCMtoken:'',
+    //FCMtoken:'',
   };
  
   async storeData(value){
     try {
       const jsonValue = JSON.stringify(value)
       await AsyncStorage.setItem('test', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
+
+  async storeToken(){
+    const token = await messaging().getToken();
+    
+    try {
+      const jsonValue = JSON.stringify(token)
+      await AsyncStorage.setItem('token', jsonValue)
+      console.log("FCM token: ",jsonValue)
     } catch (e) {
       // saving error
     }
@@ -48,10 +60,11 @@ export default class Login extends React.Component {
       console.log("Retailer is  empty ")
       this.getPhoneNumber() 
     }
-    else{ this.props.navigation.navigate("Home")}
-      //return jsonValue != null ? JSON.parse(jsonValue) : null;
-      
-      
+    else
+    { 
+      this.getLoggedIn();
+    }
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;      
     } catch(e) {
       // error reading value
     }
@@ -64,6 +77,26 @@ export default class Login extends React.Component {
       console.log("this is FCM token ", JSON.parse(jsonValue))
       jsonValue != null ? this.setState({FCMtoken:JSON.parse(jsonValue)}) :null;
     
+ 
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+  
+  async getLoggedIn(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('loggedIn')
+      let loggedIn= JSON.parse(jsonValue)
+      console.log("Logged In :", JSON.parse(jsonValue))
+     // jsonValue != null ? this.setState({FCMtoken:JSON.parse(jsonValue)}) :null;
+     if(loggedIn==='true'){
+      this.props.navigation.navigate("Home")
+     }
+     else{
+      this.getPhoneNumber() 
+     }
+     
  
     } catch(e) {
       // error reading value
@@ -183,8 +216,8 @@ export default class Login extends React.Component {
      
       if (this.state.data.checkUser.Verified === true) {
         //console.log('you have permission',this.state.data);
+        //this.sendToken();
         this.storeData(this.state.data);
-        this.sendToken();
         this.props.navigation.push('OtpLogin', {phoneno: this.state.phoneno,
         data:this.state.data});
       } else {
@@ -225,7 +258,8 @@ export default class Login extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({showSpinner:false,phoneno:''})
       this.getData()
-      this.getToken();
+      //this.getToken();
+      this.storeToken();
       this.fadeIn();
       
     });

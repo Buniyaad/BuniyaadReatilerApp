@@ -571,7 +571,7 @@ export default class Cart extends React.Component {
       headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      token: `bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZjNlOTM5ZTEyMmRlMmU1YmE0MjFlNCIsImVtYWlsIjoiaGFpZGVyQGdtYWlsLmNvbSIsImlzQWRtaW4iOiJBZG1pbiIsImlhdCI6MTY0NjU2MzY2MywiZXhwIjoxNjQ3MTY4NDYzfQ.zraXWi8OPe6wn-LcFtbhpEurG-afTTB8cOMx_REExzA`,
+      token: `bearer ${this.state.retailerData.token}`,
       },
       body: JSON.stringify({
           "status":"Cancelled",

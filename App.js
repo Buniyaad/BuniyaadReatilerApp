@@ -23,13 +23,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
 const Stack = createNativeStackNavigator();
-var data=''
+
 
   
 
 export default function App() {
 
-  const storeToken= async ()=>{
+ /* const storeToken= async ()=>{
     const token = await messaging().getToken();
    
     try {
@@ -49,7 +49,7 @@ export default function App() {
     storeToken();
    
   }, []);
-
+*/
 
   return (
     <NavigationContainer>    

@@ -20,6 +20,9 @@ export default class Otp extends React.Component {
     data:`${this.props.route.params.data}`,
     phoneno: `${this.props.route.params.phoneno}`,
     showResendBtn: false,
+    FCMtoken:'',
+    retailerData:[],
+    
   };
 
  async storeData(value){
@@ -28,6 +31,41 @@ export default class Otp extends React.Component {
       await AsyncStorage.setItem('test', jsonValue)
     } catch (e) {
       // saving error
+    }
+  }
+
+  async getData(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('test')
+      await this.setState({retailerData:JSON.parse(jsonValue)})
+      this.sendToken();
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      console.log("this is async data: ",JSON.parse(jsonValue))
+      
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+  async storeLoggedin(value){
+    try {
+      
+      await AsyncStorage.setItem('loggedIn',JSON.stringify(value) )
+      console.log("Logged in is set to: ",JSON.stringify(value))
+    } catch (e) {
+      // saving error
+    }
+  }
+
+  async getToken(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('token')
+      console.log("this is FCM token ", JSON.parse(jsonValue))
+      jsonValue != null ? this.setState({FCMtoken:JSON.parse(jsonValue)}) :null;
+    
+ 
+    } catch(e) {
+      // error reading value
     }
   }
 
@@ -87,11 +125,42 @@ export default class Otp extends React.Component {
     //console.log(code);
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
-      
+      this.storeLoggedin("true");
       this.props.navigation.push('Home')
       //this.handle_register();
     }
+
   }
+
+    // post token 
+    sendToken(){
+      retailerData=this.state.retailerData;
+      console.log("REtailare data: ",retailerData)
+      //console.log("Retailer Data is:",this.state.retailerData)
+     // console.log("Token is ",this.state.data.token)
+      fetch(`https://api.buniyaad.pk/users/update/${retailerData.checkUser._id}`, {
+       method: 'PUT',
+       headers: {
+       Accept: 'application/json',
+       'Content-Type': 'application/json',
+       token: `bearer ${retailerData.token}`,
+       },
+       body: JSON.stringify({
+         "Name":retailerData.checkUser.Name,
+         "Email":retailerData.checkUser.Email,
+         "PhoneNumber":retailerData.checkUser.PhoneNumber,
+         "ShopAddress":retailerData.checkUser.ShopAddress,
+         "ShopName":retailerData.checkUser.ShopName,
+         "CNIC":retailerData.checkUser.CNIC,
+         "Verified":retailerData.checkUser.Verified,
+         "AreaId":retailerData.checkUser.AreaId,
+         "IntrustCategory":retailerData.checkUser.IntrustCategory,
+         "token":this.state.FCMtoken,
+       })
+      }).then((response)=>response.json())
+      .then(data=>console.log("results:", data))
+     }
+ 
 
   // reset timer and send sms again on resesnd btn
   resend_sms() {
@@ -124,6 +193,8 @@ export default class Otp extends React.Component {
 
   componentDidMount() {
     // send sms and set timer
+    this.getToken();
+    this.getData();
     this.send_sms();
     console.log(this.state.otp);
     Clipboard.setString('');
