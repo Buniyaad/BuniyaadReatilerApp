@@ -19,15 +19,27 @@ import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Adjust, AdjustEvent, AdjustConfig } from 'react-native-adjust';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
 const Stack = createNativeStackNavigator();
 
 
-  
-
 export default function App() {
+  const adjust= async ()=>{
+    const adjustConfig = new AdjustConfig("4py4iuyxgem8", AdjustConfig.EnvironmentSandbox);
+    Adjust.create(adjustConfig);
+  }
+
+  useEffect(() => {
+    adjust();
+
+    return () => {
+      // Anything in here is fired on component unmount.
+      Adjust.componentWillUnmount();
+  }   
+  }, []);
 
  /* const storeToken= async ()=>{
     const token = await messaging().getToken();

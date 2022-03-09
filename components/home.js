@@ -18,6 +18,7 @@ import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
+import { Adjust, AdjustEvent, AdjustConfig } from 'react-native-adjust';
 
 
 export default class Login extends React.Component {
@@ -299,6 +300,8 @@ export default class Login extends React.Component {
     //check if cart is created first
     this.setState({cart:[],btnDisabled:true})
     ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+    var adjustEvent = new AdjustEvent("7o11me");
+    Adjust.trackEvent(adjustEvent);
 
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
@@ -309,7 +312,7 @@ export default class Login extends React.Component {
       .then(res => {
         if(res.data===false){
           //if cart was empty add first product
-          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total,Image:this.state.product.Image}
           this.state.cart.push(product);
           console.log("new cart is: ",this.state.cart)
           this.post_cart();
@@ -327,7 +330,7 @@ export default class Login extends React.Component {
       .then(response => response.json())
       .then(res=>{
       
-        let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total}
+        let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total,Image:this.state.product.Image}
         let resCart=this.checkProductInCart(res.data.products,product)
         this.state.cart.push(product);
         console.log("local cart",this.state.cart)
@@ -566,7 +569,7 @@ export default class Login extends React.Component {
            ,alignItems:'center',padding:10,marginTop:20}}>
 
             <Label style={{alignItems:'center',marginRight:10,marginTop:10}}>
-              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Quantity</Text>
+              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Miqdaar</Text>
             </Label>
 
             <Button

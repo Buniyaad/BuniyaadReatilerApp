@@ -34,7 +34,7 @@ export default class Cart extends React.Component {
   };
 
 
-  cartItemsComponent = itemData => (
+ /* cartItemsComponent = itemData => (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => this.getPrices(itemData)}>
@@ -71,6 +71,62 @@ export default class Cart extends React.Component {
               name="close-circle-outline"
               color="red"
               style={{fontSize: 35, marginTop: -20}}
+            />
+          </Button>
+        </View>
+      </Card>
+    </TouchableOpacity>
+  ); */
+
+  cartItemsComponent = itemData => (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => this.getPrices(itemData)}>
+      <Card style={styles.cartCardStyle}>
+     
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}>
+        
+        <Image
+                style={styles.cartImageStyle}
+                source={{uri: itemData.item.Image}}
+              />
+
+        <View style={{flexDirection:'column',width: '35%',justifyContent:'space-between'}}>
+        <Text
+          style={{fontSize: 15, color: '#737070', fontWeight: 'bold'}}
+          numberOfLines={1}>
+          {itemData.item.Title}
+        </Text>
+
+          <Text
+            style={{ fontSize: 15,fontWeight:'bold'}}>
+            Miqdar: {itemData.item.quantity.toLocaleString('en-GB')}
+          </Text>
+        </View>
+        
+          <Text
+            style={{
+              width: '35%',
+              fontWeight: 'bold',
+              fontSize: 17,
+              textAlignVertical: 'center',
+              textAlign:'right',
+            }}>
+            Rs. {itemData.item.total.toLocaleString('en-GB')}
+          </Text>
+          <Button
+            transparent
+            style={{width: '10%', alignSelf: 'center',marginLeft:5}}
+            onPress={() => this.removeProduct(itemData.item)}>
+            <Icon
+              name="close-circle-outline"
+              color="red"
+              style={{fontSize: 30}}
             />
           </Button>
         </View>
@@ -404,6 +460,7 @@ export default class Cart extends React.Component {
             productId: this.state.isSuggested?this.state.product._id:this.state.product.productId,
             quantity: this.state.quantity,
             total: this.state.total,
+            Image:this.state.product.Image
           };
           this.state.cart.push(product);
           console.log('new cart is: ', this.state.cart);
@@ -436,6 +493,7 @@ export default class Cart extends React.Component {
                 productId: this.state.isSuggested?this.state.product._id:this.state.product.productId,
                 quantity: this.state.quantity,
                 total: this.state.total,
+                Image:this.state.product.Image
               };
               let resCart = this.checkProductInCart(res.data.products, product);
               this.state.cart.push(product);
@@ -696,9 +754,16 @@ export default class Cart extends React.Component {
             width: '100%',
             alignSelf: 'center',
           }}>
-          <Text style={{fontSize: 30, alignSelf: 'center', margin: 20}}>
-            Total: {this.state.cartTotal.toLocaleString('en-GB')}
+
+          <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',margin:10}}>
+          <Text style={styles.totalLabelStyle}>
+            Kul Keemat:  
           </Text>
+          <Text style={{fontSize: 20,marginLeft:5,fontWeight:'bold'}}>
+           Rs. {this.state.cartTotal.toLocaleString('en-GB')}
+          </Text>
+          </View>
+          
           <Button
             full
             style={[styles.fullBtnStyle, {margin: 10}]}
@@ -755,7 +820,7 @@ export default class Cart extends React.Component {
            ,alignItems:'center',padding:10,marginTop:20}}>
 
             <Label style={{alignItems:'center',marginRight:10,marginTop:10}}>
-              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Quantity</Text>
+              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Miqdaar</Text>
             </Label>
 
             <Button
@@ -794,7 +859,7 @@ export default class Cart extends React.Component {
            <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
            ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
 
-            <Text>ADD TO CART</Text>
+            <Text>ADD ITEM</Text>
            </Button>
         
             </View>
@@ -933,6 +998,12 @@ const styles = StyleSheet.create({
     height: 100,
     padding: 10,
   },
+  cartImageStyle:{
+    height:'100%',
+    width:'20%',
+    overflow: "hidden",
+    resizeMode:'contain',
+  },
   recommendedStyle: {
     marginLeft: 10,
     borderRadius: 10,
@@ -948,7 +1019,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   itemLabelStyle: {
-    marginTop: 50,
+    marginTop: 30,
     marginBottom: 10,
     fontWeight: 'bold',
     color: '#737070',
@@ -961,6 +1032,13 @@ const styles = StyleSheet.create({
     color: '#737070',
     alignSelf: 'center',
     fontSize: 30,
+  },
+  totalLabelStyle:{
+
+    fontWeight: 'bold',
+    color: '#737070',
+    textAlignVertical:'bottom',
+    fontSize: 20,
   },
   cartLabelStyle: {
     fontWeight: 'bold',

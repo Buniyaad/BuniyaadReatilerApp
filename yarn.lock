@@ -5901,6 +5901,11 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
+"react-native-adjust@^4.29.6":
+  "integrity" "sha512-6XShRFrqx/kif0iPutaS4gj6LhZtzPIpH3MAxxKOoqwWWX0UPVQ9boQC4j2BtFjmerVQG1p2LGwsdylsGOiJ2g=="
+  "resolved" "https://registry.npmjs.org/react-native-adjust/-/react-native-adjust-4.29.6.tgz"
+  "version" "4.29.6"
+
 "react-native-android-sms-listener@^0.8.0":
   "integrity" "sha512-jRAsSjQFeJKTF5ljo67UMzpUUo4P3Doq2n/uyCrBg7MowXyIMY5ALwIzs72w6oalnXUnq9izvYXeU40vLFLz6Q=="
   "resolved" "https://registry.npmjs.org/react-native-android-sms-listener/-/react-native-android-sms-listener-0.8.0.tgz"

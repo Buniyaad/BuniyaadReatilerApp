@@ -218,8 +218,12 @@ export default class Account extends React.Component {
           ListHeaderComponent={<>
 
           <Text style={styles.itemLabelStyle}>Retailer:</Text>   
-
+          
           <Card style={styles.retailerCardStyle}>
+              <Image
+                style={styles.profileImg}
+                source={ require('./assets/default.png')/*{uri: "https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7054897.jpg"}*/}
+              />
               <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
                 Shop: {this.state.retailerData.checkUser.ShopName}
               </Text>
@@ -415,6 +419,14 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     color: '#737070',
     marginLeft:10,
+  },
+  profileImg: {
+    width: 100,
+    height: 100,
+    borderRadius: 150/2,
+    overflow: "hidden",
+    alignSelf:'center',
+    marginBottom:20,
   },
   retailerCardStyle: {
     padding:20,
