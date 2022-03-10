@@ -300,8 +300,8 @@ export default class Login extends React.Component {
     //check if cart is created first
     this.setState({cart:[],btnDisabled:true})
     ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
-    var adjustEvent = new AdjustEvent("7o11me");
-    Adjust.trackEvent(adjustEvent);
+   // var adjustEvent = new AdjustEvent("7o11me");
+    //Adjust.trackEvent(adjustEvent);
 
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {

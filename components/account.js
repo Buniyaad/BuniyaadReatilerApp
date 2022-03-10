@@ -45,7 +45,7 @@ export default class Account extends React.Component {
     <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getProducts(itemData)}>
       <Card style={styles.orderHistoryCardStyle}>
       
-        <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>id: {itemData.item.orderId}</Text>
+        <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}> Order id: {itemData.item.orderId}</Text>
         <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
         <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>date: {new Date(itemData.item.date).toDateString()}</Text>
         <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>status: {itemData.item.status}</Text>
@@ -56,12 +56,22 @@ export default class Account extends React.Component {
 
   cartItemsComponent = itemData => (
       <Card style={styles.cartCardStyle}>
-         
-        <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
-        <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
-        <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>quantity: { itemData.item.quantity}</Text>
-        <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>Rs.{itemData.item.sellingprice}</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+        <Image
+                style={styles.cartImageStyle}
+                source={{uri: itemData.item.Image}}
+              />
+         <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
+            <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+                
+           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
+            <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.sellingprice}</Text>
+           </View>
+
         </View>
+        </View>
+        
       </Card>
 
   );
@@ -222,7 +232,11 @@ export default class Account extends React.Component {
           <Card style={styles.retailerCardStyle}>
               <Image
                 style={styles.profileImg}
-                source={ require('./assets/default.png')/*{uri: "https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7054897.jpg"}*/}
+                source={ 
+                  this.state.retailerData.checkUser.Picture === ''?
+               require('./assets/default.png')
+               :{uri: this.state.retailerData.checkUser.Picture}
+            }
               />
               <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
                 Shop: {this.state.retailerData.checkUser.ShopName}
@@ -273,20 +287,26 @@ export default class Account extends React.Component {
               <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
             </Button>
           <Text style={styles.labelStyle}>Order Details</Text>
-          <Text style={{alignSelf:'center',color:'#FFC000',fontWeight:'bold'}}>Order ID: {this.state.orderId}</Text>
+          
 
           {this.state.combinedList.length>0 &&(
-            <View style={{marginLeft:10,marginRight:10}}>
-              <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:50,alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
+            <Card style={{marginLeft:10,marginRight:10,padding:10,borderRadius:10}}>
+            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{this.state.status}</Text>
             </View>
 
             <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>{this.state.status}</Text>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
             </View>
+
+            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
+            <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>{this.state.orderId}</Text>
             </View>
+
+            </Card>
              
             
           )}
@@ -404,6 +424,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
     height: 100,
     padding: 10,
+  },
+  cartImageStyle:{
+    height:100,
+    width:'20%',
+    overflow: "hidden",
+    resizeMode:'contain',
+    marginRight:5,
   },
   labelStyle: {
     marginTop: 10,

@@ -34,52 +34,43 @@ export default class Cart extends React.Component {
   };
 
 
- /* cartItemsComponent = itemData => (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() => this.getPrices(itemData)}>
-      <Card style={styles.cartCardStyle}>
-        <Text
-          style={{fontSize: 20, color: '#737070', fontWeight: 'bold'}}
-          numberOfLines={1}>
-          {itemData.item.Title}
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}>
-          <Text
-            style={{width: '40%', fontSize: 15, textAlignVertical: 'bottom'}}>
-            quantity: {itemData.item.quantity.toLocaleString('en-GB')}
-          </Text>
-          <Text
-            style={{
-              width: '40%',
-              fontWeight: 'bold',
-              fontSize: 20,
-              textAlignVertical: 'bottom',
-            }}>
-            Rs.{itemData.item.total.toLocaleString('en-GB')}
-          </Text>
-          <Button
-            transparent
-            style={{width: '10%', alignSelf: 'center'}}
-            onPress={() => this.removeProduct(itemData.item)}>
-            <Icon
-              name="close-circle-outline"
-              color="red"
-              style={{fontSize: 35, marginTop: -20}}
-            />
-          </Button>
-        </View>
-      </Card>
-    </TouchableOpacity>
-  ); */
 
   cartItemsComponent = itemData => (
     <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => this.getPrices(itemData)}>
+    <Card style={styles.cartCardStyle}>
+    <Button
+       transparent
+       style={{ alignSelf:'flex-end'}}
+       onPress={() => this.removeProduct(itemData.item)}>
+       <Icon
+         name="close-circle-outline"
+         color="red"
+         style={{fontSize: 30}}
+       />
+     </Button>
+   <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+   <Image
+           style={styles.cartImageStyle}
+           source={{uri: itemData.item.Image}}
+         />
+    <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
+
+       <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+
+      <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:20,marginRight:5}}>
+       <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
+       <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.total.toLocaleString('en-GB')}</Text>
+      </View>
+
+   </View>
+   </View>
+   
+ </Card>
+ </TouchableOpacity>
+ );
+    /*<TouchableOpacity
       activeOpacity={0.9}
       onPress={() => this.getPrices(itemData)}>
       <Card style={styles.cartCardStyle}>
@@ -96,16 +87,16 @@ export default class Cart extends React.Component {
                 source={{uri: itemData.item.Image}}
               />
 
-        <View style={{flexDirection:'column',width: '35%',justifyContent:'space-between'}}>
+        <View style={{flexDirection:'column',width: '35%',justifyContent:'space-evenly'}}>
         <Text
-          style={{fontSize: 15, color: '#737070', fontWeight: 'bold'}}
+          style={{fontSize: 17, color: '#737070', fontWeight: 'bold'}}
           numberOfLines={1}>
           {itemData.item.Title}
         </Text>
 
           <Text
             style={{ fontSize: 15,fontWeight:'bold'}}>
-            Miqdar: {itemData.item.quantity.toLocaleString('en-GB')}
+            Miqdaar: {itemData.item.quantity.toLocaleString('en-GB')}
           </Text>
         </View>
         
@@ -121,7 +112,7 @@ export default class Cart extends React.Component {
           </Text>
           <Button
             transparent
-            style={{width: '10%', alignSelf: 'center',marginLeft:5}}
+            style={{width: '10%', alignSelf: 'center',marginLeft:10}}
             onPress={() => this.removeProduct(itemData.item)}>
             <Icon
               name="close-circle-outline"
@@ -131,8 +122,8 @@ export default class Cart extends React.Component {
           </Button>
         </View>
       </Card>
-    </TouchableOpacity>
-  );
+    </TouchableOpacity>*/
+ 
 
   recommendedProductsItemComponent = itemData => (
     <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getSuggestedPrices(itemData)}>
@@ -156,13 +147,23 @@ export default class Cart extends React.Component {
 
   orderItemsComponent = itemData => (
     <Card style={styles.cartCardStyle}>
-       
-      <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
-      <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
-      <Text style={{width:'40%',fontSize:15,textAlignVertical:'bottom'}}>quantity: { itemData.item.quantity}</Text>
-      <Text style={{width:'40%',fontWeight:'bold',fontSize:20,textAlignVertical:'bottom'}}>Rs.{itemData.item.sellingprice}</Text>
-      </View>
-    </Card>
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+        <Image
+                style={styles.cartImageStyle}
+                source={{uri: itemData.item.Image}}
+              />
+         <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
+            <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+                
+           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
+            <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.sellingprice}</Text>
+           </View>
+
+        </View>
+        </View>
+        
+      </Card>
 
 );
 
@@ -257,7 +258,7 @@ export default class Cart extends React.Component {
       .then(response => response.json())
       .then(res => {
         this.setState({suggestedProductsData: res.data});
-        console.log("suggested: ",res.data)
+        //console.log("suggested: ",res.data)
       });
   }
 
@@ -655,7 +656,7 @@ export default class Cart extends React.Component {
     console.log(phoneno);
 
     fetch(
-      `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=HELI-KZK&phone=${phoneno}&type=English&message=${messagebody}`,
+      `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=BuniyadTech&phone=${phoneno}&type=English&message=${messagebody}`,
     );
   }
 
@@ -889,20 +890,26 @@ export default class Cart extends React.Component {
               <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
             </Button>
           <Text style={styles.labelStyle}>Order Details</Text>
-          <Text style={{alignSelf:'center',color:'#FFC000',fontWeight:'bold'}}>Order ID: {this.state.orderId}</Text>
+          
 
           {this.state.orderCombinedList.length>0 &&(
-            <View style={{marginLeft:10,marginRight:10}}>
-              <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:50,alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
-            </View>
+           <Card style={{marginLeft:10,marginRight:10,padding:10,borderRadius:10}}>
+           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{this.state.status}</Text>
+           </View>
 
-            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>{this.state.status}</Text>
-            </View>
-            </View>
+           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
+           </View>
+
+           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
+           <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>{this.state.orderId}</Text>
+           </View>
+
+           </Card>
              
             
           )}
@@ -999,10 +1006,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cartImageStyle:{
-    height:'100%',
+    height:100,
     width:'20%',
     overflow: "hidden",
     resizeMode:'contain',
+    marginRight:5,
   },
   recommendedStyle: {
     marginLeft: 10,
