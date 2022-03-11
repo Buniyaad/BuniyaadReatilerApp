@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   BackHandler,
   View,
+  ScrollView,
 } from 'react-native';
 import {
   Badge,
@@ -31,6 +32,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default class Categories extends React.Component {
   state = {
     data: [],
+    brandsData:[],
     retailerData:'',
     showSpinner:true,
   };
@@ -42,6 +44,7 @@ export default class Categories extends React.Component {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
       this.getCategories();
+      this.getBrands();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",JSON.parse(jsonValue))
       
@@ -53,6 +56,7 @@ export default class Categories extends React.Component {
   categoryCardComponent = itemData => (
     <TouchableOpacity activeOpacity={0.9} onPress={() => this.props.navigation.navigate('CategoriesSearch', {
       id:itemData.item._id
+      ,type:'category'
     })}>
       <Card style={styles.categoryCardStyle}>
         <Image
@@ -65,7 +69,36 @@ export default class Categories extends React.Component {
             backgroundColor:'#FFC000',
             fontWeight: 'bold',
             textAlign: 'center',
-            fontSize: 25,
+            textAlignVertical:'center',
+            fontSize: 20,
+            height:50,
+            borderBottomRightRadius:10,
+            borderBottomLeftRadius:10
+          }}>
+          {itemData.item.Name}
+        </Text>
+      </Card>
+    </TouchableOpacity>
+  );
+
+  brandCardComponent = itemData => (
+    <TouchableOpacity activeOpacity={0.9} onPress={() => this.props.navigation.navigate('CategoriesSearch', {
+      id:itemData.item._id
+      ,type:'brand'
+    })}>
+      <Card style={styles.categoryCardStyle}>
+        <Image
+          style={styles.imageStyle}
+          source={{uri: itemData.item.BrandImage}}
+        />
+        <Text
+          style={{
+            color: 'black',
+            backgroundColor:'#FFC000',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            textAlignVertical:'center',
+            fontSize: 20,
             height:50,
             borderBottomRightRadius:10,
             borderBottomLeftRadius:10
@@ -101,6 +134,20 @@ export default class Categories extends React.Component {
         console.log(JSON.stringify(res.data));
       });
   }
+
+    //get all brand names and images
+    getBrands(){
+      fetch('https://api.buniyaad.pk/brands/get', {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res => {
+          console.log("brands are:",res.data)
+          this.setState({brandsData: res.data,showSpinner:false});
+        });
+    }
 
     //handle back button function
     backAction = () => {
@@ -146,8 +193,64 @@ export default class Categories extends React.Component {
   render() {
     return (
       <Container style={styles.containerStyle}>
-        <FlatList
-         
+       <ScrollView>
+
+        <Text style={styles.labelStyle}>Categories</Text>
+           {this.state.showSpinner && (
+             <Spinner color={'black'}/>
+            )}
+
+      <Text style={styles.itemLabelStyle}>SAB CATEGORIES</Text>
+      
+       <ScrollView
+       horizontal
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
+       contentContainerStyle={{ paddingVertical: 20 }}>
+        {this.state.data.length>0 &&(
+       <FlatList
+         scrollEnabled={false}
+         contentContainerStyle={{
+           alignSelf: 'flex-start',
+         }}
+         numColumns={ Math.ceil(this.state.data.length / 2)}
+         showsVerticalScrollIndicator={false}
+         showsHorizontalScrollIndicator={false}
+         data={this.state.data}
+         renderItem={item => this.categoryCardComponent(item)}
+       />
+       )}
+     </ScrollView>
+
+     <Text style={styles.itemLabelStyle}>SAB BRANDS</Text>
+
+     <ScrollView
+       horizontal
+       showsVerticalScrollIndicator={false}
+       showsHorizontalScrollIndicator={false}
+       contentContainerStyle={{ paddingVertical: 20 }}>
+        {this.state.brandsData.length>0 &&(
+       <FlatList
+         scrollEnabled={false}
+         contentContainerStyle={{
+           alignSelf: 'flex-start',
+         }}
+         numColumns={ Math.ceil(this.state.brandsData.length / 2)}
+         showsVerticalScrollIndicator={false}
+         showsHorizontalScrollIndicator={false}
+         data={this.state.brandsData}
+         renderItem={item => this.brandCardComponent(item)}
+       />
+       )}
+     </ScrollView>
+
+     </ScrollView>
+ 
+   
+
+        {/*<FlatList
+          columnWrapperStyle={{justifyContent: 'space-evenly'}}
+          numColumns={3}
           ListHeaderComponent={
             <>
               <Text style={styles.labelStyle}>Categories</Text>
@@ -158,7 +261,7 @@ export default class Categories extends React.Component {
           }
           data={this.state.data}
           renderItem={item => this.categoryCardComponent(item)}
-        />
+        />*/}
 
         <Footer style={{height:70}}>
           <FooterTab style={styles.footerStyle}>
@@ -228,17 +331,27 @@ const styles = StyleSheet.create({
     color: '#737070',
     alignSelf: 'center',
     fontSize: 30,
+    
+  },
+  itemLabelStyle: {
+    marginTop: 30,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    color: '#737070',
+    marginLeft: 10,
   },
   categoryCardStyle: {
-    marginLeft: 20,
+   
+    marginLeft: 10,
     borderRadius: 10,
-    height: 200,
-    marginRight:20,
-    marginRight:20,
-    justifyContent: 'space-between',
+    height: 150,
+    width: 150,
+
+
+   
   },
   imageStyle: {
-    height: 150,
+    height: 100,
     borderTopRightRadius:10,
     borderTopLeftRadius:10,
     

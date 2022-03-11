@@ -36,7 +36,7 @@ export default class Otp extends React.Component {
 
   //send sms params: phoneno, otp
   send_sms() {
-    const messagebody=encodeURIComponent(`your buniyaad OTP code is: ${this.state.otp}\n7/T/23FErL1`)
+    const messagebody=encodeURIComponent(`your buniyaad OTP code is: ${this.state.otp}\nK0XFHr4Jh4L`)
     console.log(messagebody)
     let phoneno=`92${this.state.phoneno.substring(1)}`
     console.log(phoneno)

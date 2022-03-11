@@ -40,7 +40,48 @@ export default class Cart extends React.Component {
       activeOpacity={0.9}
       onPress={() => this.getPrices(itemData)}>
     <Card style={styles.cartCardStyle}>
-    <Button
+
+    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+   <Image
+           style={styles.cartImageStyle}
+           source={{uri: itemData.item.Image}}
+         />
+
+    <View style={{flexDirection:'column',justifyContent:'space-around',width:'80%'}}>
+      <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+   
+
+    <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
+       <Text  style={{fontSize:17,fontWeight:'bold'}} numberOfLines={1}>Miqdaar: {itemData.item.quantity}</Text>
+       <Button
+       transparent
+       style={{ alignSelf:'flex-end'}}
+       onPress={() => this.removeProduct(itemData.item)}>
+       <Icon
+         name="close-circle-outline"
+         color="red"
+         style={{fontSize: 30,marginTop:-10}}
+       />
+     </Button>
+    </View>
+
+    <Text style={{fontWeight:'bold',fontSize:20}}>Rs.{itemData.item.total.toLocaleString('en-GB')}</Text>
+
+        
+    </View>
+    </View>
+
+   
+   {/*<View style={{flexDirection:'row',justifyContent:'space-between'}}>
+   <Image
+           style={styles.cartImageStyle}
+           source={{uri: itemData.item.Image}}
+         />
+    <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
+      
+    <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
+       <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+       <Button
        transparent
        style={{ alignSelf:'flex-end'}}
        onPress={() => this.removeProduct(itemData.item)}>
@@ -50,14 +91,7 @@ export default class Cart extends React.Component {
          style={{fontSize: 30}}
        />
      </Button>
-   <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-   <Image
-           style={styles.cartImageStyle}
-           source={{uri: itemData.item.Image}}
-         />
-    <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
-
-       <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+    </View>
 
       <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:20,marginRight:5}}>
        <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
@@ -65,7 +99,8 @@ export default class Cart extends React.Component {
       </View>
 
    </View>
-   </View>
+  </View>*/}
+
    
  </Card>
  </TouchableOpacity>
@@ -155,7 +190,7 @@ export default class Cart extends React.Component {
          <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
             <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
                 
-           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+           <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
             <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
             <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.sellingprice}</Text>
            </View>
@@ -1002,7 +1037,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginLeft: 10,
     marginRight: 10,
-    height: 100,
+    height: 120,
     padding: 10,
   },
   cartImageStyle:{

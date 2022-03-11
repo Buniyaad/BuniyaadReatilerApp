@@ -21,6 +21,7 @@ import { Mixpanel } from 'mixpanel-react-native';
 import { Adjust, AdjustEvent, AdjustConfig } from 'react-native-adjust';
 
 
+
 export default class Login extends React.Component {
   state = {
     search: '',
@@ -138,6 +139,14 @@ export default class Login extends React.Component {
           Rs. {itemData.item.MinPrice.price.toLocaleString("en-GB")}
         </Text>
       </Card>
+    </TouchableOpacity>
+  );
+
+  Images = itemData => (
+    <TouchableOpacity activeOpacity={0.9}>
+     <Image>
+
+     </Image>
     </TouchableOpacity>
   );
 
@@ -300,8 +309,7 @@ export default class Login extends React.Component {
     //check if cart is created first
     this.setState({cart:[],btnDisabled:true})
     ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
-   // var adjustEvent = new AdjustEvent("7o11me");
-    //Adjust.trackEvent(adjustEvent);
+    
 
     fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
@@ -490,6 +498,8 @@ export default class Login extends React.Component {
                 <Image style={{width:'45%',height:'100%'}} source={require('./assets/Banner.jpg')} />
               </Card>
 
+          
+                
               <View>
                 <Text style={styles.labelStyle}> AAP KEH LIYE</Text>
                 <FlatList

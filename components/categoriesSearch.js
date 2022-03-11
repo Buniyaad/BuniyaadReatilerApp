@@ -32,6 +32,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default class CategoriesSearch extends React.Component {
   state = {
     categoryId: this.props.route.params.id,
+    type:this.props.route.params.type,
     retailerData: '',
     data: [],
     showSpinner:true,
@@ -71,7 +72,12 @@ export default class CategoriesSearch extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
-      this.getProductsBySearch();
+      if(this.state.type==='category')
+      {
+        this.getProductsBySearch();
+      }
+      else{this.getProductsBySearchBrand();}
+      
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",JSON.parse(jsonValue))
       
@@ -290,6 +296,19 @@ export default class CategoriesSearch extends React.Component {
         this.setState({data: res.data, showSpinner:false});
       });
   }
+
+     // get search results
+     getProductsBySearchBrand() {
+      fetch(`https://api.buniyaad.pk/brands/GetProducts/${this.state.categoryId}`, {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+      })
+        .then(response => response.json())
+        .then(res => {
+          this.setState({data: res.data, showSpinner:false});
+        });
+    }
 
   backAction = () => {
     this.setState({search:''})
