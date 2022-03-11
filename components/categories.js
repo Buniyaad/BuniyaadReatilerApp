@@ -66,11 +66,10 @@ export default class Categories extends React.Component {
         <Text
           style={{
             color: 'black',
-            backgroundColor:'#FFC000',
             fontWeight: 'bold',
             textAlign: 'center',
-            textAlignVertical:'center',
             fontSize: 20,
+            textAlignVertical:'bottom',
             height:50,
             borderBottomRightRadius:10,
             borderBottomLeftRadius:10
@@ -92,13 +91,13 @@ export default class Categories extends React.Component {
           source={{uri: itemData.item.BrandImage}}
         />
         <Text
+        numberOfLines={2}
           style={{
             color: 'black',
-            backgroundColor:'#FFC000',
             fontWeight: 'bold',
             textAlign: 'center',
-            textAlignVertical:'center',
             fontSize: 20,
+            textAlignVertical:'bottom',
             height:50,
             borderBottomRightRadius:10,
             borderBottomLeftRadius:10
@@ -193,62 +192,8 @@ export default class Categories extends React.Component {
   render() {
     return (
       <Container style={styles.containerStyle}>
-       <ScrollView>
-
-        <Text style={styles.labelStyle}>Categories</Text>
-           {this.state.showSpinner && (
-             <Spinner color={'black'}/>
-            )}
-
-      <Text style={styles.itemLabelStyle}>SAB CATEGORIES</Text>
-      
-       <ScrollView
-       horizontal
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-       contentContainerStyle={{ paddingVertical: 20 }}>
-        {this.state.data.length>0 &&(
-       <FlatList
-         scrollEnabled={false}
-         contentContainerStyle={{
-           alignSelf: 'flex-start',
-         }}
-         numColumns={ Math.ceil(this.state.data.length / 2)}
-         showsVerticalScrollIndicator={false}
-         showsHorizontalScrollIndicator={false}
-         data={this.state.data}
-         renderItem={item => this.categoryCardComponent(item)}
-       />
-       )}
-     </ScrollView>
-
-     <Text style={styles.itemLabelStyle}>SAB BRANDS</Text>
-
-     <ScrollView
-       horizontal
-       showsVerticalScrollIndicator={false}
-       showsHorizontalScrollIndicator={false}
-       contentContainerStyle={{ paddingVertical: 20 }}>
-        {this.state.brandsData.length>0 &&(
-       <FlatList
-         scrollEnabled={false}
-         contentContainerStyle={{
-           alignSelf: 'flex-start',
-         }}
-         numColumns={ Math.ceil(this.state.brandsData.length / 2)}
-         showsVerticalScrollIndicator={false}
-         showsHorizontalScrollIndicator={false}
-         data={this.state.brandsData}
-         renderItem={item => this.brandCardComponent(item)}
-       />
-       )}
-     </ScrollView>
-
-     </ScrollView>
- 
-   
-
-        {/*<FlatList
+    
+        <FlatList
           columnWrapperStyle={{justifyContent: 'space-evenly'}}
           numColumns={3}
           ListHeaderComponent={
@@ -257,12 +202,24 @@ export default class Categories extends React.Component {
               {this.state.showSpinner && (
                 <Spinner color={'black'}/>
                )}
+
+              <Text style={styles.itemLabelStyle}>CATEGORIES</Text>
+                <FlatList
+                  columnWrapperStyle={{justifyContent: 'space-evenly'}}
+                  numColumns={3}
+      
+                 data={this.state.data}
+                  renderItem={item => this.categoryCardComponent(item)}
+
+                />
+              <Text style={styles.itemLabelStyle}>BRANDS</Text>
             </>
           }
-          data={this.state.data}
-          renderItem={item => this.categoryCardComponent(item)}
-        />*/}
+          data={this.state.brandsData}
+          renderItem={item => this.brandCardComponent(item)}
+        />
 
+       
         <Footer style={{height:70}}>
           <FooterTab style={styles.footerStyle}>
             <Button
@@ -342,18 +299,16 @@ const styles = StyleSheet.create({
   },
   categoryCardStyle: {
    
-    marginLeft: 10,
     borderRadius: 10,
     height: 150,
-    width: 150,
-
-
-   
+    width: 120,
+    margin:20
   },
   imageStyle: {
     height: 100,
     borderTopRightRadius:10,
     borderTopLeftRadius:10,
+    resizeMode:'cover'
     
   },
 });

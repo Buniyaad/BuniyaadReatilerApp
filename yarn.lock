@@ -5947,6 +5947,13 @@
   dependencies:
     "lodash" "^4.17.15"
 
+"react-native-image-slider-banner@^1.0.2":
+  "integrity" "sha512-ritikYPrS9Kt+VIW3nDJ8OkdaKAEDL6l3eQOsWjnNudQ8BmMY3aWAzHBJxFV7/6YPHsd+o0w1O9Fcq2UeSlSdw=="
+  "resolved" "https://registry.npmjs.org/react-native-image-slider-banner/-/react-native-image-slider-banner-1.0.2.tgz"
+  "version" "1.0.2"
+  dependencies:
+    "react-native-vector-icons" "^8.1.0"
+
 "react-native-ionicons@^4.6.5":
   "integrity" "sha512-s2Ia7M5t609LE9LWygMj3ALVPUlKhK7R9XcMb67fP4EYJv0oLcwg5pc+8ftv9XXaUuTW/WgL3zJlBYxAvtvMJg=="
   "resolved" "https://registry.npmjs.org/react-native-ionicons/-/react-native-ionicons-4.6.5.tgz"
@@ -5996,6 +6003,20 @@
     "lodash.template" "^4.5.0"
     "prop-types" "^15.7.2"
     "yargs" "^15.0.2"
+
+"react-native-vector-icons@^8.1.0":
+  "integrity" "sha512-sHIdBB6Y0dHaot2fMXgy5J/hhCn5YuyN7SKDNFgPzL8KA1oF2/v7mgYMavnK7LIIs2dJoGnDANKf61dsU+TZlg=="
+  "resolved" "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-8.1.0.tgz"
+  "version" "8.1.0"
+  dependencies:
+    "lodash.frompairs" "^4.0.1"
+    "lodash.isequal" "^4.5.0"
+    "lodash.isstring" "^4.0.1"
+    "lodash.omit" "^4.5.0"
+    "lodash.pick" "^4.4.0"
+    "lodash.template" "^4.5.0"
+    "prop-types" "^15.7.2"
+    "yargs" "^16.1.1"
 
 "react-native-vector-icons@^9.0.0":
   "integrity" "sha512-qKX5d5/TafHmI4B7UOSZCL3BAGh7ZfF30iLwRgxBkKfZl2lKSuHp8Ottj9OyWh9b5fFtlg+LtyvZrns3g2kh+w=="

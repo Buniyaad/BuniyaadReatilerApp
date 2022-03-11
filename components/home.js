@@ -19,9 +19,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
 import { Adjust, AdjustEvent, AdjustConfig } from 'react-native-adjust';
+import { ImageSlider } from "react-native-image-slider-banner";
 
 
-
+const data=[
+  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/716435.jpg'},
+  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/234513.jpg'},
+  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/1373030.jpg'},
+ 
+]
 export default class Login extends React.Component {
   state = {
     search: '',
@@ -484,21 +490,25 @@ export default class Login extends React.Component {
                {this.state.showSpinner && (
                 <Spinner color={'black'}/>
                )}
-              <Card style={styles.bannerStyle}>
-                <View style={{width:'50%',justifyContent:'center',marginLeft:10}}>
-                <Text style={{fontWeight:'bold',fontSize:20}}>
-                  Buniyaad 
-                </Text>
-                <Text style={{color:'#FFC000',fontWeight:'bold',fontSize:20}}>
-                  Flash Sale!
-                </Text>
-                <Text style={{fontSize:10,textAlignVertical:'bottom',marginTop:10,fontWeight:'bold'}}>Upto 50% off</Text>
-                </View>
-                
-                <Image style={{width:'45%',height:'100%'}} source={require('./assets/Banner.jpg')} />
-              </Card>
+              
+              {/*<Card style={styles.bannerStyle}>
+                <Image style={{width:'100%',height:100, resizeMode:'contain'}} source={{uri:'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/1373030.jpg'} require('./assets/Banner.jpg')}/>
+              </Card>*/}
 
-          
+          <Card style={styles.bannerStyle}>
+            <ImageSlider 
+                data={data}
+                autoPlay={true}
+                onItemChanged={(item) => console.log("item", item)}
+                closeIconColor="#fff"
+                onClick={(item, index) => {alert('coming soon!')}}
+                timer={5000}
+                caroselImageContainerStyle={{resizeMode:'contain'}}
+                indicatorContainerStyle={{top:50}}
+                
+            />
+            </Card>
+              
                 
               <View>
                 <Text style={styles.labelStyle}> AAP KEH LIYE</Text>
@@ -743,7 +753,7 @@ const styles = StyleSheet.create({
     padding:10,
     width: '95%',
     borderRadius:10,
-    flexDirection:'row'
+    height:150,
   },
   labelStyle: {
     marginTop: 50,

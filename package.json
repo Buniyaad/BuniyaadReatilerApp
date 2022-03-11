@@ -26,6 +26,7 @@
     "react-native-android-sms-listener": "^0.8.0",
     "react-native-banner-carousel": "^1.0.3",
     "react-native-banner-carousel-updated": "^1.2.1",
+    "react-native-image-slider-banner": "^1.0.2",
     "react-native-ionicons": "^4.6.5",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.2",
