@@ -306,10 +306,22 @@ export default class Account extends React.Component {
 
           {this.state.combinedList.length>0 &&(
             <Card style={{marginLeft:10,marginRight:10,padding:10,borderRadius:10}}>
-            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+           
+           
+          <Image
+           style={styles.imageStyle}
+            source={{uri: this.state.status==='Processing'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7779254.jpg'
+            :this.state.status==='Shipped'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3905138.jpg'
+            :this.state.status==='Completed'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/8023701.jpg'
+            :this.state.status==='Paid'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3854356.jpg'
+            :null}}
+          />
+
+<Text style={{fontSize:30,marginTop:-30,marginBottom:10,fontWeight:'bold',alignSelf:'center',color:'#FFC000'}}>{this.state.status}</Text>
+            {/*<View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{this.state.status}</Text>
-            </View>
+          </View>*/}
 
             <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
@@ -490,6 +502,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5
   },
+  imageStyle:{
+    height:200,
+    width:'100%',
+    alignSelf:'center',
+    resizeMode:'contain'
+  }
 
  
 });

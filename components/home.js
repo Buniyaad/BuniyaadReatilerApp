@@ -499,7 +499,7 @@ export default class Login extends React.Component {
             <ImageSlider 
                 data={data}
                 autoPlay={true}
-                onItemChanged={(item) => console.log("item", item)}
+                //onItemChanged={(item) => console.log("item", item)}
                 closeIconColor="#fff"
                 onClick={(item, index) => {alert('coming soon!')}}
                 timer={5000}

@@ -66,11 +66,9 @@ export default class Categories extends React.Component {
         <Text
           style={{
             color: 'black',
-            fontWeight: 'bold',
             textAlign: 'center',
-            fontSize: 20,
             textAlignVertical:'bottom',
-            height:50,
+            marginTop:5,
             borderBottomRightRadius:10,
             borderBottomLeftRadius:10
           }}>
@@ -94,11 +92,9 @@ export default class Categories extends React.Component {
         numberOfLines={2}
           style={{
             color: 'black',
-            fontWeight: 'bold',
+           marginTop:5,
             textAlign: 'center',
-            fontSize: 20,
             textAlignVertical:'bottom',
-            height:50,
             borderBottomRightRadius:10,
             borderBottomLeftRadius:10
           }}>
@@ -305,7 +301,7 @@ const styles = StyleSheet.create({
     margin:20
   },
   imageStyle: {
-    height: 100,
+    height: "70%",
     borderTopRightRadius:10,
     borderTopLeftRadius:10,
     resizeMode:'cover'
