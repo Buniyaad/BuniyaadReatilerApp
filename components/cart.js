@@ -929,10 +929,12 @@ export default class Cart extends React.Component {
 
           {this.state.orderCombinedList.length>0 &&(
            <Card style={{marginLeft:10,marginRight:10,padding:10,borderRadius:10}}>
-           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{this.state.status}</Text>
-           </View>
+            <Image
+           style={styles.processingImageStyle}
+            source={{uri:'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7779254.jpg'}}
+          />
+
+          <Text style={{fontSize:30,marginTop:-30,marginBottom:10,fontWeight:'bold',alignSelf:'center',color:'#FFC000'}}>{this.state.status}</Text>
 
            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
@@ -1118,6 +1120,12 @@ const styles = StyleSheet.create({
     minWidth: 150,
     borderTopRightRadius:10,
     borderTopLeftRadius:10,
+  },
+  processingImageStyle:{
+    height:200,
+    width:'100%',
+    alignSelf:'center',
+    resizeMode:'contain'
   },
   imageModalStyle: {
     flex:0.6,

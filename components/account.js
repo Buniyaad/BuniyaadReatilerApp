@@ -317,7 +317,7 @@ export default class Account extends React.Component {
             :null}}
           />
 
-<Text style={{fontSize:30,marginTop:-30,marginBottom:10,fontWeight:'bold',alignSelf:'center',color:'#FFC000'}}>{this.state.status}</Text>
+            <Text style={{fontSize:30,marginTop:-30,marginBottom:10,fontWeight:'bold',alignSelf:'center',color:'#FFC000'}}>{this.state.status}</Text>
             {/*<View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{this.state.status}</Text>
