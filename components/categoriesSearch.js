@@ -106,182 +106,183 @@ export default class CategoriesSearch extends React.Component {
   );
 
   
-  //get all prices
-  async  getPrices(itemData) {
+ //get all prices
+ async  getPrices(itemData) {
 
-    await this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})
-  
-     if(this.state.productPrices.length===0){
-      this.setState({showModalSpinner:true})
-      let prices=this.state.product.Price
-      let priceArr=[]
-      //console.log("prices are:", prices)
-      for(let i=0; i<prices.length; i++){
-        await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
-        headers: {
-          token: `bearer ${this.state.retailerData.token}`,
-        },
-      })
-        .then(response => response.json())
-        .then(res => { res.data===null?null:priceArr.push(res.data)})
-        
-      }
-      
-      let minQTY =this.getMinQty(priceArr);
-      this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:minQTY,minQuantity:minQTY})
-      this.calculateTotal(minQTY)
-      //console.log(JSON.stringify(this.state.productPrices))
-     }
-      
-    }
-  
-    //calculate total for a product
-    calculateTotal(qty){
-    this.setState({quantity:qty})
-  
-     if(qty>=parseInt(this.state.minQuantity) && this.state.pricesFound){
-        let compasrisonPrice=this.state.productPrices;
-      let selectedPrice=0;
-      console.log(compasrisonPrice);
-      //this.getPrices()
-  
-      for(let i=0; i<compasrisonPrice.length; i++){
-        if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
-          selectedPrice=compasrisonPrice[i]
-          //this.setState({price:compasrisonPrice[i]})
-        }
-        else if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && compasrisonPrice[i].max==='')
-        {
-          selectedPrice=compasrisonPrice[i]
-        }
-        
-      }
-      let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
-      console.log("selected price:",this.state.price)
-       this.setState({total:total,price:selectedPrice})
-     }
-     else{this.setState({total:0})}
-      
-    }
-  
-    getMinQty(prices){
-      let minQTY=0
-      prices.sort(function (a, b) {
-        return a.min - b.min
-    })
-    return prices[0].min
-    }
-  
-    increaseQty(){
-      let qty=this.state.quantity;
-      
-      if(qty>=parseInt(this.state.minQuantity)){
-       qty=parseInt(qty)+100
-       this.calculateTotal(qty)
-       console.log(qty)
-       this.setState({quantity:qty})
-      
-      }
-      else{
-        qty=this.state.minQuantity
-        this.calculateTotal(qty)
-        this.setState({quantity:qty})
-      }
-    }
-  
-    decreaseQty(){
-      let qty=this.state.quantity;
-      
-      if(qty>parseInt(this.state.minQuantity)){
-      qty=parseInt(qty)-100
-      this.calculateTotal(qty)
-      console.log(qty)
-      this.setState({quantity:qty})
-      
-      }
-      
-    }
-  
-   
-  
-    checkProductInCart(cart,product){
-      console.log("old array",cart)
-       cart=cart.filter(cartProduct=> cartProduct.productId != product.productId)
-       console.log("updated array",cart)
-       
-       return cart
-    }
-  
-  
-  
-    post_cart(){
-      fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
-        method: 'POST',
-        headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+  await this.setState({modalVisible:true,product:itemData.item,price:itemData.item.MinPrice})
+
+   if(this.state.productPrices.length===0){
+    this.setState({showModalSpinner:true})
+    let prices=this.state.product.Price
+    let priceArr=[]
+    //console.log("prices are:", prices)
+    for(let i=0; i<prices.length; i++){
+      await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+      headers: {
         token: `bearer ${this.state.retailerData.token}`,
-        },
-        body: JSON.stringify({
-            "userId":this.state.retailerData.checkUser._id,
-            "products":this.state.cart,
-        })
-       }).then((response)=>response.json())
-       .then(data=>console.log(data))
-       
+      },
+    })
+      .then(response => response.json())
+      .then(res => { res.data===null?null:priceArr.push(res.data)})
+      
     }
-  
-    handle_Cart(){
-      //check if cart is created first
-      this.setState({cart:[],btnDisabled:true})
-      ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
-      fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
-        headers: {
-          token: `bearer ${this.state.retailerData.token}`,
-        },
-      })
-        .then(response => response.json())
-        .then(res => {
-          if(res.data===false){
-            //if cart was empty add first product
-            let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total,Image:this.state.product.Image}
-            this.state.cart.push(product);
-            console.log("new cart is: ",this.state.cart)
-            this.post_cart();
-            this.storeCart(this.state.cart)
-            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
-          }
-          else{
-            //add product to existing cart
-           fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
-        headers: {
-          token: `bearer ${this.state.retailerData.token}`,
-        },
-      })
-        .then(response => response.json())
-        .then(res=>{
-         // console.log("postman cart:",res.data.products)
-          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total,Image:this.state.product.Image}
-          let resCart=this.checkProductInCart(res.data.products,product)
-          this.state.cart.push(product);
-          console.log("local cart",this.state.cart)
-          Array.prototype.push.apply(this.state.cart,resCart); 
-          //this.state.cart.concat(res.data.products) 
-          //console.log("concatenated",this.state.cart) 
-          //console.log(this.state.cart)
-          //this.state.cart.push(product);
-            
-            this.post_cart();
-            this.storeCart(this.state.cart)
-            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
-            this.props.navigation.push('Cart')
-        })
+    
+    let minQTY =this.getMinQty(priceArr);
+    console.log(priceArr)
+    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
+    this.calculateTotal(this.state.price.min)
+    //console.log(JSON.stringify(this.state.productPrices))
+   }
+    
+  }
+
+  //calculate total for a product
+  calculateTotal(qty){
+  this.setState({quantity:qty})
+
+   if(qty>=parseInt(this.state.minQuantity) && this.state.pricesFound){
+      let compasrisonPrice=this.state.productPrices;
+    let selectedPrice=0;
+    console.log(compasrisonPrice);
+    //this.getPrices()
+
+    for(let i=0; i<compasrisonPrice.length; i++){
+      if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && parseInt(qty) <= parseInt(compasrisonPrice[i].max)){
+        selectedPrice=compasrisonPrice[i]
+        //this.setState({price:compasrisonPrice[i]})
+      }
+      else if(parseInt(qty) >= parseInt(compasrisonPrice[i].min) && compasrisonPrice[i].max==='')
+      {
+        selectedPrice=compasrisonPrice[i]
+      }
+      
+    }
+    let total= qty > 0? parseInt(qty)*parseInt(selectedPrice.price):0
+    console.log("selected price:",this.state.price)
+     this.setState({total:total,price:selectedPrice})
+   }
+   else{this.setState({total:0})}
+    
+  }
+
+  getMinQty(prices){
+    let minQTY=0
+    prices.sort(function (a, b) {
+      return a.min - b.min
+  })
+  return prices[0].min
+  }
+
+  increaseQty(){
+    let qty=this.state.quantity;
+    
+    if(qty>=parseInt(this.state.minQuantity)){
+     qty=parseInt(qty)+100
+     this.calculateTotal(qty)
+     console.log(qty)
+     this.setState({quantity:qty})
+    
+    }
+    else{
+      qty=this.state.minQuantity
+      this.calculateTotal(qty)
+      this.setState({quantity:qty})
+    }
+  }
+
+  decreaseQty(){
+    let qty=this.state.quantity;
+    
+    if(qty>parseInt(this.state.minQuantity)){
+    qty=parseInt(qty)-100
+    this.calculateTotal(qty)
+    console.log(qty)
+    this.setState({quantity:qty})
+    
+    }
+    
+  }
+
+ 
+
+  checkProductInCart(cart,product){
+    console.log("old array",cart)
+     cart=cart.filter(cartProduct=> cartProduct.productId != product.productId)
+     console.log("updated array",cart)
      
-          }
-        });
-  
-        
-    }
+     return cart
+  }
+
+
+
+  post_cart(){
+    fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
+      method: 'POST',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      token: `bearer ${this.state.retailerData.token}`,
+      },
+      body: JSON.stringify({
+          "userId":this.state.retailerData.checkUser._id,
+          "products":this.state.cart,
+      })
+     }).then((response)=>response.json())
+     .then(data=>console.log(data))
+     
+  }
+
+  handle_Cart(){
+    //check if cart is created first
+    this.setState({cart:[],btnDisabled:true})
+    ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+    
+
+    fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        if(res.data===false){
+          //if cart was empty add first product
+          let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total,Image:this.state.product.Image}
+          this.state.cart.push(product);
+          console.log("new cart is: ",this.state.cart)
+          this.post_cart();
+          this.storeCart(this.state.cart)
+          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
+          this.getCart()
+        }
+        else{
+          //add product to existing cart
+         fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res=>{
+      
+        let product={productId:this.state.product._id,quantity:this.state.quantity,total:this.state.total,Image:this.state.product.Image}
+        let resCart=this.checkProductInCart(res.data.products,product)
+        this.state.cart.push(product);
+        console.log("local cart",this.state.cart)
+        Array.prototype.push.apply(this.state.cart,resCart); 
+          this.post_cart();
+          this.storeCart(this.state.cart)
+          this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled:false})
+          this.getCart()
+          this.props.navigation.push('Cart')
+          
+      })
+   
+        }
+      });
+
+      
+  }
   
   
     // get search results

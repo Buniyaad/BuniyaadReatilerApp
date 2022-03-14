@@ -47,12 +47,7 @@ export default class Account extends React.Component {
       
         <View style={{borderBottomWidth:1}}>
           <Text style={{fontSize:15,margin:5,fontWeight:'bold',color:'#737070'}}>{new Date(itemData.item.date).toDateString()}</Text>
-        </View>
-
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>{itemData.item.orderId}</Text>
-        </View>    
+        </View>   
 
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
@@ -63,6 +58,11 @@ export default class Account extends React.Component {
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {itemData.item.amount.toLocaleString('en-GB')}</Text>
         </View>   
+
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>{itemData.item.orderId}</Text>
+        </View> 
       
     
       </Card>
@@ -70,26 +70,34 @@ export default class Account extends React.Component {
   );
 
   cartItemsComponent = itemData => (
-      <Card style={styles.cartCardStyle}>
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-        <Image
-                style={styles.cartImageStyle}
-                source={{uri: itemData.item.Image}}
-              />
-         <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
-            <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
-                
-           <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
-            <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
-            <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.sellingprice}</Text>
+
+    <Card style={styles.cartCardStyle}>
+
+    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+   <Image
+           style={styles.cartImageStyle}
+           source={{uri: itemData.item.Image}}
+         />
+
+    <View style={{flexDirection:'column',justifyContent:'space-around',width:'80%'}}>
+      <Text  style={{fontSize:17,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+   
+      <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
+            <Text style={{fontWeight:'bold',fontSize:15,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
+            <Text style={{fontWeight:'bold',fontSize:15}}>Rs. {itemData.item.sellingprice.toLocaleString('en-GB')}</Text>
            </View>
 
-        </View>
-        </View>
-        
-      </Card>
+      
+      <Text style={{fontWeight:'bold',fontSize:17}}>
+        Rs. {(parseInt(itemData.item.quantity)*parseInt(itemData.item.sellingprice)).toLocaleString('en-GB')}
+      </Text>
 
-  );
+        
+    </View>
+    </View>
+ </Card>
+
+ );
 
   async getData(){
     try {
@@ -306,7 +314,7 @@ export default class Account extends React.Component {
 
           {this.state.combinedList.length>0 &&(
             <Card style={{marginLeft:10,marginRight:10,padding:10,borderRadius:10}}>
-           
+           <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order #{this.state.orderId}</Text>
            
           <Image
            style={styles.imageStyle}
@@ -318,20 +326,14 @@ export default class Account extends React.Component {
           />
 
             <Text style={{fontSize:30,marginTop:-30,marginBottom:10,fontWeight:'bold',alignSelf:'center',color:'#FFC000'}}>{this.state.status}</Text>
-            {/*<View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{this.state.status}</Text>
-          </View>*/}
+           
 
             <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
             </View>
 
-            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
-            <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>{this.state.orderId}</Text>
-            </View>
+    
 
             </Card>
              
@@ -448,11 +450,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginLeft: 10,
     marginRight: 10,
-    height: 100,
+    height: 120,
     padding: 10,
   },
   cartImageStyle:{
-    height:100,
+    height:75,
     width:'20%',
     overflow: "hidden",
     resizeMode:'contain',

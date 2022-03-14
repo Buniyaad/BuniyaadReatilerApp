@@ -70,7 +70,8 @@ export default class Categories extends React.Component {
             textAlignVertical:'bottom',
             marginTop:5,
             borderBottomRightRadius:10,
-            borderBottomLeftRadius:10
+            borderBottomLeftRadius:10,
+          
           }}>
           {itemData.item.Name}
         </Text>
@@ -96,7 +97,7 @@ export default class Categories extends React.Component {
             textAlign: 'center',
             textAlignVertical:'bottom',
             borderBottomRightRadius:10,
-            borderBottomLeftRadius:10
+            borderBottomLeftRadius:10,
           }}>
           {itemData.item.Name}
         </Text>
@@ -298,7 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 150,
     width: 120,
-    margin:20
+    margin:20,
   },
   imageStyle: {
     height: "70%",

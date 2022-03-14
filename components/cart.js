@@ -70,94 +70,9 @@ export default class Cart extends React.Component {
         
     </View>
     </View>
-
-   
-   {/*<View style={{flexDirection:'row',justifyContent:'space-between'}}>
-   <Image
-           style={styles.cartImageStyle}
-           source={{uri: itemData.item.Image}}
-         />
-    <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
-      
-    <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
-       <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
-       <Button
-       transparent
-       style={{ alignSelf:'flex-end'}}
-       onPress={() => this.removeProduct(itemData.item)}>
-       <Icon
-         name="close-circle-outline"
-         color="red"
-         style={{fontSize: 30}}
-       />
-     </Button>
-    </View>
-
-      <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:20,marginRight:5}}>
-       <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
-       <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.total.toLocaleString('en-GB')}</Text>
-      </View>
-
-   </View>
-  </View>*/}
-
-   
  </Card>
  </TouchableOpacity>
  );
-    /*<TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() => this.getPrices(itemData)}>
-      <Card style={styles.cartCardStyle}>
-     
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}>
-        
-        <Image
-                style={styles.cartImageStyle}
-                source={{uri: itemData.item.Image}}
-              />
-
-        <View style={{flexDirection:'column',width: '35%',justifyContent:'space-evenly'}}>
-        <Text
-          style={{fontSize: 17, color: '#737070', fontWeight: 'bold'}}
-          numberOfLines={1}>
-          {itemData.item.Title}
-        </Text>
-
-          <Text
-            style={{ fontSize: 15,fontWeight:'bold'}}>
-            Miqdaar: {itemData.item.quantity.toLocaleString('en-GB')}
-          </Text>
-        </View>
-        
-          <Text
-            style={{
-              width: '35%',
-              fontWeight: 'bold',
-              fontSize: 17,
-              textAlignVertical: 'center',
-              textAlign:'right',
-            }}>
-            Rs. {itemData.item.total.toLocaleString('en-GB')}
-          </Text>
-          <Button
-            transparent
-            style={{width: '10%', alignSelf: 'center',marginLeft:10}}
-            onPress={() => this.removeProduct(itemData.item)}>
-            <Icon
-              name="close-circle-outline"
-              color="red"
-              style={{fontSize: 30}}
-            />
-          </Button>
-        </View>
-      </Card>
-    </TouchableOpacity>*/
  
 
   recommendedProductsItemComponent = itemData => (
@@ -768,7 +683,7 @@ export default class Cart extends React.Component {
           renderItem={item => this.cartItemsComponent(item)}
           ListFooterComponent={
             <>
-              {this.state.suggestedProductsData.length>0 && (
+              {this.state.suggestedProductsData.length>0 && this.state.cart.length>0 && (
               <View>
                 <Text style={styles.itemLabelStyle}> MILTA JULTA SAMAAN</Text>
                 <FlatList
