@@ -82,14 +82,14 @@ export default class Account extends React.Component {
     <View style={{flexDirection:'column',justifyContent:'space-around',width:'80%'}}>
       <Text  style={{fontSize:17,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
    
-      <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
-            <Text style={{fontWeight:'bold',fontSize:15,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
-            <Text style={{fontWeight:'bold',fontSize:15}}>Rs. {itemData.item.sellingprice.toLocaleString('en-GB')}</Text>
+      <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5,marginTop:-5}}>
+            <Text style={{fontWeight:'bold',fontSize:15}}>Miqdaar: { itemData.item.quantity}</Text>
+            <Text style={{fontWeight:'bold',fontSize:15}}>Rs. {itemData.item.sellingprice.toLocaleString('en-GB')} /{itemData.item.Unit}</Text>
            </View>
 
       
       <Text style={{fontWeight:'bold',fontSize:17}}>
-        Rs. {(parseInt(itemData.item.quantity)*parseInt(itemData.item.sellingprice)).toLocaleString('en-GB')}
+        Rs. {(parseInt(itemData.item.quantity)*parseInt(itemData.item.sellingprice)).toLocaleString('en-GB')} 
       </Text>
 
         
@@ -450,7 +450,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginLeft: 10,
     marginRight: 10,
-    height: 120,
     padding: 10,
   },
   cartImageStyle:{

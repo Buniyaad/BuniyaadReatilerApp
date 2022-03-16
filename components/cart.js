@@ -3,6 +3,9 @@ import {Alert,StyleSheet,Image,FlatList,TouchableOpacity,Modal,ToastAndroid,View
 import { Badge,Body,Card,Container,Content,Text,Item,Button,Header,Footer,FooterTab,Spinner,Tabs,Tab,Input,Label} from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Mixpanel} from 'mixpanel-react-native';
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 export default class Cart extends React.Component {
   state = {
@@ -48,11 +51,11 @@ export default class Cart extends React.Component {
          />
 
     <View style={{flexDirection:'column',justifyContent:'space-around',width:'80%'}}>
-      <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+      <Text  style={{fontSize:17,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
    
 
     <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
-       <Text  style={{fontSize:17,fontWeight:'bold'}} numberOfLines={1}>Miqdaar: {itemData.item.quantity}</Text>
+       <Text  style={{fontSize:15,fontWeight:'bold'}} numberOfLines={1}>Miqdaar: {itemData.item.quantity}</Text>
        <Button
        transparent
        style={{ alignSelf:'flex-end'}}
@@ -60,12 +63,12 @@ export default class Cart extends React.Component {
        <Icon
          name="close-circle-outline"
          color="red"
-         style={{fontSize: 30,marginTop:-10}}
+         style={{fontSize: 30,marginTop:-20}}
        />
      </Button>
     </View>
 
-    <Text style={{fontWeight:'bold',fontSize:20}}>Rs.{itemData.item.total.toLocaleString('en-GB')}</Text>
+    <Text style={{fontWeight:'bold',fontSize:17,marginTop:-15}}>Rs.{itemData.item.total.toLocaleString('en-GB')}</Text>
 
         
     </View>
@@ -96,25 +99,51 @@ export default class Cart extends React.Component {
 
 
   orderItemsComponent = itemData => (
+
     <Card style={styles.cartCardStyle}>
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-        <Image
-                style={styles.cartImageStyle}
-                source={{uri: itemData.item.Image}}
-              />
-         <View style={{flexDirection:'column',justifyContent:'space-evenly',width:'80%'}}>
-            <Text  style={{fontSize:20,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
-                
-           <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5}}>
-            <Text style={{fontWeight:'bold',fontSize:17,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
-            <Text style={{fontWeight:'bold',fontSize:20,textAlignVertical:'bottom',textAlign:'right'}}>Rs.{itemData.item.sellingprice}</Text>
+
+    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+   <Image
+           style={styles.cartImageStyle}
+           source={{uri: itemData.item.Image}}
+         />
+
+    <View style={{flexDirection:'column',justifyContent:'space-around',width:'80%'}}>
+      <Text  style={{fontSize:17,color:'#737070',fontWeight:'bold'}} numberOfLines={1}>{itemData.item.Title}</Text>
+   
+      <View style={{flexDirection:'row',justifyContent:'space-between',marginRight:5, marginTop:-5}}>
+            <Text style={{fontWeight:'bold',fontSize:15,textAlignVertical:'bottom'}}>Miqdaar: { itemData.item.quantity}</Text>
+            <Text style={{fontWeight:'bold',fontSize:15}}>
+              Rs. {itemData.item.sellingprice.toLocaleString('en-GB')} /{itemData.item.Unit}
+            </Text>
            </View>
 
-        </View>
-        </View>
-        
-      </Card>
+      
+      <Text style={{fontWeight:'bold',fontSize:17}}>
+        Rs. {(parseInt(itemData.item.quantity)*parseInt(itemData.item.sellingprice)).toLocaleString('en-GB')}
+      </Text>
 
+        
+    </View>
+    </View>
+ </Card>
+
+ );
+
+productPricesItemComponent = itemData => (
+  <View
+    style={{
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor: '#f7f7f7',
+    }}>
+    <Text numberOfLines={1} style={{marginLeft: 10,fontSize:17,fontWeight:'bold',marginTop:5}}>
+    {itemData.item.min}
+    </Text>
+    <Text numberOfLines={1} style={{marginRight: 10,fontSize:17,fontWeight:'bold',marginTop:5}}>
+    Rs. {itemData.item.price} /{this.state.product.Unit}
+    </Text>
+  </View>
 );
 
   async storeCart(value) {
@@ -208,7 +237,7 @@ export default class Cart extends React.Component {
       .then(response => response.json())
       .then(res => {
         this.setState({suggestedProductsData: res.data});
-        //console.log("suggested: ",res.data)
+        console.log("suggested: ",res.data)
       });
   }
 
@@ -282,6 +311,8 @@ export default class Cart extends React.Component {
       });
       this.calculateTotal(qty);
       //console.log(JSON.stringify(this.state.productPrices))
+      mixpanel.track('View product',
+      {'product': this.state.product});
     }
   }
 
@@ -393,6 +424,8 @@ export default class Cart extends React.Component {
 
   handle_Cart() {
     //check if cart is created first
+    mixpanel.track('added to cart',
+    {'product': this.state.product});
     this.setState({cart: [], btnDisabled: true});
     ToastAndroid.show('Added to cart', ToastAndroid.SHORT);
     fetch(
@@ -737,81 +770,202 @@ export default class Cart extends React.Component {
           }}>
           <View>
             <View style={styles.modalView}>
+
             <ImageBackground
-           imageStyle={{resizeMode:'contain'}}
-            style={this.state.product.Image === '' ? null : styles.imageModalStyle}
-            
-            source={
-              this.state.product.Image === ''
-              ? require('./assets/logo.png')
-              : {uri: this.state.product.Image}
-            }
-           >
-               <Button
-              transparent
-              style={{marginLeft:10}}
-              onPress={() => this.setState({modalVisible:false,productPrices:[],pricesFound:false})}>
-              <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
-            </Button>
+                imageStyle={{resizeMode: 'contain'}}
+                style={
+                  this.state.product.Image === ''
+                    ? null
+                    : styles.imageModalStyle
+                }
+                source={
+                  this.state.product.Image === ''
+                    ? require('./assets/logo.png')
+                    : {uri: this.state.product.Image}
+                }>
+                <Button
+                  transparent
+                  style={{marginLeft: 10}}
+                  onPress={() =>
+                    this.setState({
+                      modalVisible: false,
+                      productPrices: [],
+                      pricesFound: false,
+                    })
+                  }>
+                  <Icon
+                    name="close-circle-outline"
+                    color="#737070"
+                    style={{fontSize: 35}}
+                  />
+                </Button>
+              </ImageBackground>
 
-           </ImageBackground>
+              <View style={{flex: 1, marginLeft: 10, marginRight: 10}}>
+                <FlatList
+                  ListHeaderComponent={
+                    <>
+                      <Text style={{fontSize: 30, marginTop: 20}}>
+                        {this.state.product.Title}
+                      </Text>
 
-           <View style={{flex:1,marginLeft:10,marginRight:10}}>
-           <Text style={{fontSize:30,marginTop:20}}>{this.state.product.Title}</Text>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 'bold',
+                            marginTop: 10,
+                            color: '#FFC000',
+                          }}>
+                          Rs.{' '}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 30,
+                            fontWeight: 'bold',
+                            color: '#FFC000',
+                          }}>
+                          {this.state.price.price}
+                        </Text>
+                      </View>
 
-           <View style={{flexDirection:'row',alignItems:'center'}}>
-           <Text style={{fontSize:20,fontWeight:'bold',marginTop:10,color:'#FFC000'}}>Rs. </Text>
-          <Text style={{fontSize:30,fontWeight:'bold',color:'#FFC000'}}>{this.state.price.price}</Text>
-          </View>
 
-           <Text style={{color:'#737070'}} numberOfLines={2}>{this.state.product.Description}</Text>
-           
+                      <Card
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-evenly',
+                          width: '100%',
+                          borderRadius: 10,
+                          alignItems: 'center',
+                          padding: 10,
+                          marginTop: 20,
+                        }}>
+                        <Label
+                          style={{
+                            alignItems: 'center',
+                            marginRight: 10,
+                            marginTop: 10,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 20,
+                              marginTop: 10,
+                              fontWeight: 'bold',
+                              color: '#737070',
+                            }}>
+                            Miqdaar
+                          </Text>
+                        </Label>
 
-              <Card style={{flexDirection:'row',justifyContent:'space-evenly',width:'100%',borderRadius:10
-           ,alignItems:'center',padding:10,marginTop:20}}>
+                        <Button
+                          style={{alignSelf: 'center'}}
+                          transparent
+                          onPress={() => this.decreaseQty()}>
+                          <Icon
+                            name="remove-circle"
+                            color="#FFC000"
+                            style={{fontSize: 35, marginHorizontal: 10}}
+                          />
+                        </Button>
 
-            <Label style={{alignItems:'center',marginRight:10,marginTop:10}}>
-              <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Miqdaar</Text>
-            </Label>
+                        {this.state.showModalSpinner && (
+                          <Spinner color={'black'} />
+                        )}
 
-            <Button
-              style={{alignSelf:'center'}}
-              transparent
-              onPress={()=>this.decreaseQty()}>
-              <Icon name='remove-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
-            </Button>
-            
-            {this.state.showModalSpinner && (
-                <Spinner color={'black'}/>
-               )}
-           
-            {!this.state.showModalSpinner &&( <Input keyboardType='numeric' value={this.state.quantity.toString()} onChangeText={(text)=>this.calculateTotal(text)}
-             style={{borderWidth:0.5,borderRadius:5,marginHorizontal:10,borderColor:'#737070',textAlign:'center',fontSize:20,fontWeight:'bold'}}/>
-            )}
+                        {!this.state.showModalSpinner && (
+                          <Input
+                            keyboardType="numeric"
+                            value={this.state.quantity.toString()}
+                            onChangeText={text => this.calculateTotal(text)}
+                            style={{
+                              borderWidth: 0.5,
+                              borderRadius: 5,
+                              marginHorizontal: 10,
+                              borderColor: '#737070',
+                              textAlign: 'center',
+                              fontSize: 20,
+                              fontWeight: 'bold',
+                            }}
+                          />
+                        )}
 
-            <Button
-              style={{alignSelf:'center'}}
-              transparent
-              onPress={()=>this.increaseQty()}>
-              <Icon name='add-circle' color='#FFC000' style={{fontSize:35,marginHorizontal:10}}/>
-            </Button>
-           </Card>
+                        <Button
+                          style={{alignSelf: 'center'}}
+                          transparent
+                          onPress={() => this.increaseQty()}>
+                          <Icon
+                            name="add-circle"
+                            color="#FFC000"
+                            style={{fontSize: 35, marginHorizontal: 10}}
+                          />
+                        </Button>
+                      </Card>
 
-          {!this.state.showModalSpinner &&(
-             <View style={{flexDirection:'row',justifyContent:'space-between',borderTopWidth:1,marginTop:70,marginBottom:20,alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.total.toLocaleString('en-GB')}</Text>
-            </View>
-          )}
-         
+                      <Text style={{marginTop:30,fontWeight:'bold',backgroundColor:'#FFC000',fontSize:15,color:'white', 
+                      alignSelf: 'flex-start',padding:10,borderTopRightRadius:20,borderTopLeftRadius:10}}>Zyaada Miqdaar - Zyaada Bachat</Text>  
 
-           </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          backgroundColor: '#f7f7f7',
+                        }}>
+                        
+                        <Text numberOfLines={1} style={{marginLeft: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
+                           Miqdaar
+                        </Text>
+                        <Text numberOfLines={1} style={{marginRight: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
+                        Rate
+                        </Text>
+                      </View>
+                    </>
+                  }
+                  data={this.state.productPrices}
+                  renderItem={item => this.productPricesItemComponent(item)}
+             
+                />
 
-           <Button full disabled={this.state.btnDisabled} style={styles.fullBtnStyle} onPress={()=> {this.state.quantity>=this.state.minQuantity?this.handle_Cart():
-           ToastAndroid.show("invalid quantity", ToastAndroid.SHORT)}}>
+                {!this.state.showModalSpinner && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginBottom: 20,
+                      alignItems: 'center',
+                      borderTopWidth:1,
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        marginTop: 10,
+                        fontWeight: 'bold',
+                        color: '#737070',
+                      }}>
+                      Total
+                    </Text>
+                    <Text
+                      style={{fontSize: 20, marginTop: 10, fontWeight: 'bold'}}>
+                      Rs. {this.state.total.toLocaleString('en-GB')}
+                    </Text>
+                  </View>
+                )}
 
-            <Text>ADD ITEM</Text>
-           </Button>
+                <Button
+                  full
+                  disabled={this.state.btnDisabled}
+                  style={styles.fullBtnStyle}
+                  onPress={() => {
+                    this.state.quantity >= this.state.minQuantity
+                      ? this.handle_Cart()
+                      : ToastAndroid.show(
+                          'invalid quantity',
+                          ToastAndroid.SHORT,
+                        );
+                  }}>
+                  <Text>ITEM ADD KAREIN</Text>
+                </Button>
+              </View>
         
             </View>
           </View>
@@ -844,6 +998,8 @@ export default class Cart extends React.Component {
 
           {this.state.orderCombinedList.length>0 &&(
            <Card style={{marginLeft:10,marginRight:10,padding:10,borderRadius:10}}>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order #{this.state.orderId}</Text>
+
             <Image
            style={styles.processingImageStyle}
             source={{uri:'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7779254.jpg'}}
@@ -854,11 +1010,6 @@ export default class Cart extends React.Component {
            <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {this.state.amount.toLocaleString('en-GB')}</Text>
-           </View>
-
-           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-            <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
-           <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>{this.state.orderId}</Text>
            </View>
 
            </Card>
@@ -954,11 +1105,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginLeft: 10,
     marginRight: 10,
-    height: 120,
+   
     padding: 10,
   },
   cartImageStyle:{
-    height:100,
+    height:75,
     width:'20%',
     overflow: "hidden",
     resizeMode:'contain',
@@ -1016,19 +1167,19 @@ const styles = StyleSheet.create({
     height:50,
   },
   modalView: {
-    marginTop:10,
-    height:"100%",
-    width:'100%',
-    backgroundColor: "white",
+    marginTop: 10,
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'white',
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   imageStyle: {
     height:'60%',
@@ -1043,11 +1194,8 @@ const styles = StyleSheet.create({
     resizeMode:'contain'
   },
   imageModalStyle: {
-    flex:0.6,
+    flex: 0.4,
     height: '100%',
     width: '100%',
-    
-   
-    
   },
 });

@@ -9,6 +9,11 @@ import {
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SmsRetriever from 'react-native-sms-retriever';
 import SmsListener from 'react-native-android-sms-listener'
+import {Mixpanel} from 'mixpanel-react-native';
+
+
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 
 
@@ -106,7 +111,10 @@ export default class Otp extends React.Component {
       })
     }).then((response)=>response.json())
      .then(data=> console.log(data.data))
-    .then(() => this.props.navigation.navigate('NotVerified'));
+    .then(() => {
+      mixpanel.track('register',
+      {'phone number': this.state.phoneno});
+      this.props.navigation.navigate('NotVerified')});
         }
 
   componentDidMount() {

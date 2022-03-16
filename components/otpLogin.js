@@ -10,6 +10,11 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SmsRetriever from 'react-native-sms-retriever';
 import SmsListener from 'react-native-android-sms-listener'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Mixpanel} from 'mixpanel-react-native';
+
+
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 
 export default class Otp extends React.Component {
@@ -125,6 +130,9 @@ export default class Otp extends React.Component {
     //console.log(code);
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
+      mixpanel.track('logged in',
+      {'phone number': this.state.phoneno,
+        'Retailer Data': this.state.retailerData});
       this.storeLoggedin("true");
       this.props.navigation.push('Home')
       //this.handle_register();

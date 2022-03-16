@@ -64,13 +64,13 @@ export default class Categories extends React.Component {
           source={{uri: itemData.item.CategoryImage}}
         />
         <Text
+        numberOfLines={2}
           style={{
             color: 'black',
             textAlign: 'center',
             textAlignVertical:'bottom',
-            marginTop:5,
-            borderBottomRightRadius:10,
-            borderBottomLeftRadius:10,
+            margin:5,
+        
           
           }}>
           {itemData.item.Name}
@@ -93,11 +93,9 @@ export default class Categories extends React.Component {
         numberOfLines={2}
           style={{
             color: 'black',
-           marginTop:5,
+           margin:5,
             textAlign: 'center',
             textAlignVertical:'bottom',
-            borderBottomRightRadius:10,
-            borderBottomLeftRadius:10,
           }}>
           {itemData.item.Name}
         </Text>
@@ -297,12 +295,12 @@ const styles = StyleSheet.create({
   categoryCardStyle: {
    
     borderRadius: 10,
-    height: 150,
-    width: 120,
+    height: 130,
+    width: 110,
     margin:20,
   },
   imageStyle: {
-    height: "70%",
+    height: "60%",
     borderTopRightRadius:10,
     borderTopLeftRadius:10,
     resizeMode:'cover'

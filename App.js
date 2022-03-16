@@ -30,6 +30,7 @@ export default function App() {
   const adjust= async ()=>{
     const adjustConfig = new AdjustConfig("4py4iuyxgem8", AdjustConfig.EnvironmentSandbox);
     Adjust.create(adjustConfig);
+    
   }
 
   useEffect(() => {

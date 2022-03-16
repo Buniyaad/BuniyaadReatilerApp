@@ -38,10 +38,13 @@ import {Mixpanel} from 'mixpanel-react-native';
 import {Adjust, AdjustEvent, AdjustConfig} from 'react-native-adjust';
 import {ImageSlider} from 'react-native-image-slider-banner';
 
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init(); 
+
 const data = [
-  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/716435.jpg'},
-  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/234513.jpg'},
-  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/1373030.jpg'},
+  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7357880.jpg'},
+  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/2931542.jpg'},
+  {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/817587.jpg'},
 ];
 export default class Login extends React.Component {
   state = {
@@ -203,13 +206,13 @@ export default class Login extends React.Component {
       style={{
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: '#FBFCFF',
+        backgroundColor: '#f7f7f7',
       }}>
-      <Text numberOfLines={1} style={{marginLeft: 10,fontSize:17,fontWeight:'bold'}}>
-       Rs. {itemData.item.price}
+      <Text numberOfLines={1} style={{marginLeft: 10,fontSize:17,fontWeight:'bold',marginTop:5}}>
+      {itemData.item.min} 
       </Text>
-      <Text numberOfLines={1} style={{marginRight: 10,fontSize:17,fontWeight:'bold'}}>
-        {itemData.item.min}
+      <Text numberOfLines={1} style={{marginRight: 10,fontSize:17,fontWeight:'bold',marginTop:5}}>
+      Rs. {itemData.item.price} /{this.state.product.Unit}
       </Text>
     </View>
   );
@@ -281,6 +284,8 @@ export default class Login extends React.Component {
         minQuantity: minQTY,
       });
       this.calculateTotal(this.state.price.min);
+      mixpanel.track('View Product',
+      {'product': this.state.product});
       //console.log(JSON.stringify(this.state.productPrices))
     }
   }
@@ -383,6 +388,8 @@ export default class Login extends React.Component {
 
   handle_Cart() {
     //check if cart is created first
+    mixpanel.track('added to cart',
+     {'product': this.state.product});
     this.setState({cart: [], btnDisabled: true});
     ToastAndroid.show('Added to cart', ToastAndroid.SHORT);
 
@@ -523,7 +530,7 @@ export default class Login extends React.Component {
             <Icon name="search" />
           </Label>
           <Input
-            placeholder="search"
+            placeholder=" Search"
             value={this.state.search}
             onChangeText={text => this.setState({search: text})}
             returnKeyType="search"
@@ -562,7 +569,7 @@ export default class Login extends React.Component {
                     alert('coming soon!');
                   }}
                   timer={5000}
-                  caroselImageContainerStyle={{resizeMode: 'contain'}}
+                  caroselImageStyle={{height:150,borderRadius:10,resizeMode:'contain'}}
                   indicatorContainerStyle={{top: 50}}
                 />
               </Card>
@@ -672,9 +679,6 @@ export default class Login extends React.Component {
                         </Text>
                       </View>
 
-                      <Text style={{color: '#737070'}} numberOfLines={2}>
-                        {this.state.product.Description}
-                      </Text>
 
                       <Card
                         style={{
@@ -747,19 +751,21 @@ export default class Login extends React.Component {
                         </Button>
                       </Card>
 
+                      <Text style={{marginTop:30,fontWeight:'bold',backgroundColor:'#FFC000',fontSize:15,color:'white', 
+                      alignSelf: 'flex-start',padding:10,borderTopRightRadius:20,borderTopLeftRadius:10}}>Zyaada Miqdaar - Zyaada Bachat</Text>  
+
                       <View
                         style={{
                           flexDirection: 'row',
                           justifyContent: 'space-between',
-                          backgroundColor: '#FBFCFF',
-                         
-                          marginTop:10,
+                          backgroundColor: '#f7f7f7',
                         }}>
-                        <Text numberOfLines={1} style={{marginLeft: 10, marginTop: 5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
-                          Prices
+                        
+                        <Text numberOfLines={1} style={{marginLeft: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
+                           Miqdaar
                         </Text>
-                        <Text numberOfLines={1} style={{marginLeft: 10, marginTop: 5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
-                          Miqdaar
+                        <Text numberOfLines={1} style={{marginRight: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
+                        Rate
                         </Text>
                       </View>
                     </>
@@ -776,6 +782,7 @@ export default class Login extends React.Component {
                       justifyContent: 'space-between',
                       marginBottom: 20,
                       alignItems: 'center',
+                      borderTopWidth:1,
                     }}>
                     <Text
                       style={{
@@ -805,7 +812,7 @@ export default class Login extends React.Component {
                           ToastAndroid.SHORT,
                         );
                   }}>
-                  <Text>ADD TO CART</Text>
+                  <Text>ITEM ADD KAREIN</Text>
                 </Button>
               </View>
             </View>
@@ -921,10 +928,10 @@ const styles = StyleSheet.create({
   bannerStyle: {
     marginTop: 20,
     alignSelf: 'center',
-    padding: 10,
     width: '95%',
     borderRadius: 10,
-    height: 150,
+   
+   
   },
   labelStyle: {
     marginTop: 50,
