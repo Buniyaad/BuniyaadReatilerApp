@@ -219,21 +219,31 @@ export default class Login extends React.Component {
 
   //get Sab Samaan products
   getAllProducts() {
+    
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
     this.setState({refresh: true});
     fetch(`https://api.buniyaad.pk/products`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
+      signal:controller.signal
     })
       .then(response => response.json())
       .then(res => {
         this.setState({data: res.data, showSpinner: false, refresh: false});
         //console.log(JSON.stringify(res.data));
-      });
+      })
+      .catch(error => {this.setState({showSpinner:false,refresh: false})
+      ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+      });;;
+      
   }
 
   //get Khaas Aap Keh Liye products
   getInterestProducts() {
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
     this.setState({refresh: true});
     fetch(
       `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory}`,
@@ -241,16 +251,20 @@ export default class Login extends React.Component {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
+        signal:controller.signal
       },
     )
       .then(response => response.json())
       .then(res => {
         this.setState({interestedData: res.data, showSpinner: false});
-      });
+      })
+      .catch(error => {this.setState({showSpinner:false,refresh: false})});
   }
 
   //get all prices
   async getPrices(itemData) {
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
     await this.setState({
       modalVisible: true,
       product: itemData.item,
@@ -271,7 +285,11 @@ export default class Login extends React.Component {
           .then(response => response.json())
           .then(res => {
             res.data === null ? null : priceArr.push(res.data);
-          });
+          })
+          .catch(error => {this.setState({showSpinner:false})
+      ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+
+      });
       }
 
       let minQTY = this.getMinQty(priceArr);
@@ -285,7 +303,8 @@ export default class Login extends React.Component {
       });
       this.calculateTotal(this.state.price.min);
       mixpanel.track('View Product',
-      {'product': this.state.product});
+      {'product': this.state.product
+    });
       //console.log(JSON.stringify(this.state.productPrices))
     }
   }
@@ -388,10 +407,11 @@ export default class Login extends React.Component {
 
   handle_Cart() {
     //check if cart is created first
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
     mixpanel.track('added to cart',
      {'product': this.state.product});
     this.setState({cart: [], btnDisabled: true});
-    ToastAndroid.show('Added to cart', ToastAndroid.SHORT);
 
     fetch(
       `https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`,
@@ -399,6 +419,8 @@ export default class Login extends React.Component {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
+
+        signal:controller.signal
       },
     )
       .then(response => response.json())
@@ -459,7 +481,10 @@ export default class Login extends React.Component {
               this.props.navigation.push('Cart');
             });
         }
-      });
+      }).catch(error => {this.setState({btnDisabled:false})
+      ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+
+      });;
   }
 
   //handle back button function
@@ -487,6 +512,7 @@ export default class Login extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({search: ''});
       this.getCart();
+      
     });
 
     this.getData();

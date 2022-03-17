@@ -141,8 +141,12 @@ export default class Login extends React.Component {
     } catch (error) {
       console.log(JSON.stringify(error));
     }
+    await this.setState({phoneno:phoneNumber})
+    if(phoneNumber.length===11){
+      this.handle_loginbtn()
+    }
     
-    this.handle_phoneno(phoneNumber)
+    //this.handle_phoneno(phoneNumber)
     //this.setState({phoneno:phoneNumber})
    }; 
    
@@ -171,6 +175,9 @@ export default class Login extends React.Component {
 
   //check if number is registered, button onpress event
    handle_loginbtn(){
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
+
      this.setState({showSpinner:true,showBtn:false})
     fetch('https://api.buniyaad.pk/auth/contact', {
   method: 'POST',
@@ -178,6 +185,7 @@ export default class Login extends React.Component {
     Accept: 'application/json',
     'Content-Type': 'application/json'
   },
+  signal:controller.signal,
   body: JSON.stringify({
     "contactNo":this.state.phoneno,
   })

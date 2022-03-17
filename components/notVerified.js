@@ -1,13 +1,20 @@
 import * as React from 'react';
-import {StyleSheet, Image} from 'react-native';
+import {StyleSheet, Image, Linking} from 'react-native';
 import {
   Container,
   Content,
   Text,
   Button,
 } from 'native-base';
+import Icon from 'react-native-ionicons';
 
 export default class NotVerified extends React.Component{
+
+  open_WhatsApp(){
+    //alert("hghj")
+    Linking.openURL("https://wa.me/+923213543115?text=Mainey%20abhi%20Buniyaad%20App%20per%20signup%20kia%20hai!%20Mera%20account%20activate%20kar%20dain")
+  }
+  
     render(){return(
       <Container style={styles.containerStyle}>
         <Content>
@@ -16,15 +23,20 @@ export default class NotVerified extends React.Component{
          
          <Button
               style={styles.btnStyle}
-              onPress={() => this.props.navigation.reset({
+              onPress={() => this.open_WhatsApp()
+
+                 /*this.props.navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }]
-           })}>
+           })*/}>
               <Text
                 style={{color: '#FFC000', fontWeight: 'bold', fontSize: 20}}>
-                Back to Login
+                 message Buniyaad
               </Text>
+              <Icon color="#25D366" name="logo-whatsapp" />
             </Button>
+
+            
         
         </Content>
       </Container>

@@ -45,25 +45,20 @@ export default class Account extends React.Component {
     <TouchableOpacity activeOpacity={0.9} onPress={()=>this.getProducts(itemData)}>
       <Card style={styles.orderHistoryCardStyle}>
       
-        <View style={{borderBottomWidth:1}}>
+        <View style={{borderBottomWidth:1, flexDirection:'row',justifyContent:'space-between'}}>
+          <Text style={{fontSize:15,margin:5,fontWeight:'bold',color:'#737070'}}>Order #{itemData.item.orderId}</Text>
           <Text style={{fontSize:15,margin:5,fontWeight:'bold',color:'#737070'}}>{new Date(itemData.item.date).toDateString()}</Text>
         </View>   
 
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{itemData.item.status}</Text>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Status</Text>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#FFC000'}}>{itemData.item.status}</Text>
         </View>   
         
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold'}}>Rs. {itemData.item.amount.toLocaleString('en-GB')}</Text>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Total</Text>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>Rs. {itemData.item.amount.toLocaleString('en-GB')}</Text>
         </View>   
-
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Order ID</Text>
-             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold'}}>{itemData.item.orderId}</Text>
-        </View> 
-      
     
       </Card>
     </TouchableOpacity>

@@ -113,7 +113,8 @@ export default class Otp extends React.Component {
      .then(data=> console.log(data.data))
     .then(() => {
       mixpanel.track('register',
-      {'phone number': this.state.phoneno});
+      {'phone number': this.state.phoneno
+      ,"source":"App"});
       this.props.navigation.navigate('NotVerified')});
         }
 

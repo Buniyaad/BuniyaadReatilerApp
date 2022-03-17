@@ -113,6 +113,7 @@ export default class Otp extends React.Component {
           this.setState({code:otp})
           console.log(otp)
           this.check_otp(otp)
+          //in case listener stops working place the remove() event here
           SmsRetriever.removeSmsListener();
         }); 
         
@@ -128,11 +129,22 @@ export default class Otp extends React.Component {
   //match entered otp with generated otp
   check_otp(code) {
     //console.log(code);
+    let retailerData=this.state.retailerData;
+
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
+      mixpanel.identify(this.state.phoneno)
+      mixpanel.getPeople().set("Name",retailerData.checkUser.Name)
+      mixpanel.getPeople().set("ShopName",retailerData.checkUser.ShopName)
+      mixpanel.getPeople().set( "ShopAdress",retailerData.checkUser.ShopAddress)
+      mixpanel.getPeople().set("Verified",retailerData.checkUser.Verified)
+        
+       
+        
+    
       mixpanel.track('logged in',
-      {'phone number': this.state.phoneno,
-        'Retailer Data': this.state.retailerData});
+      {'phone number': this.state.phoneno
+      ,"source":"App"});
       this.storeLoggedin("true");
       this.props.navigation.push('Home')
       //this.handle_register();

@@ -181,6 +181,8 @@ productPricesItemComponent = itemData => (
   }
 
   async getProducts() {
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
     this.setState({showSpinner: true});
     this.getSuggestedProducts()
     for (let i = 0; i < this.state.cart.length; i++) {
@@ -190,12 +192,15 @@ productPricesItemComponent = itemData => (
           headers: {
             token: `bearer ${this.state.retailerData.token}`,
           },
+          signal:controller.signal
         },
       )
         .then(response => response.json())
         .then(res => {
           res.data === null ? null : this.state.products.push(res.data);
-        });
+        })
+        .catch(error => {ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+   });;
     }
 
     const mergedArray = this.state.products.map(t1 => ({
@@ -391,17 +396,6 @@ productPricesItemComponent = itemData => (
   }
 
 
-  //Place Order prompt
-  placeOrder() {
-    Alert.alert('Place Order?', 'press OK to confirm Order', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {text: 'OK', onPress: () => this.post_order()},
-    ]);
-  }
-
   post_cart() {
     fetch(
       `https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`,
@@ -424,16 +418,20 @@ productPricesItemComponent = itemData => (
 
   handle_Cart() {
     //check if cart is created first
+    let controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000);
+
     mixpanel.track('added to cart',
     {'product': this.state.product});
     this.setState({cart: [], btnDisabled: true});
-    ToastAndroid.show('Added to cart', ToastAndroid.SHORT);
+
     fetch(
       `https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
+        signal:controller.signal,
       },
     )
       .then(response => response.json())
@@ -502,7 +500,10 @@ productPricesItemComponent = itemData => (
               this.getProducts();
             });
         }
-      });
+      })
+      .catch(error => {this.setState({btnDisabled:false})
+      ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+      });;
   }
 
   // Order Starts here
@@ -555,7 +556,7 @@ productPricesItemComponent = itemData => (
           this.getCart();
           this.getProducts();
           this.send_sms();
-          ToastAndroid.show('order has been placed', ToastAndroid.SHORT);
+
           this.getOrderById(orderId)
           //this.props.navigation.push('Account',{showLatestOrder: true})
         });
@@ -751,7 +752,7 @@ productPricesItemComponent = itemData => (
           <Button
             full
             style={[styles.fullBtnStyle, {margin: 10}]}
-            onPress={() => this.placeOrder()}>
+            onPress={() => this.post_order()}>
             <Text>Place Order</Text>
           </Button>
         </Card>

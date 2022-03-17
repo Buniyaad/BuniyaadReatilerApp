@@ -251,15 +251,19 @@ export default class Login extends React.Component {
   
     handle_Cart(){
       //check if cart is created first
+      let controller = new AbortController()
+      setTimeout(() => controller.abort(), 10000);
+
       this.setState({cart:[],btnDisabled:true})
       mixpanel.track('added to cart',
       {'product': this.state.product});
 
-      ToastAndroid.show("Added to cart", ToastAndroid.SHORT)
+     
       fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
+        signal:controller.signal,
       })
         .then(response => response.json())
         .then(res => {
@@ -299,7 +303,10 @@ export default class Login extends React.Component {
         })
      
           }
-        });
+        })
+        .catch(error => {this.setState({btnDisabled:false})
+      ToastAndroid.show("Network issues :(", ToastAndroid.LONG)
+      });
   
         
     }
