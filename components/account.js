@@ -315,6 +315,7 @@ export default class Account extends React.Component {
            style={styles.imageStyle}
             source={{uri: this.state.status==='Processing'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7779254.jpg'
             :this.state.status==='Shipped'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3905138.jpg'
+            :this.state.status==='Cancelled'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7378653.jpg'
             :this.state.status==='Completed'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/8023701.jpg'
             :this.state.status==='Paid'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3854356.jpg'
             :null}}

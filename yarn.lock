@@ -5911,18 +5911,6 @@
   "resolved" "https://registry.npmjs.org/react-native-android-sms-listener/-/react-native-android-sms-listener-0.8.0.tgz"
   "version" "0.8.0"
 
-"react-native-banner-carousel-updated@^1.2.1":
-  "integrity" "sha512-Ws7w8rvf9p8CT10eCyxYl2h7IHWHzTAGOLvXvd7WMqaSdlYJ2LUj0EflU0yTBTInSeFjT62yw03atpG9b9Koqg=="
-  "resolved" "https://registry.npmjs.org/react-native-banner-carousel-updated/-/react-native-banner-carousel-updated-1.2.1.tgz"
-  "version" "1.2.1"
-  dependencies:
-    "typescript" "^4.0.5"
-
-"react-native-banner-carousel@^1.0.3":
-  "integrity" "sha1-g9dgIzzXSWtZWjweUTmf/LFu3LI="
-  "resolved" "https://registry.npmjs.org/react-native-banner-carousel/-/react-native-banner-carousel-1.0.3.tgz"
-  "version" "1.0.3"
-
 "react-native-codegen@^0.0.7":
   "integrity" "sha512-dwNgR8zJ3ALr480QnAmpTiqvFo+rDtq6V5oCggKhYFlRjzOmVSFn3YD41u8ltvKS5G2nQ8gCs2vReFFnRGLYng=="
   "resolved" "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.0.7.tgz"
@@ -5946,6 +5934,11 @@
   "version" "0.2.2"
   dependencies:
     "lodash" "^4.17.15"
+
+"react-native-fast-image@^8.5.11":
+  "integrity" "sha512-cNW4bIJg3nvKaheG8vGMfqCt5LMWX9MS5+wMudgKIHbGO51spRr4sgnlhVgwHLcZ5aeNOVJ8CPRxDIWKRq/0QA=="
+  "resolved" "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.5.11.tgz"
+  "version" "8.5.11"
 
 "react-native-image-slider-banner@^1.0.2":
   "integrity" "sha512-ritikYPrS9Kt+VIW3nDJ8OkdaKAEDL6l3eQOsWjnNudQ8BmMY3aWAzHBJxFV7/6YPHsd+o0w1O9Fcq2UeSlSdw=="
@@ -6032,7 +6025,7 @@
     "prop-types" "^15.7.2"
     "yargs" "^16.1.1"
 
-"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@>=0.38.0", "react-native@>=0.42.0", "react-native@>=0.43.0", "react-native@>=0.50.0", "react-native@>=0.56.0", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@>=0.63.0", "react-native@0.66.4":
+"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@>=0.38.0", "react-native@>=0.42.0", "react-native@>=0.43.0", "react-native@>=0.50.0", "react-native@>=0.56.0", "react-native@>=0.57", "react-native@>=0.57.0", "react-native@>=0.60.0", "react-native@>=0.63.0", "react-native@0.66.4":
   "integrity" "sha512-9vx5dlSfQlKbbDtr8+xMon6qsmSu7jvjdXWZpEKh3XVKpUidbbODv7048gwVKX8YAel1egeR7hN8vzSeI6ssTw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.66.4.tgz"
   "version" "0.66.4"
@@ -6100,7 +6093,7 @@
     "raf" "^3.1.0"
     "tween-functions" "^1.0.1"
 
-"react@*", "react@^16.0", "react@^16.0.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0", "react@^17.0.0", "react@>=16.0", "react@>=16.0.0-alpha.3", "react@>=16.4.1", "react@17.0.2":
+"react@*", "react@^16.0", "react@^16.0.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0", "react@^16.8.6 || ^17.0.0", "react@^17.0.0", "react@>=16.0", "react@>=16.0.0-alpha.3", "react@>=16.4.1", "react@17.0.2":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"
@@ -7102,7 +7095,7 @@
   dependencies:
     "is-typedarray" "^1.0.0"
 
-"typescript@^4.0.5", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta":
+"typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta":
   "integrity" "sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg=="
   "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.6.2.tgz"
   "version" "4.6.2"
