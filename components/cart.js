@@ -316,8 +316,11 @@ productPricesItemComponent = itemData => (
       });
       this.calculateTotal(qty);
       //console.log(JSON.stringify(this.state.productPrices))
-      mixpanel.track('View product',
-      {'product': this.state.product});
+      mixpanel.track('View Product',
+      {'product': this.state.product.Title,
+      'source':'App'
+    });
+
     }
   }
 
@@ -422,7 +425,10 @@ productPricesItemComponent = itemData => (
     setTimeout(() => controller.abort(), 10000);
 
     mixpanel.track('added to cart',
-    {'product': this.state.product});
+    {'product': this.state.product.Title,
+    'quantity': this.state.quantity,
+    'total': this.state.total,
+     'source':'App'});
     this.setState({cart: [], btnDisabled: true});
 
     fetch(
@@ -510,6 +516,9 @@ productPricesItemComponent = itemData => (
   post_order() {
     var orderId='';
 
+   
+
+
     if (this.state.cart.length > 0) {
       // filler for selling price
       let cart = this.state.cart;
@@ -534,13 +543,18 @@ productPricesItemComponent = itemData => (
             products: this.state.cart,
             amount: this.state.cartTotal,
             date: new Date(),
-            orderId: '2000',
           }),
         },
       )
         .then(response => response.json())
         .then(data => orderId=data.data._id)
         .then(() => {
+
+          mixpanel.track('purchased',
+          {'products': this.state.cart,
+          'amount': this.state.cartTotal,
+           'source':'App'});
+
           this.setState({
             productPrices: [],
             pricesFound: false,
@@ -556,7 +570,6 @@ productPricesItemComponent = itemData => (
           this.getCart();
           this.getProducts();
           this.send_sms();
-
           this.getOrderById(orderId)
           //this.props.navigation.push('Account',{showLatestOrder: true})
         });

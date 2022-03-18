@@ -303,7 +303,8 @@ export default class Login extends React.Component {
       });
       this.calculateTotal(this.state.price.min);
       mixpanel.track('View Product',
-      {'product': this.state.product
+      {'product': this.state.product.Title,
+      'source':'App'
     });
       //console.log(JSON.stringify(this.state.productPrices))
     }
@@ -410,7 +411,11 @@ export default class Login extends React.Component {
     let controller = new AbortController()
     setTimeout(() => controller.abort(), 10000);
     mixpanel.track('added to cart',
-     {'product': this.state.product});
+    {'product': this.state.product.Title,
+    'quantity': this.state.quantity,
+    'total': this.state.total,
+     'source':'App'});
+
     this.setState({cart: [], btnDisabled: true});
 
     fetch(

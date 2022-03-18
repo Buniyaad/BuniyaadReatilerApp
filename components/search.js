@@ -146,8 +146,10 @@ export default class Login extends React.Component {
       this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
       this.calculateTotal(this.state.price.min)
 
-      mixpanel.track('View product',
-      {'product': this.state.product});
+      mixpanel.track('View Product',
+      {'product': this.state.product.Title,
+      'source':'App'
+    });
       //console.log(JSON.stringify(this.state.productPrices))
      }
       
@@ -256,7 +258,10 @@ export default class Login extends React.Component {
 
       this.setState({cart:[],btnDisabled:true})
       mixpanel.track('added to cart',
-      {'product': this.state.product});
+    {'product': this.state.product.Title,
+    'quantity': this.state.quantity,
+    'total': this.state.total,
+     'source':'App'});
 
      
       fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {

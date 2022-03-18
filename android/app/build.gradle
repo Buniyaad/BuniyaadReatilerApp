@@ -204,8 +204,6 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
-    compile 'com.google.android.gms:play-services-analytics:10.0.1'
-    compile 'com.android.installreferrer:installreferrer:1.0'
     
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
