@@ -19,7 +19,7 @@ export default class NotVerified extends React.Component{
       <Container style={styles.containerStyle}>
         <Content>
               
-         <Text style={styles.txt} >Unfortunatley You cannot access this page until admin verifies your account</Text>
+         <Text style={styles.txt} >BUNIYAAD APP PER REGISTER KARNE KA SHUKRIYA. HAMARI TEAM JALD AAP SE CONTACT KAREGI!</Text>
          
          <Button
               style={styles.btnStyle}
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
     fontWeight: 'bold',
     color: '#303030',
+    
   },
   phoneInputStyle: {
     marginTop: 20,

@@ -65,7 +65,9 @@ export default class Login extends React.Component {
     btnDisabled: false,
     refresh: false,
     cartCount: '',
+    interestCategory:'',
     interestedData: [],
+    hideAapKehLiye:false,
   };
 
   async storeCart(value) {
@@ -242,10 +244,25 @@ export default class Login extends React.Component {
 
   //get Khaas Aap Keh Liye products
   getInterestProducts() {
+    
+    if(this.state.retailerData.checkUser.IntrustCategory != ''){
     let controller = new AbortController()
     setTimeout(() => controller.abort(), 10000);
     this.setState({refresh: true});
-    fetch(
+
+    fetch(`https://api.buniyaad.pk/categories/getById/${this.state.retailerData.checkUser.IntrustCategory}`,{
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+      signal:controller.signal
+    },)
+    .then(response => response.json())
+    .then(res=>{
+      this.setState({interestCategory:res.data.Name})
+      console.log("category: ",res.data.Name)
+    })
+
+     fetch(
       `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory}`,
       {
         headers: {
@@ -258,7 +275,10 @@ export default class Login extends React.Component {
       .then(res => {
         this.setState({interestedData: res.data, showSpinner: false});
       })
+      .then()
       .catch(error => {this.setState({showSpinner:false,refresh: false})});
+
+    }
   }
 
   //get all prices
@@ -604,7 +624,8 @@ export default class Login extends React.Component {
                   indicatorContainerStyle={{top: 50}}
                 />
               </Card>
-
+              
+              {(this.state.interestCategory==='') && (
               <View>
                 <Text style={styles.labelStyle}> AAP KEH LIYE</Text>
                 <FlatList
@@ -615,10 +636,11 @@ export default class Login extends React.Component {
                   }
                 />
               </View>
+              )}
 
               {this.state.interestedData.length > 0 && (
                 <View>
-                  <Text style={styles.labelStyle}> KHAAS AAP KEH LIYE</Text>
+                  <Text style={styles.labelStyle}> {this.state.interestCategory.toLocaleUpperCase()}</Text>
                   <FlatList
                     horizontal={true}
                     data={this.state.interestedData}
