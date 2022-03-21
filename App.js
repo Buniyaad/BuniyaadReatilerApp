@@ -15,6 +15,7 @@ import NotVerified from './components/notVerified';
 import Search from './components/search';
 import CategoriesSearch from './components/categoriesSearch';
 import OtpLogin from './components/otpLogin'
+import Onboarding from './components/onboarding'
 import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -141,6 +142,11 @@ export default function App() {
         <Stack.Screen
           name="NotVerified"
           component={NotVerified}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Onboarding"
+          component={Onboarding}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

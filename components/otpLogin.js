@@ -145,7 +145,8 @@ export default class Otp extends React.Component {
       {'phone number': this.state.phoneno
       ,"source":"App"});
       this.storeLoggedin("true");
-      this.props.navigation.push('Home')
+      this.props.navigation.push('Onboarding')
+      //this.props.navigation.push('Home')
       //this.handle_register();
     }
 
