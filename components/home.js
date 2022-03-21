@@ -35,7 +35,6 @@ import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import analytics from '@react-native-firebase/analytics';
 import {Mixpanel} from 'mixpanel-react-native';
-import {Adjust, AdjustEvent, AdjustConfig} from 'react-native-adjust';
 import {ImageSlider} from 'react-native-image-slider-banner';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
@@ -640,7 +639,7 @@ export default class Login extends React.Component {
 
               {this.state.interestedData.length > 0 && (
                 <View>
-                  <Text style={styles.labelStyle}> {this.state.interestCategory.toLocaleUpperCase()}</Text>
+                  <Text style={styles.labelStyle}> {this.state.interestCategory.toUpperCase()}</Text>
                   <FlatList
                     horizontal={true}
                     data={this.state.interestedData}

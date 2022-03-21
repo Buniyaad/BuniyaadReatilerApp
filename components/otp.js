@@ -8,7 +8,6 @@ import {
 } from 'native-base';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SmsRetriever from 'react-native-sms-retriever';
-import SmsListener from 'react-native-android-sms-listener'
 import {Mixpanel} from 'mixpanel-react-native';
 
 
