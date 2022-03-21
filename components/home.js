@@ -467,8 +467,10 @@ export default class Login extends React.Component {
             pricesFound: false,
             total: 0,
             quantity: '',
+            btnDisabled: false,
           });
           this.getCart();
+          this.props.navigation.push('Cart')
         } else {
           //add product to existing cart
           fetch(

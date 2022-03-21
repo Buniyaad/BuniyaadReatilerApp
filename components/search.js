@@ -279,7 +279,8 @@ export default class Login extends React.Component {
             console.log("new cart is: ",this.state.cart)
             this.post_cart();
             this.storeCart(this.state.cart)
-            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:''})
+            this.setState({modalVisible:false,productPrices:[],pricesFound:false,total:0,quantity:'',btnDisabled: false})
+            this.props.navigation.push('Cart')
           }
           else{
             //add product to existing cart
