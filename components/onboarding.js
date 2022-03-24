@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, } from 'react-native';
+import {StyleSheet, Image, BackHandler } from 'react-native';
 import {
   Container,
   Content,
@@ -11,18 +11,35 @@ import Onboarding from 'react-native-onboarding-swiper';
 
 export default class NotVerified extends React.Component{
 
-  
+  backAction = () => {
+    let currentScreen = this.props.route.name;
+    console.log(currentScreen);
+    this.props.navigation.replace('Home')
+
+    //BackHandler.exitApp()
+    return true;
+  };
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backAction);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backAction);
+  }
+
     render(){return(
       <Container style={styles.containerStyle}>  
         <Onboarding
-    onDone={() => this.props.navigation.push('Home')}
-    onSkip={()=> this.props.navigation.push('Home')}
+    onDone={() => this.props.navigation.replace('Home')}
+    onSkip={()=> this.props.navigation.replace('Home')}
+
     pages={[
       {
         backgroundColor: '#FFC000',
         subTitleStyles :{fontWeight:'bold'},
         titleStyles :{fontWeight:'bold'},   
-        image: <Image source={require('./assets/Kabhibhi.png')} />,
+        image: <Image  source={require('./assets/Kabhibhi.png')} />,
         title: 'Khush Amdeed!',
         subtitle: 'Dukaan ka saman, mangwana hua asaan! Hamari app say mangwaey apna sab saman ab asani k sath!',
       },
@@ -53,7 +70,7 @@ export default class NotVerified extends React.Component{
 const styles = StyleSheet.create({
   containerStyle: {
     justifyContent: 'center',
-    backgroundColor: '#FFC000',
+   
     flex:1,
   },
   logoStyle: {

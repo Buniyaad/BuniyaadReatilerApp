@@ -64,12 +64,13 @@ export default class Otp extends React.Component {
           this.setState({code:otp})
           console.log(otp)
           this.check_otp(otp)
-          SmsRetriever.removeSmsListener();
+          //SmsRetriever.removeSmsListener();
         }); 
         
       }
     } catch (error) {
       console.log(JSON.stringify(error));
+      SmsRetriever.removeSmsListener();
     }
   };
 
@@ -79,6 +80,7 @@ export default class Otp extends React.Component {
   //match entered otp with generated otp
   check_otp(code) {
     //console.log(code);
+    SmsRetriever.removeSmsListener();
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
       this.handle_register();
@@ -105,7 +107,7 @@ export default class Otp extends React.Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-      "contactNo":this.state.phoneno,
+      "contactNo":`92${this.state.phoneno.substring(1)}`,
     
       })
     }).then((response)=>response.json())
@@ -121,6 +123,7 @@ export default class Otp extends React.Component {
     // send sms and set timer
     this.send_sms();
     console.log(this.state.otp);
+    console.log("User phone num:",`92${this.state.phoneno.substring(1)}`)
     Clipboard.setString('');
     this.setTimer();
     this._onSmsListenerPressed()

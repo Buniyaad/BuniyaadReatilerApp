@@ -113,12 +113,13 @@ export default class Otp extends React.Component {
           console.log(otp)
           this.check_otp(otp)
           //in case listener stops working place the remove() event here
-          SmsRetriever.removeSmsListener();
+          
         }); 
         
       }
     } catch (error) {
       console.log(JSON.stringify(error));
+      SmsRetriever.removeSmsListener();
     }
   };
 
@@ -128,6 +129,8 @@ export default class Otp extends React.Component {
   //match entered otp with generated otp
   check_otp(code) {
     //console.log(code);
+    SmsRetriever.removeSmsListener();
+
     let retailerData=this.state.retailerData;
 
     if (parseInt(this.state.otp) === parseInt(code)) {
@@ -145,7 +148,11 @@ export default class Otp extends React.Component {
       {'phone number': this.state.phoneno
       ,"source":"App"});
       this.storeLoggedin("true");
-      this.props.navigation.push('Onboarding')
+      if(this.state.retailerData.checkUser.UserFirstLogin){
+        this.props.navigation.push('Home')
+      }
+      else{this.props.navigation.push('Onboarding')}
+      
       //this.props.navigation.push('Home')
       //this.handle_register();
     }
@@ -176,6 +183,7 @@ export default class Otp extends React.Component {
          "AreaId":retailerData.checkUser.AreaId,
          "IntrustCategory":retailerData.checkUser.IntrustCategory,
          "token":this.state.FCMtoken,
+         "UserFirstLogin":false,
        })
       }).then((response)=>response.json())
       .then(data=>console.log("results:", data))

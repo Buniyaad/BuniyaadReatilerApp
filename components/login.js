@@ -187,7 +187,7 @@ export default class Login extends React.Component {
   },
   signal:controller.signal,
   body: JSON.stringify({
-    "contactNo":this.state.phoneno,
+    "contactNo":`92${this.state.phoneno.substring(1)}`,
   })
 })
  .then((response)=>response.json())
@@ -209,7 +209,7 @@ export default class Login extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contactNo: this.state.phoneno,
+        contactNo: `92${this.state.phoneno.substring(1)}`,
       }),
     })
       .then(response => response.json())

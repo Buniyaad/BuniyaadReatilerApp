@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, Linking} from 'react-native';
+import {StyleSheet, Image, Linking,BackHandler} from 'react-native';
 import {
   Container,
   Content,
@@ -13,6 +13,23 @@ export default class NotVerified extends React.Component{
   open_WhatsApp(){
     //alert("hghj")
     Linking.openURL("https://wa.me/+923213543115?text=Mainey%20abhi%20Buniyaad%20App%20per%20signup%20kia%20hai!%20Mera%20account%20activate%20kar%20dain")
+  }
+
+  backAction = () => {
+    let currentScreen = this.props.route.name;
+    console.log(currentScreen);
+    this.props.navigation.replace('Login')
+
+    //BackHandler.exitApp()
+    return true;
+  };
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backAction);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backAction);
   }
   
     render(){return(

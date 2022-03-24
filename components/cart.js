@@ -647,9 +647,7 @@ productPricesItemComponent = itemData => (
   send_sms() {
     const messagebody = encodeURIComponent(`Your order has been placed`);
     console.log(messagebody);
-    let phoneno = `92${this.state.retailerData.checkUser.PhoneNumber.substring(
-      1,
-    )}`;
+    let phoneno = this.state.retailerData.checkUser.PhoneNumber;
     console.log(phoneno);
 
     fetch(
