@@ -36,6 +36,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import analytics from '@react-native-firebase/analytics';
 import {Mixpanel} from 'mixpanel-react-native';
 import {ImageSlider} from 'react-native-image-slider-banner';
+import IconButton from 'react-native-vector-icons/dist/lib/icon-button';
+
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init(); 
@@ -67,6 +69,7 @@ export default class Login extends React.Component {
     interestCategory:'',
     interestedData: [],
     hideAapKehLiye:false,
+    notificationRecieved:false,
   };
 
   async storeCart(value) {
@@ -538,6 +541,7 @@ export default class Login extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({search: ''});
       this.getCart();
+    
       
     });
 
@@ -571,7 +575,17 @@ export default class Login extends React.Component {
           </Body>
 
           <Right style={{width: '20%', marginTop: 10}}>
+            <Button transparent
+            badge
+            vertical
+             onPress={()=> this.props.navigation.navigate('Notifications')}>
+              {this.state.notificationRecieved && (
+                <Badge warning>
+                  <Text>H</Text>
+                </Badge>
+              )}
             <Icon color="black" name="notifications" />
+            </Button>
           </Right>
         </Header>
 

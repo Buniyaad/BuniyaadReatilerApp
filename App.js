@@ -16,10 +16,13 @@ import Search from './components/search';
 import CategoriesSearch from './components/categoriesSearch';
 import OtpLogin from './components/otpLogin'
 import Onboarding from './components/onboarding'
+import Notifications from './components/notifications'
+
 import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
@@ -40,16 +43,37 @@ export default function App() {
       // saving error
     }
   }
-
-
-
-
+ */  
 
    useEffect(() => {
-    storeToken();
+
+    messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        console.log(
+          'Notification caused app to open from quit state:',
+          remoteMessage.notification,
+        );
+        //setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+      }
+      //setLoading(false);
+    });
+
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+     // navigation.navigate(remoteMessage.data.type);
+    });
+
+    messaging().onMessage(async remoteMessage => {
+       alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+  })
    
   }, []);
-*/
+
 
   return (
     <NavigationContainer>    
@@ -147,6 +171,11 @@ export default function App() {
         <Stack.Screen
           name="Onboarding"
           component={Onboarding}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Notifications"
+          component={Notifications}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

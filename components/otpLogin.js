@@ -183,7 +183,7 @@ export default class Otp extends React.Component {
          "AreaId":retailerData.checkUser.AreaId,
          "IntrustCategory":retailerData.checkUser.IntrustCategory,
          "token":this.state.FCMtoken,
-         "UserFirstLogin":false,
+         "UserFirstLogin":true,
        })
       }).then((response)=>response.json())
       .then(data=>console.log("results:", data))
