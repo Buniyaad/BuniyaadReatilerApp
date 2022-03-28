@@ -293,8 +293,9 @@ export default class Login extends React.Component {
          <ImageBackground
       style={{width:'100%',height:'100%'}}
       tintColor='#C78E15'
-     source={{uri:'https://s3-alpha-sig.figma.com/img/74c8/1b77/a5860b618da8770a72034c819baaae15?Expires=1646611200&Signature=PKlBd85VHolrYVqR4HJLLooQIq2nkIXOAGTsAplGmQmbIMddPhVx1d93VPHL2-hRAHgpnlFdmdHB~NfWnlp3b-5EM7i9xkPox99Kopt7gmSTYN5zkQxw3iJ7yRAoa6~rpg-d4CPs~YWLBWfO64m0BmTZOfL~Dlm2QjczZJIaAURKjcfIeqqZMG5qTA0Dfr3FoJA78VSsqjgahvzHV~iQv17xLu1mcwknHqrciaveU7VPAj9oR3Nhx1zHw2CAiQa2kApNxoucLkQR6Af0AEA9EAmDaFu9sDvrWzGCdK8vFO80HiW0gJC8Kl3w8pQwvQgm2dSzZ2c3KQhVSgNzE13qNg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA'}}
+     source={require("./assets/home.png")}
    >
+     {/* 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3696030.jpg' */}
         <Content>
          
           <Image

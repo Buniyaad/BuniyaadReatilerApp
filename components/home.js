@@ -37,6 +37,8 @@ import analytics from '@react-native-firebase/analytics';
 import {Mixpanel} from 'mixpanel-react-native';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import IconButton from 'react-native-vector-icons/dist/lib/icon-button';
+import SearchableDropdown from 'react-native-searchable-dropdown';
+import { Fragment } from 'react/cjs/react.production.min';
 
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
@@ -47,6 +49,42 @@ const data = [
   {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/2931542.jpg'},
   {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/817587.jpg'},
 ];
+
+var items = [
+  {
+    id: 1,
+    name: 'JavaScript',
+  },
+  {
+    id: 2,
+    name: 'Java',
+  },
+  {
+    id: 3,
+    name: 'Ruby',
+  },
+  {
+    id: 4,
+    name: 'React Native',
+  },
+  {
+    id: 5,
+    name: 'PHP',
+  },
+  {
+    id: 6,
+    name: 'Python',
+  },
+  {
+    id: 7,
+    name: 'Go',
+  },
+  {
+    id: 8,
+    name: 'Swift',
+  },
+];
+
 export default class Login extends React.Component {
   state = {
     search: '',
@@ -70,6 +108,7 @@ export default class Login extends React.Component {
     interestedData: [],
     hideAapKehLiye:false,
     notificationRecieved:false,
+    productNames:[]
   };
 
   async storeCart(value) {
@@ -235,7 +274,12 @@ export default class Login extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        this.setState({data: res.data, showSpinner: false, refresh: false});
+        let productNames=[] 
+        res.data.map((product)=>{
+          productNames.push({id:product._id,name:product.Title})
+        })
+        console.log(productNames)
+        this.setState({data: res.data,productNames:productNames, showSpinner: false, refresh: false});
         //console.log(JSON.stringify(res.data));
       })
       .catch(error => {this.setState({showSpinner:false,refresh: false})
@@ -595,7 +639,7 @@ export default class Login extends React.Component {
           <Label style={{marginLeft: 10}}>
             <Icon name="search" />
           </Label>
-          <Input
+          {/* <Input
             placeholder=" Search"
             value={this.state.search}
             onChangeText={text => this.setState({search: text})}
@@ -608,8 +652,44 @@ export default class Login extends React.Component {
                     search: this.state.search,
                   })
             }
-          />
+          /> */}
+<Fragment>
+<SearchableDropdown
+            onItemSelect={(item) => {
+              this.setState({ search: item.name });
+              this.state.search == ''
+              ? null
+              : this.props.navigation.navigate('Search', {
+                  data: this.state.retailerData,
+                  search: this.state.search,
+                })
+            }}
+            containerStyle={{width:'90%' }}
+            itemStyle={{
+              padding: 10,
+              marginTop: 2,          
+            }}
+            itemTextStyle={{ color: 'black' }}
+            itemsContainerStyle={{ maxHeight: 150 }}
+            items={this.state.productNames}
+            resetValue={true}
+            textInputProps={
+              {
+                placeholder: "Search",
+                underlineColorAndroid: "transparent",
+                onTextChange: text => this.setState({search:text})
+              }
+            }
+            listProps={
+              {
+                nestedScrollEnabled: true,
+              }
+            }
+        />
+        </Fragment>
         </Item>
+
+      
 
         {/*set aap keh liye as header to sab samaan */}
 
@@ -992,6 +1072,7 @@ const styles = StyleSheet.create({
   searchViewStyle: {
     backgroundColor: '#FFC000',
     height: 30,
+    
   },
   bannerStyle: {
     marginTop: 20,

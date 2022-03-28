@@ -135,7 +135,7 @@ export default class Notifications extends React.Component {
     return (
       <Container style={styles.containerStyle}>
       
-
+      {this.state.data == '' && (<Text style={{textAlign:'center'}}>No notifications to show</Text>)}
       {this.state.data != '' && (
            <FlatList
           ListHeaderComponent={<>
