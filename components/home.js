@@ -39,7 +39,7 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import IconButton from 'react-native-vector-icons/dist/lib/icon-button';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { Fragment } from 'react/cjs/react.production.min';
-
+import messaging from '@react-native-firebase/messaging';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init(); 
@@ -50,40 +50,7 @@ const data = [
   {img: 'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/817587.jpg'},
 ];
 
-var items = [
-  {
-    id: 1,
-    name: 'JavaScript',
-  },
-  {
-    id: 2,
-    name: 'Java',
-  },
-  {
-    id: 3,
-    name: 'Ruby',
-  },
-  {
-    id: 4,
-    name: 'React Native',
-  },
-  {
-    id: 5,
-    name: 'PHP',
-  },
-  {
-    id: 6,
-    name: 'Python',
-  },
-  {
-    id: 7,
-    name: 'Go',
-  },
-  {
-    id: 8,
-    name: 'Swift',
-  },
-];
+
 
 export default class Login extends React.Component {
   state = {
@@ -585,9 +552,13 @@ export default class Login extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({search: ''});
       this.getCart();
-    
+      
       
     });
+
+    messaging().onMessage(async remoteMessage => {
+      this.setState({notificationRecieved:true})
+ })
 
     this.getData();
     //this.getCart();
@@ -622,10 +593,13 @@ export default class Login extends React.Component {
             <Button transparent
             badge
             vertical
-             onPress={()=> this.props.navigation.navigate('Notifications')}>
+            style={{flexDirection:'row'}}
+             onPress={()=> {
+               this.setState({notificationRecieved:false})
+               this.props.navigation.navigate('Notifications')}}>
               {this.state.notificationRecieved && (
-                <Badge warning>
-                  <Text>H</Text>
+                <Badge danger>
+                  <Text>!</Text>
                 </Badge>
               )}
             <Icon color="black" name="notifications" />
@@ -673,12 +647,26 @@ export default class Login extends React.Component {
             itemsContainerStyle={{ maxHeight: 150 }}
             items={this.state.productNames}
             resetValue={true}
+            
             textInputProps={
               {
-                placeholder: "Search",
+                placeholder: " Search",
+                placeholderTextColor:'grey',
                 underlineColorAndroid: "transparent",
-                onTextChange: text => this.setState({search:text})
-              }
+                color:'black',
+                onTextChange: text => this.setState({search:text}),
+                onSubmitEditing: (text)=>    {
+                    console.log("on submit", text)
+                    this.setState({ search: text });
+                    this.state.search == ''
+                    ? null
+                    : this.props.navigation.navigate('Search', {
+                      data: this.state.retailerData,
+                      search: this.state.search,
+                    })
+                },              
+              returnKeyType:'search'
+            }
             }
             listProps={
               {

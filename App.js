@@ -68,9 +68,10 @@ export default function App() {
      // navigation.navigate(remoteMessage.data.type);
     });
 
-    messaging().onMessage(async remoteMessage => {
-       alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  })
+  //   messaging().onMessage(async remoteMessage => {
+  //      alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      
+  // })
    
   }, []);
 

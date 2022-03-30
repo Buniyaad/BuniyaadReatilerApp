@@ -190,7 +190,7 @@ export default class Account extends React.Component {
             },
             { text: "OK", onPress: () => {
               this.storeData()
-              this.props.navigation.replace("Login")
+              this.props.navigation.popToTop()
              }}
           ]
         );
