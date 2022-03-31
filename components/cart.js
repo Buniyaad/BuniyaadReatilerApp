@@ -543,6 +543,7 @@ productPricesItemComponent = itemData => (
             products: this.state.cart,
             amount: this.state.cartTotal,
             date: new Date(),
+            type:'Mobile',
           }),
         },
       )
@@ -1040,7 +1041,7 @@ productPricesItemComponent = itemData => (
 
           <Button full style={styles.fullBtnStyle} onPress={()=> {this.cancelOrder()}}>
 
-          <Text>Cancel</Text>
+          <Text>Cancel Order</Text>
           </Button> 
 
             
