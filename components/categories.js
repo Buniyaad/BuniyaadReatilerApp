@@ -28,6 +28,9 @@ import {
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Mixpanel} from 'mixpanel-react-native';
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 export default class Categories extends React.Component {
   state = {
@@ -43,6 +46,7 @@ export default class Categories extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
+      mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       this.getCategories();
       this.getBrands();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;

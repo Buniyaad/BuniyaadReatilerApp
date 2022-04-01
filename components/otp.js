@@ -40,7 +40,7 @@ export default class Otp extends React.Component {
 
   //send sms params: phoneno, otp
   send_sms() {
-    const messagebody=encodeURIComponent(`Your Buniyaad OTP Code is: ${this.state.otp}\nK0XFHr4Jh4L`)
+    const messagebody=encodeURIComponent(`Your Buniyaad OTP app Code is: ${this.state.otp}\nK0XFHr4Jh4L`)
     console.log(messagebody)
     let phoneno=`92${this.state.phoneno.substring(1)}`
     console.log(phoneno)
@@ -113,10 +113,36 @@ export default class Otp extends React.Component {
     }).then((response)=>response.json())
      .then(data=> console.log(data.data))
     .then(() => {
-      mixpanel.track('register',
+
+      mixpanel.track('OTP Verified',
+    {'phone number': `92${this.state.phoneno.substring(1)}`
+    ,"source":"App"});
+
+      mixpanel.track('Register',
       {'phone number': this.state.phoneno
       ,"source":"App"});
+
+      this.notify_admin();
+      
       this.props.navigation.navigate('NotVerified')});
+    }
+
+      notify_admin(){
+          fetch(
+            `https://api.buniyaad.pk/webretailernotification/sentnotifications/retailer`,
+            {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+             
+              }),
+            },
+          )
+            .then(response => response.json())
+            .then(data => console.log("notified admin",data));
         }
 
   componentDidMount() {
@@ -124,6 +150,9 @@ export default class Otp extends React.Component {
     this.send_sms();
     console.log(this.state.otp);
     console.log("User phone num:",`92${this.state.phoneno.substring(1)}`)
+    mixpanel.track('Verification Initiated',
+    {'phone number': `92${this.state.phoneno.substring(1)}`
+    ,"source":"App"});
     Clipboard.setString('');
     this.setTimer();
     this._onSmsListenerPressed()

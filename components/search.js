@@ -76,6 +76,7 @@ export default class Login extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
+      mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       this.getProductsBySearch();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",JSON.parse(jsonValue))
@@ -257,7 +258,7 @@ export default class Login extends React.Component {
       setTimeout(() => controller.abort(), 10000);
 
       this.setState({cart:[],btnDisabled:true})
-      mixpanel.track('added to cart',
+      mixpanel.track('Add to Cart',
     {'product': this.state.product.Title,
     'quantity': this.state.quantity,
     'total': this.state.total,

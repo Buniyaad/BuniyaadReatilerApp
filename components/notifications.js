@@ -29,10 +29,32 @@ export default class Notifications extends React.Component {
   state = {
     data: [],
     retailerData:'',
-    showSpinner:false
+    showSpinner:false,
+    refresh:false
   };
 
- 
+  getTime(date){
+    date=new Date(date)
+   var hours,ampm,mins;
+  if(date.getHours()>12){
+     hours=date.getHours()-12;
+     hours=hours.toString();
+     ampm=' pm';
+  }
+  else{hours=date.getHours()
+    ampm=' am'}
+
+  if(date.getMinutes()<10){
+    mins='0'+date.getMinutes().toString()
+  }
+  else{
+    mins=date.getMinutes().toString()
+  }
+  
+  date=hours+':'+mins+ampm;
+ return date;
+}
+
 
   notificationsItemsComponent = itemData => (
     <TouchableOpacity activeOpacity={0.9} >
@@ -49,7 +71,11 @@ export default class Notifications extends React.Component {
        </View>   
 
         <Text numberOfLines={2} style={{fontSize:15,margin:5,fontWeight:'bold'}}>{itemData.item.message}</Text>
-        <Text style={{fontSize:15,margin:5,fontWeight:'bold',color:'#737070',textAlign:'right'}}>{new Date(itemData.item.createdAt).toDateString()}</Text>    
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+          <Text style={{fontSize:15,margin:5,fontWeight:'bold',color:'#737070',textAlign:'right'}}>{new Date(itemData.item.createdAt).toDateString()}</Text>
+          <Text style={{fontSize:15,margin:5,fontWeight:'bold',color:'#737070',textAlign:'right'}}>{this.getTime(itemData.item.createdAt)}</Text>
+        </View>
+    
 
   
         </Card>
@@ -77,7 +103,7 @@ export default class Notifications extends React.Component {
 
     //get notifiactions
     getNotifications() {
-      this.setState({refresh:true})
+      this.setState({refresh:true,showSpinner:true})
       fetch(`https://api.buniyaad.pk/notification/getById/${this.state.retailerData.checkUser._id}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -86,7 +112,7 @@ export default class Notifications extends React.Component {
         .then(response => response.json())
         .then(res => {
         let data =res.data.reverse()
-          this.setState({data: data,refresh:false});
+          this.setState({data: data,refresh:false,showSpinner:false});
          // console.log(JSON.stringify(res.data));
         });
     }
@@ -134,12 +160,17 @@ export default class Notifications extends React.Component {
     
     return (
       <Container style={styles.containerStyle}>
-      
-      {this.state.data == '' && (<Text style={{textAlign:'center'}}>No notifications to show</Text>)}
+       {this.state.showSpinner && this.state.data == '' && (
+                <Spinner color={'black'}/>
+               )}
+      {this.state.data == '' && !this.state.showSpinner && (<Text style={{textAlign:'center'}}>No notifications to show</Text>)}
       {this.state.data != '' && (
            <FlatList
           ListHeaderComponent={<>
           <Text style={styles.labelStyle}>Notifications</Text>
+          {this.state.showSpinner && (
+                <Spinner color={'black'}/>
+               )}
            </>}
            data={this.state.data}
            refreshing={this.state.refresh}

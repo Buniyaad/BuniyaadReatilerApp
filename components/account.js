@@ -22,7 +22,9 @@ import {
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {Mixpanel} from 'mixpanel-react-native';
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 export default class Account extends React.Component {
   state = {
@@ -98,6 +100,7 @@ export default class Account extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
+      mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       this.getOrderHistory()
       console.log("hello")
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -171,6 +174,10 @@ export default class Account extends React.Component {
       })
      }).then((response)=>response.json())
      .then(data=>{console.log(data)
+      this.send_cancel_email(this.state.combinedList)
+      this.send_sms_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
+      this.notify_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
+      this.notify_admin_on_cancel()
       this.getOrderHistory();
       ToastAndroid.show('order has been cancelled', ToastAndroid.SHORT);
       this.setState({modalVisible:false})
@@ -223,6 +230,100 @@ export default class Account extends React.Component {
            return true;
          };
 
+         notify_admin_on_cancel(){
+          fetch(
+            `https://api.buniyaad.pk/webnotification/sentnotifications/cancel`,
+            {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                Name:this.state.retailerData.checkUser.Name,
+              }),
+            },
+          )
+            .then(response => response.json())
+            .then(data => console.log("notified admin for cancel",data));
+        }
+
+        notify_on_cancel(orderId,amount){
+          fetch(
+            `https://api.buniyaad.pk/notification/notifications`,
+            {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                UserId:this.state.retailerData.checkUser._id,
+                title:`Order #${orderId}`,
+                body:`cancel ho gaya hai! Kul keemat Rs. ${amount}`,
+                token:[this.state.retailerData.checkUser.token],
+                data:{type:'Account'},
+                Type:'Retailer'
+              }),
+            },
+          )
+            .then(response => response.json())
+            .then(data => console.log("notified admin",data));
+        }
+
+        send_cancel_email(mergedArray){
+
+          let productNames=[]
+           mergedArray.map((prod)=>{
+           productNames.push(prod.Title)
+          })
+      
+          let products=[]
+          this.state.orderDetails.products.map((prod)=>{
+           products.push({"productId":prod.productId,"quantity":prod.quantity,"sellingprice":prod.sellingprice})
+          })
+          console.log("Prod Names",productNames,"  prods ",products)
+      
+          fetch(
+            `https://api.buniyaad.pk/email/sendEmail/order`,
+            {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                token: `bearer ${this.state.retailerData.token}`,
+              },
+              body: JSON.stringify({
+                userId:this.state.retailerData.checkUser._id,
+                products:products,
+                productsName:productNames,
+                amount:this.state.amount,
+                status:'Cancelled',
+                orderId:this.state.orderId,
+                date: new Date(),
+                retailername:this.state.retailerData.checkUser.Name,
+                retailerContact:this.state.retailerData.checkUser.PhoneNumber,
+                retialerShop:this.state.retailerData.checkUser.ShopAddress,
+                retailerCnic:this.state.retailerData.checkUser.CNIC,
+                retailerShopName: this.state.retailerData.checkUser.ShopName
+      
+              }),
+            },
+          )
+            .then(response => response.json())
+            .then(data => console.log("email resp: ",data));
+        }
+
+        send_sms_on_cancel(orderId,amount) {
+          const messagebody = encodeURIComponent(`Apka Order #${orderId} jiss ki kul qeemat Rs. ${amount} hai, cancel ho gaya hai. Kisi bhi masla ya madad ki soorat may hamari team say rabta karain.\n\nBuniyaad say order karna ka SHUKRIYA`);
+          console.log(messagebody);
+          let phoneno = this.state.retailerData.checkUser.PhoneNumber;
+          console.log(phoneno);
+      
+          fetch(
+            `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=BuniyadTech&phone=${phoneno}&type=English&message=${messagebody}`,
+          );
+        }
   componentDidMount(){
     this.getData();
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
@@ -243,9 +344,7 @@ export default class Account extends React.Component {
 
           {this.state.retailerData != '' && (
            <FlatList
-          ListHeaderComponent={<>
-
-          <Text style={styles.itemLabelStyle}>Retailer:</Text>   
+          ListHeaderComponent={<>  
           
           <Card style={styles.retailerCardStyle}>
               <Image
@@ -315,9 +414,10 @@ export default class Account extends React.Component {
            style={styles.imageStyle}
             source={{uri: this.state.status==='Processing'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7779254.jpg'
             :this.state.status==='Shipped'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3905138.jpg'
-            :this.state.status==='Cancelled'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/7378653.jpg'
-            :this.state.status==='Completed'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/8023701.jpg'
-            :this.state.status==='Paid'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/3854356.jpg'
+            :this.state.status==='Cancelled'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/2771678.jpg'
+            :this.state.status==='Completed'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/1167358.jpg'
+            :this.state.status==='Confirmed'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/701380.jpg'
+            :this.state.status==='Delivered'?'https://buniyaadimages.s3.ap-southeast-1.amazonaws.com/747491.jpg'
             :null}}
           />
 

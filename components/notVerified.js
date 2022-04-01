@@ -7,18 +7,27 @@ import {
   Button,
 } from 'native-base';
 import Icon from 'react-native-ionicons';
+import {Mixpanel} from 'mixpanel-react-native';
+
+
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 export default class NotVerified extends React.Component{
 
+
+
   open_WhatsApp(){
     //alert("hghj")
+    mixpanel.track('WhatsApp contact Initiated',
+    {"source":"App"});
     Linking.openURL("https://wa.me/+923213543115?text=Mainey%20abhi%20Buniyaad%20App%20per%20signup%20kia%20hai!%20Mera%20account%20activate%20kar%20dain")
   }
 
   backAction = () => {
     let currentScreen = this.props.route.name;
     console.log(currentScreen);
-    this.props.navigation.replace('Login')
+    this.props.navigation.push('Login')
 
     //BackHandler.exitApp()
     return true;
@@ -26,6 +35,7 @@ export default class NotVerified extends React.Component{
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
+    
   }
 
   componentWillUnmount() {

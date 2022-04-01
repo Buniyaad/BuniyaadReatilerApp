@@ -77,6 +77,7 @@ export default class CategoriesSearch extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
+      mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       if(this.state.type==='category')
       {
         this.getProductsBySearch();
@@ -264,7 +265,7 @@ export default class CategoriesSearch extends React.Component {
 
     this.setState({cart:[],btnDisabled:true})
     
-    mixpanel.track('added to cart',
+    mixpanel.track('Add to Cart',
     {'product': this.state.product.Title,
     'quantity': this.state.quantity,
     'total': this.state.total,

@@ -219,6 +219,7 @@ export default class Login extends React.Component {
       .then(() => this.check_Verified());
   }
 
+
     //check whether user is verified
     check_Verified() {
      

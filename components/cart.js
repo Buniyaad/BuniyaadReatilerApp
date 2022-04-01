@@ -172,7 +172,7 @@ productPricesItemComponent = itemData => (
     try {
       const jsonValue = await AsyncStorage.getItem('test');
       this.setState({retailerData: JSON.parse(jsonValue)});
-
+      mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log('this is async data: ', JSON.parse(jsonValue));
     } catch (e) {
@@ -424,7 +424,7 @@ productPricesItemComponent = itemData => (
     let controller = new AbortController()
     setTimeout(() => controller.abort(), 10000);
 
-    mixpanel.track('added to cart',
+    mixpanel.track('Add to Cart',
     {'product': this.state.product.Title,
     'quantity': this.state.quantity,
     'total': this.state.total,
@@ -551,7 +551,7 @@ productPricesItemComponent = itemData => (
         .then(data => orderId=data.data._id)
         .then(() => {
 
-          mixpanel.track('purchased',
+          mixpanel.track('Order Placed',
           {'products': this.state.cart,
           'amount': this.state.cartTotal,
            'source':'App'});
@@ -570,8 +570,10 @@ productPricesItemComponent = itemData => (
           this.storeCart(this.state.cart);
           this.getCart();
           this.getProducts();
-          this.send_sms();
+          
           this.getOrderById(orderId)
+          this.notify_admin();
+          
           //this.props.navigation.push('Account',{showLatestOrder: true})
         });
     } else {
@@ -600,9 +602,8 @@ productPricesItemComponent = itemData => (
       await this.setState({orderModalVisible:true,orderDetails:itemData,amount:itemData.amount,status:itemData.status,
       orderId:itemData.orderId})
        console.log("tester :",this.state.orderDetails)
-
-       // Sending email here
-       this.send_email();
+      
+       this.send_sms(this.state.orderId,this.state.amount); 
 
        for(let i=0;i<this.state.orderDetails.products.length;i++){
         await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
@@ -617,7 +618,10 @@ productPricesItemComponent = itemData => (
            const mergedArray = this.state.products.map(t1 => ({...t1, ...this.state.orderDetails.products.find(t2 => t2.productId === t1._id)}))
            this.setState({orderCombinedList:mergedArray,showSpinner:false})
           console.log("merged array",mergedArray)
-  
+
+          // Sending email here
+       this.send_email(mergedArray);
+       this.notify(this.state.orderId,this.state.amount)
   
       }
 
@@ -637,20 +641,34 @@ productPricesItemComponent = itemData => (
      }).then((response)=>response.json())
      .then(data=>{console.log(data)
       ToastAndroid.show('order has been cancelled', ToastAndroid.SHORT);
+      mixpanel.track('Order Cancelled',
+      {
+      'source':'App'
+    });
+      this.send_cancel_email(this.state.orderCombinedList)
+      this.send_sms_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
+      this.notify_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
+      this.notify_admin_on_cancel()
       this.setState({orderModalVisible:false})
       
      })
          
       }
 
+      
+
       goToProfile(){
         this.setState({orderModalVisible:false});
+        mixpanel.track('Order History viewed',
+      {
+      'source':'App'
+    });
         this.props.navigation.push('Account')
       }
 
   //send sms params: phoneno, otp
-  send_sms() {
-    const messagebody = encodeURIComponent(`Your order has been placed`);
+  send_sms(orderId,amount) {
+    const messagebody = encodeURIComponent(`Apka Order #${orderId} jiss ki kul qeemat Rs. ${amount} hai, hamein mosool ho gaya hai. Hamara numainda jald aap say rabta kar kai order confirm karega.\n\nBuniyaad say order karna ka SHUKRIYA!`);
     console.log(messagebody);
     let phoneno = this.state.retailerData.checkUser.PhoneNumber;
     console.log(phoneno);
@@ -660,8 +678,112 @@ productPricesItemComponent = itemData => (
     );
   }
 
+  send_sms_on_cancel(orderId,amount) {
+    const messagebody = encodeURIComponent(`Apka Order #${orderId} jiss ki kul qeemat Rs. ${amount} hai, cancel ho gaya hai. Kisi bhi masla ya madad ki soorat may hamari team say rabta karain.\n\nBuniyaad say order karna ka SHUKRIYA`);
+    console.log(messagebody);
+    let phoneno = this.state.retailerData.checkUser.PhoneNumber;
+    console.log(phoneno);
+
+    fetch(
+      `https://sms.lrt.com.pk/api/sms-single-or-bulk-api.php?username=Waze&password=Waze0987654321asdfghjkl&apikey=f5df4546ce2eac4b86172e2d29aa4046&sender=BuniyadTech&phone=${phoneno}&type=English&message=${messagebody}`,
+    );
+  }
+
+  notify(orderId,amount){
+    fetch(
+      `https://api.buniyaad.pk/notification/notifications`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          UserId:this.state.retailerData.checkUser._id,
+          title:`Order #${orderId}`,
+          body:`hama mosool ho gaya hai! Kul keemat Rs. ${amount}`,
+          token:[this.state.retailerData.checkUser.token],
+          data:{type:'Account'},
+          Type:'Retailer'
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log("notified admin",data));
+  }
+
+  notify_on_cancel(orderId,amount){
+    fetch(
+      `https://api.buniyaad.pk/notification/notifications`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          UserId:this.state.retailerData.checkUser._id,
+          title:`Order #${orderId}`,
+          body:`cancel ho gaya hai! Kul keemat Rs. ${amount}`,
+          token:[this.state.retailerData.checkUser.token],
+          data:{type:'Account'},
+          Type:'Retailer'
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log("notified admin",data));
+  }
+
+  notify_admin(){
+    fetch(
+      `https://api.buniyaad.pk/webnotification/sentnotifications`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Name:this.state.retailerData.checkUser.Name,
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log("notified admin",data));
+  }
+
+  notify_admin_on_cancel(){
+    fetch(
+      `https://api.buniyaad.pk/webnotification/sentnotifications/cancel`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Name:this.state.retailerData.checkUser.Name,
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log("notified admin for cancel",data));
+  }
+
   //send email 
-  send_email(){
+  send_email(mergedArray){
+
+    let productNames=[]
+     mergedArray.map((prod)=>{
+     productNames.push(prod.Title)
+    })
+
+    let products=[]
+    this.state.orderDetails.products.map((prod)=>{
+     products.push({"productId":prod.productId,"quantity":prod.quantity,"sellingprice":prod.sellingprice})
+    })
+    console.log("Prod Names",productNames,"  prods ",products)
 
     fetch(
       `https://api.buniyaad.pk/email/sendEmail/order`,
@@ -673,12 +795,61 @@ productPricesItemComponent = itemData => (
           token: `bearer ${this.state.retailerData.token}`,
         },
         body: JSON.stringify({
+          userId:this.state.retailerData.checkUser._id,
+          products:products,
+          productsName:productNames,
           amount:this.state.amount,
           status:this.state.status,
           orderId:this.state.orderId,
           date: new Date(),
           retailername:this.state.retailerData.checkUser.Name,
-          count:this.state.orderDetails.products.length,
+          retailerContact:this.state.retailerData.checkUser.PhoneNumber,
+          retialerShop:this.state.retailerData.checkUser.ShopAddress,
+          retailerCnic:this.state.retailerData.checkUser.CNIC,
+          retailerShopName: this.state.retailerData.checkUser.ShopName
+
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log("email resp: ",data));
+  }
+
+  send_cancel_email(mergedArray){
+
+    let productNames=[]
+     mergedArray.map((prod)=>{
+     productNames.push(prod.Title)
+    })
+
+    let products=[]
+    this.state.orderDetails.products.map((prod)=>{
+     products.push({"productId":prod.productId,"quantity":prod.quantity,"sellingprice":prod.sellingprice})
+    })
+    console.log("Prod Names",productNames,"  prods ",products)
+
+    fetch(
+      `https://api.buniyaad.pk/email/sendEmail/order`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+        body: JSON.stringify({
+          userId:this.state.retailerData.checkUser._id,
+          products:products,
+          productsName:productNames,
+          amount:this.state.amount,
+          status:'Cancelled',
+          orderId:this.state.orderId,
+          date: new Date(),
+          retailername:this.state.retailerData.checkUser.Name,
+          retailerContact:this.state.retailerData.checkUser.PhoneNumber,
+          retialerShop:this.state.retailerData.checkUser.ShopAddress,
+          retailerCnic:this.state.retailerData.checkUser.CNIC,
+          retailerShopName: this.state.retailerData.checkUser.ShopName
 
         }),
       },
@@ -689,8 +860,9 @@ productPricesItemComponent = itemData => (
 
   closeOrderModal(){
     this.setState({orderModalVisible:false,orderCombinedlist:[],products:[]});
-    this.props.navigation.push('Home')
+    this.props.navigation.navigate('Home')
   }
+
 
   //handle back button function
   backAction = () => {

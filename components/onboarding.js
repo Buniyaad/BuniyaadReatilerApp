@@ -8,31 +8,75 @@ import {
 } from 'native-base';
 import Icon from 'react-native-ionicons';
 import Onboarding from 'react-native-onboarding-swiper';
+import {Mixpanel} from 'mixpanel-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
+mixpanel.init();
 
 export default class NotVerified extends React.Component{
+  state={
+    retailerData:[],
+  }
 
-  backAction = () => {
-    let currentScreen = this.props.route.name;
-    console.log(currentScreen);
-    this.props.navigation.replace('Home')
+  async getData(){
+    try {
+      const jsonValue = await AsyncStorage.getItem('test')
+      await this.setState({retailerData:JSON.parse(jsonValue)})
+      //this.sendToken();
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      console.log("this is async data: ",JSON.parse(jsonValue))
+      
+    } catch(e) {
+      // error reading value
+    }
+  }
 
-    //BackHandler.exitApp()
-    return true;
-  };
+  
+ async storeData(value){
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem('test', jsonValue)
+  } catch (e) {
+    // saving error
+  }
+}
+
+  
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
+    
+    mixpanel.track('First Time Login',
+    {"source":"App"});
   }
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backAction);
   }
 
+  onDone(){
+    mixpanel.track('Tutorial Completed',
+    {"source":"App"});
+    mixpanel.track('First Time Login',
+      {"source":"App"});
+    this.props.navigation.push('Home')
+  }
+
+  onSkip(){
+      mixpanel.track('Tutorial Skipped',
+      {"source":"App"});
+      mixpanel.track('First Time Login',
+      {"source":"App"});
+      this.props.navigation.replace('Home')
+  }
+
     render(){return(
       <Container style={styles.containerStyle}>  
         <Onboarding
-    onDone={() => this.props.navigation.replace('Home')}
-    onSkip={()=> this.props.navigation.replace('Home')}
+    onDone={() => this.onDone()}
+    onSkip={()=> this.onSkip()}
 
     pages={[
       {

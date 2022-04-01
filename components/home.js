@@ -102,6 +102,7 @@ export default class Login extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test');
       this.setState({retailerData: JSON.parse(jsonValue)});
+      mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       this.getAllProducts();
       this.getInterestProducts();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -258,12 +259,12 @@ export default class Login extends React.Component {
   //get Khaas Aap Keh Liye products
   getInterestProducts() {
     
-    if(this.state.retailerData.checkUser.IntrustCategory != ''){
+    if(this.state.retailerData.checkUser.IntrustCategory.length>0){
     let controller = new AbortController()
     setTimeout(() => controller.abort(), 10000);
     this.setState({refresh: true});
 
-    fetch(`https://api.buniyaad.pk/categories/getById/${this.state.retailerData.checkUser.IntrustCategory}`,{
+    fetch(`https://api.buniyaad.pk/categories/getById/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,{
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -276,7 +277,7 @@ export default class Login extends React.Component {
     })
 
      fetch(
-      `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory}`,
+      `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -443,7 +444,7 @@ export default class Login extends React.Component {
     //check if cart is created first
     let controller = new AbortController()
     setTimeout(() => controller.abort(), 10000);
-    mixpanel.track('added to cart',
+    mixpanel.track('Add to cart',
     {'product': this.state.product.Title,
     'quantity': this.state.quantity,
     'total': this.state.total,
@@ -552,6 +553,7 @@ export default class Login extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({search: ''});
       this.getCart();
+    
       
       
     });

@@ -1,7 +1,7 @@
 import React,{useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Container, NativeBaseProvider} from 'native-base';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from './components/login';
 import Home from './components/home';
@@ -17,6 +17,8 @@ import CategoriesSearch from './components/categoriesSearch';
 import OtpLogin from './components/otpLogin'
 import Onboarding from './components/onboarding'
 import Notifications from './components/notifications'
+import { navigationRef, isReadyRef } from './RootNavigation';
+import * as RootNavigation from './RootNavigation.js';
 
 import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
@@ -27,25 +29,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
 const Stack = createNativeStackNavigator();
-
+var retailerData=[];
 
 export default function App() {
+ // const navigation = useNavigation();
 
-
- /* const storeToken= async ()=>{
-    const token = await messaging().getToken();
-   
+  const getData= async ()=>{
     try {
-      const jsonValue = JSON.stringify(token)
-      await AsyncStorage.setItem('token', jsonValue)
-      console.log("FCM token: ",jsonValue)
+      const jsonValue = await AsyncStorage.getItem('loggedIn');
+      IsLoggedIn= JSON.parse(jsonValue)
+      if(IsLoggedIn==='true'){
+        RootNavigation.navigate('Account')
+      }
+      
+      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      console.log('this is async data: ', JSON.parse(jsonValue));
     } catch (e) {
-      // saving error
+      // error reading value
     }
   }
- */  
+ 
 
    useEffect(() => {
+    
+    isReadyRef.current = false
+    
+    
 
     messaging()
     .getInitialNotification()
@@ -55,7 +64,7 @@ export default function App() {
           'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
-        //setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+       
       }
       //setLoading(false);
     });
@@ -65,7 +74,8 @@ export default function App() {
         'Notification caused app to open from background state:',
         remoteMessage.notification,
       );
-     // navigation.navigate(remoteMessage.data.type);
+      getData()
+      
     });
 
   //   messaging().onMessage(async remoteMessage => {
@@ -77,7 +87,9 @@ export default function App() {
 
 
   return (
-    <NavigationContainer>    
+    <NavigationContainer ref={navigationRef} onReady={() => {
+      isReadyRef.current = true;
+}}>    
       <Stack.Navigator>
         <Stack.Screen
           name="Login"

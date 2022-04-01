@@ -88,7 +88,7 @@ export default class Otp extends React.Component {
 
   //send sms params: phoneno, otp
   send_sms() {
-    const messagebody=encodeURIComponent(`Your Buniyaad OTP Code is: ${this.state.otp}\nK0XFHr4Jh4L`)
+    const messagebody=encodeURIComponent(`Your Buniyaad app OTP Code is: ${this.state.otp}\nK0XFHr4Jh4L`)
     console.log(messagebody)
     let phoneno=`92${this.state.phoneno.substring(1)}`
     console.log(phoneno)
@@ -135,17 +135,19 @@ export default class Otp extends React.Component {
 
     if (parseInt(this.state.otp) === parseInt(code)) {
       ToastAndroid.show("OTP matched", ToastAndroid.SHORT)
-      mixpanel.identify(this.state.phoneno)
+      mixpanel.identify(`92${this.state.phoneno.substring(1)}`)
       mixpanel.getPeople().set("Name",retailerData.checkUser.Name)
       mixpanel.getPeople().set("ShopName",retailerData.checkUser.ShopName)
       mixpanel.getPeople().set( "ShopAdress",retailerData.checkUser.ShopAddress)
       mixpanel.getPeople().set("Verified",retailerData.checkUser.Verified)
         
        
-        
+      mixpanel.track('OTP Verified',
+    {'phone number': `92${this.state.phoneno.substring(1)}`
+    ,"source":"App"});  
     
       mixpanel.track('logged in',
-      {'phone number': this.state.phoneno
+      {'phone number': `92${this.state.phoneno.substring(1)}`
       ,"source":"App"});
       this.storeLoggedin("true");
       if(this.state.retailerData.checkUser.UserFirstLogin){
@@ -187,6 +189,9 @@ export default class Otp extends React.Component {
        })
       }).then((response)=>response.json())
       .then(data=>console.log("results:", data))
+      
+  
+     
      }
  
 
@@ -225,6 +230,9 @@ export default class Otp extends React.Component {
     this.getData();
     this.send_sms();
     console.log(this.state.otp);
+    mixpanel.track('Verification Initiated',
+    {'phone number': `92${this.state.phoneno.substring(1)}`
+    ,"source":"App"});
     Clipboard.setString('');
     this.setTimer();
     this._onSmsListenerPressed()
