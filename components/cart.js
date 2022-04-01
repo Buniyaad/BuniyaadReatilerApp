@@ -643,6 +643,10 @@ productPricesItemComponent = itemData => (
          
       }
 
+      goToProfile(){
+        this.setState({orderModalVisible:false});
+        this.props.navigation.push('Account')
+      }
 
   //send sms params: phoneno, otp
   send_sms() {
@@ -681,6 +685,11 @@ productPricesItemComponent = itemData => (
     )
       .then(response => response.json())
       .then(data => console.log("email resp: ",data));
+  }
+
+  closeOrderModal(){
+    this.setState({orderModalVisible:false,orderCombinedlist:[],products:[]});
+    this.props.navigation.push('Home')
   }
 
   //handle back button function
@@ -989,9 +998,7 @@ productPricesItemComponent = itemData => (
           animationType="slide"
           transparent={true}
           visible={this.state.orderModalVisible}
-          onRequestClose={() => {
-            this.setState({orderModalVisible:false,orderCombinedlist:[],products:[]});
-          }}
+          onRequestClose={() => this.closeOrderModal()}
         >
           <View >
             <View style={styles.modalView}>
@@ -1003,7 +1010,7 @@ productPricesItemComponent = itemData => (
            <Button
               transparent
               style={{marginLeft:10}}
-              onPress={() => this.setState({orderModalVisible:false,orderCombinedlist:[],products:[]})}>
+              onPress={() => this.closeOrderModal()}>
               <Icon name='close-circle-outline' color='#737070'  style={{fontSize:35}}/>
             </Button>
           <Text style={styles.labelStyle}>Order Details</Text>
@@ -1039,7 +1046,12 @@ productPricesItemComponent = itemData => (
           renderItem={item => this.orderItemsComponent(item)}
          />
 
-          <Button full style={styles.fullBtnStyle} onPress={()=> {this.cancelOrder()}}>
+        <Button full style={styles.fullBtnStyle} onPress={()=> {this.goToProfile()}}>
+
+        <Text>Aap keh Orders</Text>
+        </Button> 
+
+          <Button full danger style={styles.cancelBtnStyle} onPress={()=> {this.cancelOrder()}}>
 
           <Text>Cancel Order</Text>
           </Button> 
@@ -1173,8 +1185,15 @@ const styles = StyleSheet.create({
   fullBtnStyle:{
     backgroundColor: '#ffab03',
     borderRadius:10,
-    marginBottom:40,
     marginTop:10,
+    marginLeft:10,
+    marginRight:10,
+    height:50,
+  },
+  cancelBtnStyle:{
+    borderRadius:10,
+    marginTop:10,
+    marginBottom:40,
     marginLeft:10,
     marginRight:10,
     height:50,
