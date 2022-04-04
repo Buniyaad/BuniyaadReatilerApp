@@ -74,6 +74,8 @@ export default class Login extends React.Component {
     cartCount: '',
     interestCategory:'',
     interestedData: [],
+    interestCategory2:'',
+    interestedData2: [],
     hideAapKehLiye:false,
     notificationRecieved:false,
     productNames:[]
@@ -278,7 +280,7 @@ export default class Login extends React.Component {
     })
 
      fetch(
-      `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,
+      `https://api.buniyaad.pk/categories/GetFiveProducts/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -289,11 +291,42 @@ export default class Login extends React.Component {
       .then(response => response.json())
       .then(res => {
         this.setState({interestedData: res.data, showSpinner: false});
-        console.log("category: ",res.data)
       })
       .then()
       .catch(error => {this.setState({showSpinner:false,refresh: false})});
-      
+
+      if(this.state.retailerData.checkUser.IntrustCategory.length===2){
+        
+    fetch(`https://api.buniyaad.pk/categories/getById/${this.state.retailerData.checkUser.IntrustCategory[1].id}`,{
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+      signal:controller.signal
+    },)
+    .then(response => response.json())
+    .then(res=>{
+      this.setState({interestCategory2:res.data.Name})
+      console.log("category: ",res.data.Name)
+    })
+
+     fetch(
+      `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory[1].id}`,
+      {
+        headers: {
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+        signal:controller.signal
+      },
+    )
+      .then(response => response.json())
+      .then(res => {
+        this.setState({interestedData2: res.data, showSpinner: false});
+      })
+      .then()
+      .catch(error => {this.setState({showSpinner:false,refresh: false})});
+
+      }
+
     }
   }
 
@@ -732,6 +765,19 @@ export default class Login extends React.Component {
                   <FlatList
                     horizontal={true}
                     data={this.state.interestedData}
+                    renderItem={item =>
+                      this.interestProductsItemComponent(item)
+                    }
+                  />
+                </View>
+              )}
+
+          {this.state.interestedData2.length > 0 && (
+                <View>
+                  <Text style={styles.labelStyle}> {this.state.interestCategory2.toUpperCase()}</Text>
+                  <FlatList
+                    horizontal={true}
+                    data={this.state.interestedData2}
                     renderItem={item =>
                       this.interestProductsItemComponent(item)
                     }

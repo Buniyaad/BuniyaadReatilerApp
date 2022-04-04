@@ -1148,7 +1148,7 @@ productPricesItemComponent = itemData => (
                 <Button
                   full
                   disabled={this.state.btnDisabled}
-                  style={styles.fullBtnStyle}
+                  style={styles.fullProductBtnStyle}
                   onPress={() => {
                     this.state.quantity >= this.state.minQuantity
                       ? this.handle_Cart()
@@ -1358,6 +1358,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffab03',
     borderRadius:10,
     marginTop:10,
+    marginLeft:10,
+    marginRight:10,
+    height:50,
+  },
+  fullProductBtnStyle:{
+    backgroundColor: '#ffab03',
+    borderRadius:10,
+    marginTop:10,
+    marginBottom:40,
     marginLeft:10,
     marginRight:10,
     height:50,
