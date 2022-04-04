@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, Image, BackHandler } from 'react-native';
+import {StyleSheet, Image, BackHandler} from 'react-native';
 import {
   Container,
   Content,
@@ -18,6 +18,7 @@ mixpanel.init();
 export default class NotVerified extends React.Component{
   state={
     retailerData:[],
+    phoneno:`${this.props.route.params.phoneno}`,
   }
 
   async getData(){
@@ -43,11 +44,31 @@ export default class NotVerified extends React.Component{
   }
 }
 
+update_retailerData() {
+  console.log(this.state.phoneno)
+  this.setState({showSpinner: true, showBtn: false});
+  fetch('https://api.buniyaad.pk/auth/login', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      contactNo: this.state.phoneno,
+    }),
+  })
+    .then(response => response.json())
+    .then(data =>
+      {this.storeData(data.data)
+      console.log("here is updated data ",data.data)}
+    )
+}
+
   
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backAction);
-    
+    this.update_retailerData();
     mixpanel.track('First Time Login',
     {"source":"App"});
   }

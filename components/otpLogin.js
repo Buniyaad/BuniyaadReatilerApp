@@ -89,7 +89,8 @@ export default class Otp extends React.Component {
   //send sms params: phoneno, otp
   send_sms() {
     const messagebody=encodeURIComponent(`Your Buniyaad app OTP Code is: ${this.state.otp}\nK0XFHr4Jh4L`)
-    console.log(messagebody)
+    // DEBUG HASH 7/T/23FErL1
+    console.log(messagebody) 
     let phoneno=`92${this.state.phoneno.substring(1)}`
     console.log(phoneno)
 
@@ -108,7 +109,7 @@ export default class Otp extends React.Component {
       if (registered) {
         
          SmsRetriever.addSmsListener(event => {
-          let otp= event.message.substring(27,31)
+          let otp= event.message.substring(31,36)
           this.setState({code:otp})
           console.log(otp)
           this.check_otp(otp)
@@ -153,7 +154,7 @@ export default class Otp extends React.Component {
       if(this.state.retailerData.checkUser.UserFirstLogin){
         this.props.navigation.push('Home')
       }
-      else{this.props.navigation.push('Onboarding')}
+      else{this.props.navigation.push('Onboarding',{phoneno:`92${this.state.phoneno.substring(1)}`})}
       
       //this.props.navigation.push('Home')
       //this.handle_register();

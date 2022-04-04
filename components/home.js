@@ -11,6 +11,7 @@ import {
   BackHandler,
   ToastAndroid,
   Modal,
+  Vibration 
 } from 'react-native';
 import {
   Badge,
@@ -288,10 +289,11 @@ export default class Login extends React.Component {
       .then(response => response.json())
       .then(res => {
         this.setState({interestedData: res.data, showSpinner: false});
+        console.log("category: ",res.data)
       })
       .then()
       .catch(error => {this.setState({showSpinner:false,refresh: false})});
-
+      
     }
   }
 
@@ -560,6 +562,7 @@ export default class Login extends React.Component {
 
     messaging().onMessage(async remoteMessage => {
       this.setState({notificationRecieved:true})
+      Vibration.vibrate(100);
  })
 
     this.getData();
