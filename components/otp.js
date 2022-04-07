@@ -60,7 +60,7 @@ export default class Otp extends React.Component {
       if (registered) {
         
          SmsRetriever.addSmsListener(event => {
-          let otp= event.message.substring(27,31)
+          let otp= event.message.substring(31,36)
           this.setState({code:otp})
           console.log(otp)
           this.check_otp(otp)
