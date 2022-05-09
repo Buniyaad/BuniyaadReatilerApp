@@ -23,6 +23,7 @@ export default class Cart extends React.Component {
     price: '',
     total: 0,
     minQuantity: '',
+    maxQuantity:'',
     quantity: '',
     pricesFound: false,
     btnDisabled: false,
@@ -306,6 +307,7 @@ productPricesItemComponent = itemData => (
       }
 
       let minQTY = this.getMinQty(priceArr);
+      let maxQTY= this.getMaxQty(priceArr);
       let qty = itemData.item.quantity;
      // console.log(itemData.item);
       await this.setState({
@@ -313,6 +315,7 @@ productPricesItemComponent = itemData => (
         pricesFound: true,
         showModalSpinner: false,
         minQuantity: minQTY,
+        maxQuantity:maxQTY
       });
       this.calculateTotal(qty);
       //console.log(JSON.stringify(this.state.productPrices))
@@ -361,6 +364,15 @@ productPricesItemComponent = itemData => (
       return a.min - b.min;
     });
     return prices[0].min;
+  }
+
+  getMaxQty(prices) {
+    let minQTY = 0;
+    prices.sort(function (a, b) {
+      return b.max - a.max;
+    });
+    return prices[0].max;
+
   }
 
   increaseQty() {
@@ -1150,7 +1162,8 @@ productPricesItemComponent = itemData => (
                   disabled={this.state.btnDisabled}
                   style={styles.fullProductBtnStyle}
                   onPress={() => {
-                    this.state.quantity >= this.state.minQuantity
+                    (parseInt(this.state.quantity) >= parseInt(this.state.minQuantity))
+                    && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) < parseInt(this.state.maxQuantity))
                       ? this.handle_Cart()
                       : ToastAndroid.show(
                           'invalid quantity',

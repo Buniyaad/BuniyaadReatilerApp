@@ -48,6 +48,7 @@ export default class CategoriesSearch extends React.Component {
     price:'',
     total:0,
     minQuantity:'',
+    maxQuantity:'',
     quantity:'',
     cart:[],
     pricesFound:false,
@@ -150,8 +151,9 @@ export default class CategoriesSearch extends React.Component {
     }
     
     let minQTY =this.getMinQty(priceArr);
+    let maxQTY= this.getMaxQty(priceArr);
     console.log(priceArr)
-    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
+    this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY,maxQuantity:maxQTY})
     this.calculateTotal(this.state.price.min)
     mixpanel.track('View Product',
       {'product': this.state.product.Title,
@@ -197,6 +199,15 @@ export default class CategoriesSearch extends React.Component {
       return a.min - b.min
   })
   return prices[0].min
+  }
+
+  getMaxQty(prices) {
+    let minQTY = 0;
+    prices.sort(function (a, b) {
+      return b.max - a.max;
+    });
+    return prices[0].max;
+
   }
 
   increaseQty(){
@@ -583,7 +594,8 @@ export default class CategoriesSearch extends React.Component {
                   disabled={this.state.btnDisabled}
                   style={styles.fullBtnStyle}
                   onPress={() => {
-                    this.state.quantity >= this.state.minQuantity
+                    (parseInt(this.state.quantity) >= parseInt(this.state.minQuantity))
+                    && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) < parseInt(this.state.maxQuantity))
                       ? this.handle_Cart()
                       : ToastAndroid.show(
                           'invalid quantity',

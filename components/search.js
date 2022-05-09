@@ -47,6 +47,7 @@ export default class Login extends React.Component {
     price:'',
     total:0,
     minQuantity:'',
+    maxQuantity:'',
     quantity:'',
     cart:[],
     pricesFound:false,
@@ -144,7 +145,8 @@ export default class Login extends React.Component {
       }
       
       let minQTY =this.getMinQty(priceArr);
-      this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY})
+      let maxQTY= this.getMaxQty(priceArr);
+      this.setState({productPrices:priceArr,pricesFound:true,showModalSpinner:false,quantity:this.state.price.min,minQuantity:minQTY,maxQuantity:maxQTY})
       this.calculateTotal(this.state.price.min)
 
       mixpanel.track('View Product',
@@ -191,6 +193,15 @@ export default class Login extends React.Component {
         return a.min - b.min
     })
     return prices[0].min
+    }
+
+    getMaxQty(prices) {
+      let minQTY = 0;
+      prices.sort(function (a, b) {
+        return b.max - a.max;
+      });
+      return prices[0].max;
+  
     }
   
     increaseQty(){
@@ -566,7 +577,8 @@ export default class Login extends React.Component {
                   disabled={this.state.btnDisabled}
                   style={styles.fullBtnStyle}
                   onPress={() => {
-                    this.state.quantity >= this.state.minQuantity
+                    (parseInt(this.state.quantity) >= parseInt(this.state.minQuantity))
+                    && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) < parseInt(this.state.maxQuantity))
                       ? this.handle_Cart()
                       : ToastAndroid.show(
                           'invalid quantity',
