@@ -582,7 +582,7 @@ productPricesItemComponent = itemData => (
           this.storeCart(this.state.cart);
           this.getCart();
           this.getProducts();
-          
+          console.log("order id is",orderId);
           this.getOrderById(orderId)
           this.notify_admin();
           

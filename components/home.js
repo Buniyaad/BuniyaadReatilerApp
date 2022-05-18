@@ -364,7 +364,7 @@ export default class Login extends React.Component {
 
       let minQTY = this.getMinQty(priceArr);
       let maxQTY= this.getMaxQty(priceArr);
-      console.log(priceArr);
+      console.log("Prices Array:",priceArr);
      
       this.setState({
         productPrices: priceArr,
@@ -735,7 +735,9 @@ export default class Login extends React.Component {
         <FlatList
           columnWrapperStyle={{justifyContent: 'space-evenly'}}
           refreshing={this.state.refresh}
-          onRefresh={() => this.getAllProducts()}
+          onRefresh={() => {
+            this.getAllProducts()
+            this.getInterestProducts()}}
           ListHeaderComponent={
             <>
               {this.state.showSpinner && <Spinner color={'black'} />}
