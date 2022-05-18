@@ -214,7 +214,12 @@ export default class Login extends React.Component {
   
       console.log(increment)
   
-      if (qty >= parseInt(this.state.minQuantity) && this.state.maxQuantity===''? 1:
+      if(qty < parseInt(this.state.minQuantity)) {
+        qty = this.state.minQuantity;
+        this.calculateTotal(qty);
+        this.setState({quantity: qty});
+      }
+      else if (qty >= parseInt(this.state.minQuantity) && this.state.maxQuantity===''? 1:
        parseInt(qty)+increment <= parseInt(this.state.maxQuantity) ) {
         qty = parseInt(qty) + increment;
         this.calculateTotal(qty);
@@ -224,11 +229,8 @@ export default class Login extends React.Component {
       else if( this.state.maxQuantity !='' && parseInt(qty)+increment >= parseInt(this.state.maxQuantity)) {
         console.log("Max qty reached", this.state.maxQuantity);
       }
-      else {
-        qty = this.state.minQuantity;
-        this.calculateTotal(qty);
-        this.setState({quantity: qty});
-      }
+      
+     
     }
   
     decreaseQty() {
@@ -537,26 +539,32 @@ export default class Login extends React.Component {
                         </Button>
                       </Card>
 
-                      <Text style={{marginTop:30,fontWeight:'bold',backgroundColor:'#FFC000',fontSize:15,color:'white', 
+                      {this.state.productPrices.length>1 &&(
+                       <View>
+                          <Text style={{marginTop:30,fontWeight:'bold',backgroundColor:'#FFC000',fontSize:15,color:'white', 
                       alignSelf: 'flex-start',padding:10,borderTopRightRadius:20,borderTopLeftRadius:10}}>Zyaada Miqdaar - Zyaada Bachat</Text>  
 
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          backgroundColor: '#f7f7f7',
-                        }}>
-                        
-                        <Text numberOfLines={1} style={{marginLeft: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
-                           Miqdaar
-                        </Text>
-                        <Text numberOfLines={1} style={{marginRight: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
-                        Rate
-                        </Text>
-                      </View>
+                     
+                          <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            backgroundColor: '#f7f7f7',
+                          }}>
+                          
+                          <Text numberOfLines={1} style={{marginLeft: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
+                             Miqdaar
+                          </Text>
+                          <Text numberOfLines={1} style={{marginRight: 10, marginTop: 5,marginBottom:5,fontSize:17,fontWeight:'bold',color: '#737070'}}>
+                          Rate
+                          </Text>
+                        </View>
+                       </View>
+                     
+                      )}
                     </>
                   }
-                  data={this.state.productPrices}
+                  data={this.state.productPrices.length>1?this.state.productPrices:null}
                   renderItem={item => this.productPricesItemComponent(item)}
              
                 />
