@@ -375,14 +375,28 @@ productPricesItemComponent = itemData => (
 
   }
 
+
   increaseQty() {
     let qty = this.state.quantity;
+    let increment= 1;
 
-    if (qty >= parseInt(this.state.minQuantity)) {
-      qty = parseInt(qty) + 100;
+    if(this.state.product.Unit==='Bag'||this.state.product.Unit==='Kilograms'){
+      increment=50
+    }
+
+    console.log(increment)
+
+    if (qty >= parseInt(this.state.minQuantity) && this.state.maxQuantity===''? 1:
+     parseInt(qty)+increment <= parseInt(this.state.maxQuantity) ) {
+      qty = parseInt(qty) + increment;
       this.calculateTotal(qty);
+      console.log(qty);
       this.setState({quantity: qty});
-    } else {
+    }
+    else if( this.state.maxQuantity !='' && parseInt(qty)+increment >= parseInt(this.state.maxQuantity)) {
+      console.log("Max qty reached", this.state.maxQuantity);
+    }
+    else {
       qty = this.state.minQuantity;
       this.calculateTotal(qty);
       this.setState({quantity: qty});
@@ -392,10 +406,16 @@ productPricesItemComponent = itemData => (
   decreaseQty() {
     let qty = this.state.quantity;
 
-    if (qty > parseInt(this.state.minQuantity)) {
-      qty = parseInt(qty) - 100;
-      this.calculateTotal(qty);
+    let increment= 1;
 
+    if(this.state.product.Unit==='Bag'||this.state.product.Unit==='Kilograms'){
+      increment=50
+    }
+
+    if (qty-increment >= parseInt(this.state.minQuantity)) {
+      qty = parseInt(qty) - increment;
+      this.calculateTotal(qty);
+      console.log(qty);
       this.setState({quantity: qty});
     }
   }
@@ -1163,7 +1183,7 @@ productPricesItemComponent = itemData => (
                   style={styles.fullProductBtnStyle}
                   onPress={() => {
                     (parseInt(this.state.quantity) >= parseInt(this.state.minQuantity))
-                    && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) < parseInt(this.state.maxQuantity))
+                     && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) <= parseInt(this.state.maxQuantity))
                       ? this.handle_Cart()
                       : ToastAndroid.show(
                           'invalid quantity',

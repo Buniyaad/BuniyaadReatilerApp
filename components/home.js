@@ -224,7 +224,7 @@ export default class Login extends React.Component {
         backgroundColor: '#f7f7f7',
       }}>
       <Text numberOfLines={1} style={{marginLeft: 10,fontSize:17,fontWeight:'bold',marginTop:5}}>
-      {itemData.item.min} 
+      {itemData.item.min} {this.state.product.Unit}{this.state.product.Unit==='Kilograms'?null:"s"}
       </Text>
       <Text numberOfLines={1} style={{marginRight: 10,fontSize:17,fontWeight:'bold',marginTop:5}}>
       Rs. {itemData.item.price} /{this.state.product.Unit}
@@ -426,21 +426,33 @@ export default class Login extends React.Component {
   getMaxQty(prices) {
     let minQTY = 0;
     prices.sort(function (a, b) {
-      return b.max - a.max;
+      return b.min - a.min;
     });
     return prices[0].max;
-
+    
   }
 
   increaseQty() {
     let qty = this.state.quantity;
+    let increment= 1;
 
-    if (qty >= parseInt(this.state.minQuantity)) {
-      qty = parseInt(qty) + 100;
+    if(this.state.product.Unit==='Bag'||this.state.product.Unit==='Kilograms'){
+      increment=50
+    }
+
+    console.log(increment)
+
+    if (qty >= parseInt(this.state.minQuantity) && this.state.maxQuantity===''? 1:
+     parseInt(qty)+increment <= parseInt(this.state.maxQuantity) ) {
+      qty = parseInt(qty) + increment;
       this.calculateTotal(qty);
       console.log(qty);
       this.setState({quantity: qty});
-    } else {
+    }
+    else if( this.state.maxQuantity !='' && parseInt(qty)+increment >= parseInt(this.state.maxQuantity)) {
+      console.log("Max qty reached", this.state.maxQuantity);
+    }
+    else {
       qty = this.state.minQuantity;
       this.calculateTotal(qty);
       this.setState({quantity: qty});
@@ -450,8 +462,14 @@ export default class Login extends React.Component {
   decreaseQty() {
     let qty = this.state.quantity;
 
-    if (qty > parseInt(this.state.minQuantity)) {
-      qty = parseInt(qty) - 100;
+    let increment= 1;
+
+    if(this.state.product.Unit==='Bag'||this.state.product.Unit==='Kilograms'){
+      increment=50
+    }
+
+    if (qty-increment >= parseInt(this.state.minQuantity)) {
+      qty = parseInt(qty) - increment;
       this.calculateTotal(qty);
       console.log(qty);
       this.setState({quantity: qty});
@@ -1008,7 +1026,7 @@ export default class Login extends React.Component {
                   style={styles.fullBtnStyle}
                   onPress={() => {
                     (parseInt(this.state.quantity) >= parseInt(this.state.minQuantity))
-                     && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) < parseInt(this.state.maxQuantity))
+                     && (this.state.maxQuantity===''? 1 :parseInt(this.state.quantity) <= parseInt(this.state.maxQuantity))
                       ? this.handle_Cart()
                       : ToastAndroid.show(
                           'invalid quantity',
