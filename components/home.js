@@ -774,7 +774,7 @@ export default class Login extends React.Component {
                   //onItemChanged={(item) => console.log("item", item)}
                   closeIconColor="#fff"
                   onClick={(item, index) => {
-                    alert('coming soon!');
+                    
                   }}
                   timer={5000}
                   caroselImageStyle={{height:150,borderRadius:10,resizeMode:'contain'}}
