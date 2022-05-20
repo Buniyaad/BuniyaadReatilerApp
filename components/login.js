@@ -176,7 +176,7 @@ export default class Login extends React.Component {
   //check if number is registered, button onpress event
    handle_loginbtn(){
     let controller = new AbortController()
-    setTimeout(() => controller.abort(), 10000);
+    setTimeout(() => controller.abort(), 20000);
 
      this.setState({showSpinner:true,showBtn:false})
     fetch('https://api.buniyaad.pk/auth/contact', {
