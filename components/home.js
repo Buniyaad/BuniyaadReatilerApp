@@ -42,6 +42,8 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import { Fragment } from 'react/cjs/react.production.min';
 import messaging from '@react-native-firebase/messaging';
 
+import server from './fetch/baseURL';
+
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init(); 
 
@@ -239,7 +241,7 @@ export default class Login extends React.Component {
     let controller = new AbortController()
     setTimeout(() => controller.abort(), 10000);
     this.setState({refresh: true});
-    fetch(`https://api.buniyaad.pk/products`, {
+    fetch(`${server}/products`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -269,7 +271,7 @@ export default class Login extends React.Component {
     setTimeout(() => controller.abort(), 10000);
     this.setState({refresh: true});
 
-    fetch(`https://api.buniyaad.pk/categories/getById/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,{
+    fetch(`${server}/categories/getById/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,{
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -282,7 +284,7 @@ export default class Login extends React.Component {
     })
 
      fetch(
-      `https://api.buniyaad.pk/categories/GetFiveProducts/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,
+      `${server}/categories/GetFiveProducts/${this.state.retailerData.checkUser.IntrustCategory[0].id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -299,7 +301,7 @@ export default class Login extends React.Component {
 
       if(this.state.retailerData.checkUser.IntrustCategory.length===2){
         
-    fetch(`https://api.buniyaad.pk/categories/getById/${this.state.retailerData.checkUser.IntrustCategory[1].id}`,{
+    fetch(`${server}/categories/getById/${this.state.retailerData.checkUser.IntrustCategory[1].id}`,{
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -312,7 +314,7 @@ export default class Login extends React.Component {
     })
 
      fetch(
-      `https://api.buniyaad.pk/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory[1].id}`,
+      `${server}/categories/GetProducts/${this.state.retailerData.checkUser.IntrustCategory[1].id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -348,7 +350,7 @@ export default class Login extends React.Component {
       let priceArr = [];
       //console.log("prices are:", prices)
       for (let i = 0; i < prices.length; i++) {
-        await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+        await fetch(`${server}/price/get/${prices[i]}`, {
           headers: {
             token: `bearer ${this.state.retailerData.token}`,
           },
@@ -491,7 +493,7 @@ export default class Login extends React.Component {
 
   post_cart() {
     fetch(
-      `https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`,
+      `${server}/carts/addToCart/${this.state.retailerData.checkUser._id}`,
       {
         method: 'POST',
         headers: {
@@ -522,7 +524,7 @@ export default class Login extends React.Component {
     this.setState({cart: [], btnDisabled: true});
 
     fetch(
-      `https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`,
+      `${server}/carts/check/userId/${this.state.retailerData.checkUser._id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -558,7 +560,7 @@ export default class Login extends React.Component {
         } else {
           //add product to existing cart
           fetch(
-            `https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`,
+            `${server}/carts/userId/${this.state.retailerData.checkUser._id}`,
             {
               headers: {
                 token: `bearer ${this.state.retailerData.token}`,

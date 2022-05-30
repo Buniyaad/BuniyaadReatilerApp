@@ -3,9 +3,15 @@ import {Alert,StyleSheet,Image,FlatList,TouchableOpacity,Modal,ToastAndroid,View
 import { Badge,Body,Card,Container,Content,Text,Item,Button,Header,Footer,FooterTab,Spinner,Tabs,Tab,Input,Label} from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {Mixpanel} from 'mixpanel-react-native';
+
+import server from './fetch/baseURL';
+
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
+
+
 
 export default class Cart extends React.Component {
   state = {
@@ -188,7 +194,7 @@ productPricesItemComponent = itemData => (
     this.getSuggestedProducts()
     for (let i = 0; i < this.state.cart.length; i++) {
       await fetch(
-        `https://api.buniyaad.pk/products/getByPId/${this.state.cart[i].productId}`,
+        `${server}/products/getByPId/${this.state.cart[i].productId}`,
         {
           headers: {
             token: `bearer ${this.state.retailerData.token}`,
@@ -235,7 +241,7 @@ productPricesItemComponent = itemData => (
 
   getSuggestedProducts(){
   
-    fetch(`https://api.buniyaad.pk/carts/suggestedProducts/UserId/${this.state.retailerData.checkUser._id}`, {
+    fetch(`${server}/carts/suggestedProducts/UserId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -258,7 +264,7 @@ productPricesItemComponent = itemData => (
       let priceArr=[]
       //console.log("prices are:", prices)
       for(let i=0; i<prices.length; i++){
-        await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+        await fetch(`${server}/price/get/${prices[i]}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
@@ -295,7 +301,7 @@ productPricesItemComponent = itemData => (
       let priceArr = [];
       //console.log("prices are:", prices)
       for (let i = 0; i < prices.length; i++) {
-        await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+        await fetch(`${server}/price/get/${prices[i]}`, {
           headers: {
             token: `bearer ${this.state.retailerData.token}`,
           },
@@ -435,7 +441,7 @@ productPricesItemComponent = itemData => (
 
   post_cart() {
     fetch(
-      `https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`,
+      `${server}/carts/addToCart/${this.state.retailerData.checkUser._id}`,
       {
         method: 'POST',
         headers: {
@@ -466,7 +472,7 @@ productPricesItemComponent = itemData => (
     this.setState({cart: [], btnDisabled: true});
 
     fetch(
-      `https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`,
+      `${server}/carts/check/userId/${this.state.retailerData.checkUser._id}`,
       {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
@@ -502,7 +508,7 @@ productPricesItemComponent = itemData => (
         } else {
           //add product to existing cart
           fetch(
-            `https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`,
+            `${server}/carts/userId/${this.state.retailerData.checkUser._id}`,
             {
               headers: {
                 token: `bearer ${this.state.retailerData.token}`,
@@ -564,7 +570,7 @@ productPricesItemComponent = itemData => (
       console.log(cart);
 
       fetch(
-        `https://api.buniyaad.pk/orders/add/${this.state.retailerData.checkUser._id}`,
+        `${server}/orders/add/${this.state.retailerData.checkUser._id}`,
         {
           method: 'POST',
           headers: {
@@ -618,7 +624,7 @@ productPricesItemComponent = itemData => (
  getOrderById(orderId){
     console.log("Order id is:",orderId)
     
-    fetch(`https://api.buniyaad.pk/orders/getById/${orderId}`, {
+    fetch(`${server}/orders/getById/${orderId}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -640,7 +646,7 @@ productPricesItemComponent = itemData => (
        this.send_sms(this.state.orderId,this.state.amount); 
 
        for(let i=0;i<this.state.orderDetails.products.length;i++){
-        await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
+        await fetch(`${server}/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
           headers: {
             token: `bearer ${this.state.retailerData.token}`,
           },
@@ -661,7 +667,7 @@ productPricesItemComponent = itemData => (
 
       cancelOrder(){
         console.log("order Id: ",this.state.orderDetails._id," Products: ",this.state.orderDetails.products)
-        fetch(`https://api.buniyaad.pk/orders/update/${this.state.orderDetails._id}`, {
+        fetch(`${server}/orders/update/${this.state.orderDetails._id}`, {
       method: 'PUT',
       headers: {
       Accept: 'application/json',
@@ -725,7 +731,7 @@ productPricesItemComponent = itemData => (
 
   notify(orderId,amount){
     fetch(
-      `https://api.buniyaad.pk/notification/notifications`,
+      `${server}/notification/notifications`,
       {
         method: 'POST',
         headers: {
@@ -748,7 +754,7 @@ productPricesItemComponent = itemData => (
 
   notify_on_cancel(orderId,amount){
     fetch(
-      `https://api.buniyaad.pk/notification/notifications`,
+      `${server}/notification/notifications`,
       {
         method: 'POST',
         headers: {
@@ -771,7 +777,7 @@ productPricesItemComponent = itemData => (
 
   notify_admin(){
     fetch(
-      `https://api.buniyaad.pk/webnotification/sentnotifications`,
+      `${server}/webnotification/sentnotifications`,
       {
         method: 'POST',
         headers: {
@@ -789,7 +795,7 @@ productPricesItemComponent = itemData => (
 
   notify_admin_on_cancel(){
     fetch(
-      `https://api.buniyaad.pk/webnotification/sentnotifications/cancel`,
+      `${server}/webnotification/sentnotifications/cancel`,
       {
         method: 'POST',
         headers: {
@@ -820,7 +826,7 @@ productPricesItemComponent = itemData => (
     console.log("Prod Names",productNames,"  prods ",products)
 
     fetch(
-      `https://api.buniyaad.pk/email/sendEmail/order`,
+      `${server}/email/sendEmail/order`,
       {
         method: 'POST',
         headers: {
@@ -863,7 +869,7 @@ productPricesItemComponent = itemData => (
     console.log("Prod Names",productNames,"  prods ",products)
 
     fetch(
-      `https://api.buniyaad.pk/email/sendEmail/order`,
+      `${server}/email/sendEmail/order`,
       {
         method: 'POST',
         headers: {

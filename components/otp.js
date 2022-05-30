@@ -10,6 +10,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 import SmsRetriever from 'react-native-sms-retriever';
 import {Mixpanel} from 'mixpanel-react-native';
 
+import server from './fetch/baseURL';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
@@ -100,7 +101,7 @@ export default class Otp extends React.Component {
   // register User
   handle_register(){
    
-      fetch('https://api.buniyaad.pk/auth/register', {
+      fetch(`${server}/auth/register`, {
         method: 'POST',
         headers: {
         Accept: 'application/json',
@@ -129,7 +130,7 @@ export default class Otp extends React.Component {
 
       notify_admin(){
           fetch(
-            `https://api.buniyaad.pk/webretailernotification/sentnotifications/retailer`,
+            `${server}/webretailernotification/sentnotifications/retailer`,
             {
               method: 'POST',
               headers: {

@@ -12,6 +12,8 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import server from './fetch/baseURL';
+
 export default class Pin extends React.Component {
   state = {
     enteredpin: '',

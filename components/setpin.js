@@ -11,7 +11,7 @@ import {
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import Icon from 'react-native-ionicons';
 
-
+import server from './fetch/baseURL';
 
 
 export default class Setpin extends React.Component{

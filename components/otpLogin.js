@@ -11,6 +11,7 @@ import SmsRetriever from 'react-native-sms-retriever';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Mixpanel} from 'mixpanel-react-native';
 
+import server from './fetch/baseURL';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
@@ -168,7 +169,7 @@ export default class Otp extends React.Component {
       console.log("REtailare data: ",retailerData)
       //console.log("Retailer Data is:",this.state.retailerData)
      // console.log("Token is ",this.state.data.token)
-      fetch(`https://api.buniyaad.pk/users/update/${retailerData.checkUser._id}`, {
+      fetch(`${server}/users/update/${retailerData.checkUser._id}`, {
        method: 'PUT',
        headers: {
        Accept: 'application/json',

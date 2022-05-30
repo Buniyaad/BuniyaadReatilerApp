@@ -30,6 +30,7 @@ import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Mixpanel} from 'mixpanel-react-native';
 
+import server from './fetch/baseURL';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
@@ -140,7 +141,7 @@ export default class CategoriesSearch extends React.Component {
     let priceArr=[]
     //console.log("prices are:", prices)
     for(let i=0; i<prices.length; i++){
-      await fetch(`https://api.buniyaad.pk/price/get/${prices[i]}`, {
+      await fetch(`${server}/price/get/${prices[i]}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -269,7 +270,7 @@ export default class CategoriesSearch extends React.Component {
 
 
   post_cart(){
-    fetch(`https://api.buniyaad.pk/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
+    fetch(`${server}/carts/addToCart/${this.state.retailerData.checkUser._id}`, {
       method: 'POST',
       headers: {
       Accept: 'application/json',
@@ -298,7 +299,7 @@ export default class CategoriesSearch extends React.Component {
     'total': this.state.total,
      'source':'App'});
 
-    fetch(`https://api.buniyaad.pk/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
+    fetch(`${server}/carts/check/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -319,7 +320,7 @@ export default class CategoriesSearch extends React.Component {
         }
         else{
           //add product to existing cart
-         fetch(`https://api.buniyaad.pk/carts/userId/${this.state.retailerData.checkUser._id}`, {
+         fetch(`${server}/carts/userId/${this.state.retailerData.checkUser._id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -352,7 +353,7 @@ export default class CategoriesSearch extends React.Component {
   
     // get search results
   getProductsBySearch() {
-    fetch(`https://api.buniyaad.pk/categories/GetProducts/${this.state.categoryId}`, {
+    fetch(`${server}/categories/GetProducts/${this.state.categoryId}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -365,7 +366,7 @@ export default class CategoriesSearch extends React.Component {
 
      // get search results
      getProductsBySearchBrand() {
-      fetch(`https://api.buniyaad.pk/brands/GetProducts/${this.state.categoryId}`, {
+      fetch(`${server}/brands/GetProducts/${this.state.categoryId}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },

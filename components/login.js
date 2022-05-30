@@ -14,6 +14,7 @@ import {
 import SmsRetriever from 'react-native-sms-retriever';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import server from './fetch/baseURL';
 
 
 export default class Login extends React.Component {
@@ -179,7 +180,7 @@ export default class Login extends React.Component {
     setTimeout(() => controller.abort(), 20000);
 
      this.setState({showSpinner:true,showBtn:false})
-    fetch('https://api.buniyaad.pk/auth/contact', {
+    fetch(`${server}/auth/contact`, {
   method: 'POST',
   headers: {
     Accept: 'application/json',
@@ -202,7 +203,8 @@ export default class Login extends React.Component {
   handle_registered() {
     console.log(this.state.phoneno)
     this.setState({showSpinner: true, showBtn: false});
-    fetch('https://api.buniyaad.pk/auth/login', {
+
+    fetch(`${server}/auth/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -216,7 +218,7 @@ export default class Login extends React.Component {
       .then(data =>
         this.setState({data: data.data, retailerData: data.data.checkUser, authenticated: !data.error}),
       ).then(() => console.log("here ",this.state))
-      .then(() => this.check_Verified());
+      .then(() => this.check_Verified()); 
   }
 
 
@@ -245,7 +247,7 @@ export default class Login extends React.Component {
     sendToken(){
      console.log("Retailer Data is:",this.state.retailerData)
     // console.log("Token is ",this.state.data.token)
-     fetch(`https://api.buniyaad.pk/users/update/${this.state.retailerData._id}`, {
+     fetch(`${server}/users/update/${this.state.retailerData._id}`, {
       method: 'PUT',
       headers: {
       Accept: 'application/json',

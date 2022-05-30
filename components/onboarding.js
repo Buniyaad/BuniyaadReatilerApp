@@ -11,6 +11,7 @@ import Onboarding from 'react-native-onboarding-swiper';
 import {Mixpanel} from 'mixpanel-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import server from './fetch/baseURL';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
@@ -47,7 +48,7 @@ export default class NotVerified extends React.Component{
 update_retailerData() {
   console.log(this.state.phoneno)
   this.setState({showSpinner: true, showBtn: false});
-  fetch('https://api.buniyaad.pk/auth/login', {
+  fetch(`${server}/auth/login`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

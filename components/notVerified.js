@@ -9,6 +9,7 @@ import {
 import Icon from 'react-native-ionicons';
 import {Mixpanel} from 'mixpanel-react-native';
 
+import server from './fetch/baseURL';
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();

@@ -32,6 +32,8 @@ import {Mixpanel} from 'mixpanel-react-native';
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
 
+import server from './fetch/baseURL';
+
 export default class Categories extends React.Component {
   state = {
     data: [],
@@ -109,7 +111,7 @@ export default class Categories extends React.Component {
 
   //get all category names and images
   getCategories(){
-    fetch('https://api.buniyaad.pk/categories/get', {
+    fetch(`${server}/categories/get`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -122,7 +124,7 @@ export default class Categories extends React.Component {
 
   //get specific category to search
   getCategoryById(id) {
-    fetch(`https://api.buniyaad.pk/categories/getById/${id}`, {
+    fetch(`${server}/categories/getById/${id}`, {
       headers: {
         token: `bearer ${this.state.retailerData.token}`,
       },
@@ -135,7 +137,7 @@ export default class Categories extends React.Component {
 
     //get all brand names and images
     getBrands(){
-      fetch('https://api.buniyaad.pk/brands/get', {
+      fetch(`${server}/brands/get`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },

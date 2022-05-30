@@ -23,7 +23,7 @@ import {
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
+import server from './fetch/baseURL';
 
 export default class Notifications extends React.Component {
   state = {
@@ -104,7 +104,7 @@ export default class Notifications extends React.Component {
     //get notifiactions
     getNotifications() {
       this.setState({refresh:true,showSpinner:true})
-      fetch(`https://api.buniyaad.pk/notification/getById/${this.state.retailerData.checkUser._id}`, {
+      fetch(`${server}/notification/getById/${this.state.retailerData.checkUser._id}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },

@@ -23,8 +23,11 @@ import {
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Mixpanel} from 'mixpanel-react-native';
+import server from './fetch/baseURL';
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
 mixpanel.init();
+
+//const server= __DEV__?'http:dev-api.buniyaad.pk':'https:api.buniyaad.pk';
 
 export default class Account extends React.Component {
   state = {
@@ -123,7 +126,7 @@ export default class Account extends React.Component {
     //get order history
     getOrderHistory() {
       this.setState({refresh:true})
-      fetch(`https://api.buniyaad.pk/orders/history/${this.state.retailerData.checkUser._id}`, {
+      fetch(`${server}/orders/history/${this.state.retailerData.checkUser._id}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
@@ -142,7 +145,7 @@ export default class Account extends React.Component {
       orderId:itemData.item.orderId,showSpinner:true})
        console.log("tester :",this.state.orderDetails)
     for(let i=0;i<this.state.orderDetails.products.length;i++){
-      await fetch(`https://api.buniyaad.pk/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
+      await fetch(`${server}/products/getByPId/${this.state.orderDetails.products[i].productId}`, {
         headers: {
           token: `bearer ${this.state.retailerData.token}`,
         },
@@ -161,7 +164,7 @@ export default class Account extends React.Component {
 
       cancelOrder(){
         console.log("order Id: ",this.state.orderDetails._id," Products: ",this.state.orderDetails.products)
-        fetch(`https://api.buniyaad.pk/orders/update/${this.state.orderDetails._id}`, {
+        fetch(`${server}/orders/update/${this.state.orderDetails._id}`, {
       method: 'PUT',
       headers: {
       Accept: 'application/json',
@@ -232,7 +235,7 @@ export default class Account extends React.Component {
 
          notify_admin_on_cancel(){
           fetch(
-            `https://api.buniyaad.pk/webnotification/sentnotifications/cancel`,
+            `${server}/webnotification/sentnotifications/cancel`,
             {
               method: 'POST',
               headers: {
@@ -250,7 +253,7 @@ export default class Account extends React.Component {
 
         notify_on_cancel(orderId,amount){
           fetch(
-            `https://api.buniyaad.pk/notification/notifications`,
+            `${server}/notification/notifications`,
             {
               method: 'POST',
               headers: {
@@ -285,7 +288,7 @@ export default class Account extends React.Component {
           console.log("Prod Names",productNames,"  prods ",products)
       
           fetch(
-            `https://api.buniyaad.pk/email/sendEmail/order`,
+            `${server}/email/sendEmail/order`,
             {
               method: 'POST',
               headers: {
@@ -355,16 +358,23 @@ export default class Account extends React.Component {
                :{uri: this.state.retailerData.checkUser.Picture}
             }
               />
-              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
-                Name: {this.state.retailerData.checkUser.Name}
+              <Text style={{fontWeight:'bold',fontSize:30,color: 'black',textAlign:'center'}} numberOfLines={1}>
+                 {this.state.retailerData.checkUser.Name}
               </Text>
-              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={1}>
-                Shop: {this.state.retailerData.checkUser.ShopName}
+              <Text style={{fontWeight:'bold',fontSize:25,color: '#737070',textAlign:'center',marginTop:5}} numberOfLines={1}>
+                {this.state.retailerData.checkUser.ShopName}
               </Text>
-              <Text style={{fontWeight:'bold',fontSize:20,color: '#737070'}} numberOfLines={2}>
-                Address: {this.state.retailerData.checkUser.ShopAddress}
+              <Text style={{fontSize:20,color: '#737070',textAlign:'center',fontStyle:'italic',marginTop:5}} numberOfLines={2}>
+                 {this.state.retailerData.checkUser.ShopAddress}
               </Text>
           </Card>
+
+         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('Payments')}>
+          <Card style={styles.retailerCardStyle}>
+              <Text style={styles.largetxt}> View Payments </Text>
+          </Card>
+         </TouchableOpacity>
+          
           
           <Text style={styles.itemLabelStyle}>Order History:</Text>          
            </>}
@@ -563,6 +573,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 30,
   },
+  largetxt: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: '#FFC000',
+    textAlign:'center',
+    marginTop:10,
+  },
   itemLabelStyle: {
     marginTop: 50,
     marginBottom: 10,
@@ -571,8 +588,8 @@ const styles = StyleSheet.create({
     marginLeft:10,
   },
   profileImg: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: 150/2,
     overflow: "hidden",
     alignSelf:'center',
