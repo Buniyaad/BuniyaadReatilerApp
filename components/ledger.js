@@ -43,28 +43,23 @@ export default class Payments extends React.Component {
 
   ledgerItemsComponent = itemData => (
    
-      <Card style={styles.paymentsHistoryCardStyle}>
+      <View style={styles.paymentsHistoryCardStyle}>
 
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
 
-             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Credit</Text>
-             <Text style={{fontSize:25,marginTop:10,fontWeight:'bold'}}>
-               Rs. {itemData.item.Credit === null? 0 :itemData.item.Credit.toLocaleString('en-GB')}</Text>
-        </View>   
+             <Text style={{marginTop:10,fontWeight:'bold',width:'33%',
+              color:'#737070',textAlign:'left',fontStyle:'italic'}}>{new Date().toDateString()}</Text>
 
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Debit</Text>
-             <Text style={{fontSize:25,marginTop:10,fontWeight:'bold'}}>
-               Rs. {itemData.item.Debit === null? 0 :itemData.item.Debit.toLocaleString('en-GB')}</Text>
-        </View>   
-        
-        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+             <Text style={{marginTop:10,fontWeight:'bold',textAlign:'center',width:'33%'}}>{itemData.item.Type}</Text>
+
+             <Text style={{marginTop:10,fontWeight:'bold',color:itemData.item.Credit === null?'green':'red'
+             ,width:'33%',textAlign:'right'}} numberOfLines={2}>
+               Rs. {itemData.item.Credit === null? itemData.item.Debit.toLocaleString('en-GB') :itemData.item.Credit.toLocaleString('en-GB')}</Text>
+              
+            
              
-             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Type</Text>
-             <Text style={{fontSize:25,marginTop:10,fontWeight:'bold'}}>{itemData.item.Type}</Text>
-        </View>   
-    
-      </Card>
+             
+
+      </View>
  
   );
 
@@ -108,7 +103,7 @@ export default class Payments extends React.Component {
            let totalCredit = this.calculateTotalCredit(res.data)
            let totalDebit = this.calculateTotalDebit(res.data)
             this.setState({data: res.data,paymentCount:res.data.length,totalCredit:totalCredit,totalDebit:totalDebit,refresh:false});
-            // console.log(JSON.stringify(res.data));
+             console.log(JSON.stringify(res.data));
             // console.log("total credit",totalCredit)
             // console.log("total debit",totalDebit)
 
@@ -137,6 +132,8 @@ export default class Payments extends React.Component {
 
       return total;
     }
+
+ 
 
       // Logout 
        logOut(){
@@ -226,7 +223,18 @@ export default class Payments extends React.Component {
            
   
         
-        <Text style={styles.itemLabelStyle}> Payment History:</Text>      
+            
+
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',
+        marginLeft:10,marginRight:10,marginTop:10,padding:10}}>
+
+          <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Date</Text> 
+          <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>  Type</Text>
+          <Text style={{fontSize:20,marginTop:10,fontWeight:'bold',color:'#737070'}}>Paisey</Text> 
+         
+          
+        </View>
+
            </>}
            data={this.state.data}
            refreshing={this.state.refresh}
@@ -310,11 +318,16 @@ const styles = StyleSheet.create({
   },
   paymentsHistoryCardStyle: {
   
-    borderRadius:10,
-    justifyContent:'space-around',
+    backgroundColor:'white',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    borderBottomWidth:1,
+    borderBottomColor:'#f5f5f5',
     marginLeft:10,
     marginRight:10,
     padding:10,
+    paddingVertical:15,
   },
   listCardStyle: {
     padding:20,
@@ -354,7 +367,8 @@ const styles = StyleSheet.create({
   smalltxt: {
     marginTop:10,
     fontWeight: 'bold',
-    textAlign:'center'
+    textAlign:'center',
+    
   },
   itemLabelStyle: {
     marginTop: 50,
