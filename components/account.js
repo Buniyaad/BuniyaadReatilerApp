@@ -71,6 +71,7 @@ export default class Account extends React.Component {
 
   cartItemsComponent = itemData => (
 
+    
     <Card style={styles.cartCardStyle}>
 
     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
@@ -345,11 +346,17 @@ export default class Account extends React.Component {
       
        <Text style={styles.labelStyle}>Account</Text>  
 
+
           {this.state.retailerData != '' && (
            <FlatList
           ListHeaderComponent={<>  
           
           <Card style={styles.retailerCardStyle}>
+          <TouchableOpacity style={{alignSelf:'flex-end'}}  onPress={()=> this.logOut()}>
+             <Icon name='log-out' color='#ffab03'  style={{fontSize:35,alignSelf:'center'}}/>
+        
+          </TouchableOpacity>
+
               <Image
                 style={styles.profileImg}
                 source={ 
@@ -358,6 +365,7 @@ export default class Account extends React.Component {
                :{uri: this.state.retailerData.checkUser.Picture}
             }
               />
+
               <Text style={{fontWeight:'bold',fontSize:30,color: 'black',textAlign:'center'}} numberOfLines={1}>
                  {this.state.retailerData.checkUser.Name}
               </Text>
@@ -367,6 +375,8 @@ export default class Account extends React.Component {
               <Text style={{fontSize:20,color: '#737070',textAlign:'center',fontStyle:'italic',marginTop:5}} numberOfLines={2}>
                  {this.state.retailerData.checkUser.ShopAddress}
               </Text>
+
+        
           </Card>
 
          <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('Ledger')}>
@@ -386,10 +396,7 @@ export default class Account extends React.Component {
         )}
 
          
-       <Button full style={styles.fullBtnStyle} onPress={()=> this.logOut()}>
-
-<Text>LOG OUT</Text>
-</Button>
+    
  
 
           {/*View order details pop up */ }
