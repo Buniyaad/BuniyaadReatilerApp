@@ -440,47 +440,6 @@ export default class OrderHistory extends React.Component {
           </View>
         </Modal>
           
-     
-
-        <Footer style={{height:70}}>
-          <FooterTab style={styles.footerStyle}>
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigation.navigate('Home');
-              }}>
-              <Icon name="home" style={{color: '#737070'}} />
-              <Label style={{color: '#737070'}}>Home</Label>
-            </Button>
-
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigation.navigate('Categories');
-              }}>
-              <Icon name="grid" style={{color: '#737070'}} />
-              <Label style={{color: '#737070'}}>Categories</Label>
-            </Button>
-
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigation.navigate('Cart');
-              }}>
-              <Icon name="cart" style={{color: '#737070'}} />
-              <Label style={{color: '#737070'}}>Cart</Label>
-            </Button>
-
-            <Button
-              transparent
-              onPress={() => {
-                this.props.navigation.navigate('Account');
-              }}>
-              <Icon name="person" style={{color: '#FFC000'}} />
-              <Label style={{color: '#737070'}}>Account</Label>
-            </Button>
-          </FooterTab>
-        </Footer>
       </Container>
     );
   }
