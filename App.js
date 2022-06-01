@@ -25,6 +25,7 @@ import analytics from '@react-native-firebase/analytics';
 import { Mixpanel } from 'mixpanel-react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import OrderHistory from './components/orderHistory';
 
 
 const mixpanel= new Mixpanel("bc7f90d8dffd6db873b39aad77b29bf0");
@@ -115,6 +116,11 @@ export default function App() {
         <Stack.Screen
           name="Account"
           component={Account}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="OrderHistory"
+          component={OrderHistory}
           options={{headerShown: false}}
         />
         <Stack.Screen

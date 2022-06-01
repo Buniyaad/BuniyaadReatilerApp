@@ -184,7 +184,7 @@ export default class Payments extends React.Component {
              ]
            );
           }
-          else if(currentScreen==="Ledger"){
+          else if(currentScreen==="Ledger"||currentScreen==="OrderHistory"){
             this.props.navigation.pop()
           }
           else{

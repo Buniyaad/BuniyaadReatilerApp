@@ -29,7 +29,7 @@ mixpanel.init();
 
 //const server= __DEV__?'http:dev-api.buniyaad.pk':'https:api.buniyaad.pk';
 
-export default class Account extends React.Component {
+export default class OrderHistory extends React.Component {
   state = {
     data: [],
     retailerData:'',
@@ -225,6 +225,9 @@ export default class Account extends React.Component {
              ]
            );
           }
+          else if(currentScreen==="Ledger"||currentScreen==="OrderHistory"){
+            this.props.navigation.pop()
+          }
           else{
             this.props.navigation.navigate("Home");
           }
@@ -343,56 +346,19 @@ export default class Account extends React.Component {
     
     return (
       <Container style={styles.containerStyle}>
-       <Content>
-       <Text style={styles.labelStyle}>Account</Text>
-       {this.state.retailerData != '' && (
-         <Card style={styles.retailerCardStyle}>
-         <TouchableOpacity style={{alignSelf:'flex-end'}}  onPress={()=> this.logOut()}>
-            <Icon name='log-out' color='#ffab03'  style={{fontSize:35,alignSelf:'center'}}/>
-       
-         </TouchableOpacity>
-
-             <Image
-               style={styles.profileImg}
-               source={ 
-                 this.state.retailerData.checkUser.Picture === ''?
-              require('./assets/default.png')
-              :{uri: this.state.retailerData.checkUser.Picture}
-           }
-             />
-
-             <Text style={{fontWeight:'bold',fontSize:30,color: 'black',textAlign:'center'}} numberOfLines={1}>
-                {this.state.retailerData.checkUser.Name}
-             </Text>
-             <Text style={{fontWeight:'bold',fontSize:25,color: '#737070',textAlign:'center',marginTop:5}} numberOfLines={1}>
-               {this.state.retailerData.checkUser.ShopName}
-             </Text>
-             <Text style={{fontSize:20,color: '#737070',textAlign:'center',fontStyle:'italic',marginTop:5}} numberOfLines={2}>
-                {this.state.retailerData.checkUser.ShopAddress}
-             </Text>
-
-       
-         </Card>
-       )}
-        
-
-         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('Ledger')}>
-          <Card style={styles.retailerCardStyle}>
-              <Text style={styles.largetxt}> Ledger </Text>
-          </Card>
-         </TouchableOpacity>
-
-         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('OrderHistory')}>
-          <Card style={styles.retailerCardStyle}>
-              <Text style={styles.largetxt}> Order History </Text>
-          </Card>
-         </TouchableOpacity>
-       </Content>
-
- 
+      
+       <Text style={styles.labelStyle}>Order History</Text>  
 
 
+          {this.state.retailerData != '' && (
+           <FlatList
          
+           data={this.state.data}
+           refreshing={this.state.refresh}
+          onRefresh={()=>this.getOrderHistory()}
+           renderItem={item => this.orderHistoryItemsComponent(item)}
+        />
+        )}
 
          
     
@@ -602,13 +568,6 @@ const styles = StyleSheet.create({
     marginBottom:20,
   },
   retailerCardStyle: {
-    padding:20,
-    width:'90%',
-    borderRadius:10,
-    alignSelf:'center',
-  },
-   retailerCardStyle: {
-    marginBottom:20,
     padding:20,
     width:'90%',
     borderRadius:10,
