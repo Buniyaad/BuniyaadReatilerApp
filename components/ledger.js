@@ -36,6 +36,7 @@ export default class Payments extends React.Component {
     refresh:false,
     totalCredit:0,
     totalDebit:0,
+    retailerBalance:0,
     showSpinner:false
   };
 
@@ -53,11 +54,7 @@ export default class Payments extends React.Component {
 
              <Text style={{marginTop:10,fontWeight:'bold',color:itemData.item.Credit === null?'green':'red'
              ,width:'33%',textAlign:'right'}} numberOfLines={2}>
-               Rs. {itemData.item.Credit === null? itemData.item.Debit.toLocaleString('en-GB') :itemData.item.Credit.toLocaleString('en-GB')}</Text>
-              
-            
-             
-             
+               Rs. {itemData.item.Credit === null? itemData.item.Debit.toLocaleString('en-GB') :"-"+itemData.item.Credit.toLocaleString('en-GB')}</Text>
 
       </View>
  
@@ -71,7 +68,7 @@ export default class Payments extends React.Component {
       this.setState({retailerData:JSON.parse(jsonValue)})
 
      this.getLedger();
-      
+     this.getRetailerBalance();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",jsonValue)
       
@@ -103,6 +100,22 @@ export default class Payments extends React.Component {
            let totalCredit = this.calculateTotalCredit(res.data)
            let totalDebit = this.calculateTotalDebit(res.data)
             this.setState({data: res.data,paymentCount:res.data.length,totalCredit:totalCredit,totalDebit:totalDebit,refresh:false});
+             console.log(JSON.stringify(res.data));
+            // console.log("total credit",totalCredit)
+            // console.log("total debit",totalDebit)
+
+          });
+      }
+
+      getRetailerBalance(){
+        fetch(`${server}/ledgers/maintainRetailerBalance/${this.state.retailerData.checkUser._id}`, {
+          headers: {
+            token: `bearer ${this.state.retailerData.token}`,
+          },
+        })
+          .then(response => response.json())
+          .then(res => {
+            this.setState({retailerBalance: res.data});
              console.log(JSON.stringify(res.data));
             // console.log("total credit",totalCredit)
             // console.log("total debit",totalDebit)
@@ -196,7 +209,7 @@ export default class Payments extends React.Component {
     return (
       <Container style={styles.containerStyle}>
       
-       <Text style={styles.labelStyle}>payments</Text>  
+       <Text style={styles.labelStyle}>Ledger</Text>  
 
 
        {this.state.retailerData != '' && (
@@ -205,17 +218,17 @@ export default class Payments extends React.Component {
 
           <Card style={styles.retailerCardStyle}>
                 <Text style={styles.smalltxt}> Balance</Text>
-                <Text style={styles.largetxt}>Rs. {this.state.totalCredit.toLocaleString('en-GB')}</Text>
+                <Text style={styles.largetxt}>Rs. {this.state.retailerBalance.toLocaleString('en-GB')}</Text>
 
                 <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:10,borderTopWidth:1,borderColor:'#f5f5f5'}}>
                   <View >
-                        <Text style={styles.smalltxt}> Credit</Text>
-                        <Text style={[styles.largetxt,{color:'green',fontSize:20}]}> Rs. {this.state.totalCredit.toLocaleString('en-GB')}</Text>
+                        <Text style={styles.smalltxt}>Orders Total</Text>
+                        <Text style={[styles.largetxt,{color:'red',fontSize:20}]}> Rs. {this.state.totalCredit.toLocaleString('en-GB')}</Text>
                   </View>
 
                   <View >
-                        <Text style={styles.smalltxt}> Debit</Text>
-                        <Text style={[styles.largetxt,{color:'red',fontSize:20}]}>Rs. {this.state.totalDebit.toLocaleString('en-GB')}</Text>
+                        <Text style={styles.smalltxt}> Payments Total</Text>
+                        <Text style={[styles.largetxt,{color:'green',fontSize:20}]}>Rs. {this.state.totalDebit.toLocaleString('en-GB')}</Text>
                   </View>
             </View>
 
