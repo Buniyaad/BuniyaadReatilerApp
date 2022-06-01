@@ -369,9 +369,9 @@ export default class Account extends React.Component {
               </Text>
           </Card>
 
-         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('Payments')}>
+         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('Ledger')}>
           <Card style={styles.retailerCardStyle}>
-              <Text style={styles.largetxt}> View Payments </Text>
+              <Text style={styles.largetxt}> Ledger </Text>
           </Card>
          </TouchableOpacity>
           

@@ -34,24 +34,28 @@ export default class Payments extends React.Component {
     retailerData:'',
     modalVisible:false,
     refresh:false,
-    totalAmount:0,
-    paymentCount:0,
+    totalCredit:0,
+    totalDebit:0,
     showSpinner:false
   };
 
  
 
-  paymentsHistoryItemsComponent = itemData => (
+  ledgerItemsComponent = itemData => (
    
       <Card style={styles.paymentsHistoryCardStyle}>
 
-        <View style={{borderBottomWidth:1, flexDirection:'row',justifyContent:'space-between'}}>
-            <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Serial #{itemData.item.SerialNo}</Text>
-        </View>
+        <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Credit</Text>
+             <Text style={{fontSize:25,marginTop:10,fontWeight:'bold'}}>
+               Rs. {itemData.item.Credit === null? 0 :itemData.item.Credit.toLocaleString('en-GB')}</Text>
+        </View>   
 
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Amount</Text>
-             <Text style={{fontSize:25,marginTop:10,fontWeight:'bold'}}>Rs. {itemData.item.Amount.toLocaleString('en-GB')}</Text>
+             <Text style={{fontSize:17,marginTop:10,fontWeight:'bold',color:'#737070'}}>Debit</Text>
+             <Text style={{fontSize:25,marginTop:10,fontWeight:'bold'}}>
+               Rs. {itemData.item.Debit === null? 0 :itemData.item.Debit.toLocaleString('en-GB')}</Text>
         </View>   
         
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -71,8 +75,8 @@ export default class Payments extends React.Component {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
 
-     this.getPaymentHistory();
-      console.log("hello")
+     this.getLedger();
+      
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log("this is async data: ",jsonValue)
       
@@ -91,9 +95,9 @@ export default class Payments extends React.Component {
   }
 
       //get payment history
-      getPaymentHistory() {
+      getLedger() {
         this.setState({refresh:true})
-        fetch(`${server}/payments/getByRetailer/${this.state.retailerData.checkUser._id}`, {
+        fetch(`${server}/ledgers/getByRetailer/${this.state.retailerData.checkUser._id}`, {
           headers: {
             token: `bearer ${this.state.retailerData.token}`,
           },
@@ -101,25 +105,38 @@ export default class Payments extends React.Component {
           .then(response => response.json())
           .then(res => {
 
-            let totalAmount = this.calculateTotalPayments(res.data) 
-            this.setState({data: res.data,paymentCount:res.data.length,totalAmount:totalAmount,refresh:false});
-            console.log(JSON.stringify(res.data));
-            console.log("total Amount",totalAmount)
+           let totalCredit = this.calculateTotalCredit(res.data)
+           let totalDebit = this.calculateTotalDebit(res.data)
+            this.setState({data: res.data,paymentCount:res.data.length,totalCredit:totalCredit,totalDebit:totalDebit,refresh:false});
+            // console.log(JSON.stringify(res.data));
+            // console.log("total credit",totalCredit)
+            // console.log("total debit",totalDebit)
 
           });
       }
 
 
-      calculateTotalPayments(payments) {
+      calculateTotalCredit(ledgers) {
           console.log("here")
-        total = payments.reduce(
+        total = ledgers.reduce(
           (previousScore, currentScore) =>
-            parseInt(previousScore) + parseInt(currentScore.Amount),
+            parseInt(previousScore) + parseInt(currentScore.Credit===null?0:currentScore.Credit),
           0,
         );
-        console.log("total ",total)
+       
         return total;
       }
+
+      calculateTotalDebit(ledgers) {
+        console.log("here")
+      total = ledgers.reduce(
+        (previousScore, currentScore) =>
+          parseInt(previousScore) + parseInt(currentScore.Debit===null?0:currentScore.Debit),
+        0,
+      );
+
+      return total;
+    }
 
       // Logout 
        logOut(){
@@ -188,24 +205,33 @@ export default class Payments extends React.Component {
        {this.state.retailerData != '' && (
            <FlatList
           ListHeaderComponent={<>  
-        <View style={{flexDirection:'row',justifyContent:'space-around'}}>
-           <Card style={styles.retailerCardStyle}>
-                <Text style={styles.smalltxt}> Total Payments</Text>
-                <Text style={styles.largetxt}>{this.state.paymentCount}</Text>
-           </Card>
 
-           <Card style={styles.retailerCardStyle}>
-                <Text style={styles.smalltxt}> Total Amount</Text>
-                <Text style={styles.largetxt}>{this.state.totalAmount}</Text>
-           </Card>
-        </View>
+          <Card style={styles.retailerCardStyle}>
+                <Text style={styles.smalltxt}> Balance</Text>
+                <Text style={styles.largetxt}>Rs. {this.state.totalCredit.toLocaleString('en-GB')}</Text>
+
+                <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:10,borderTopWidth:1,borderColor:'#f5f5f5'}}>
+                  <View >
+                        <Text style={styles.smalltxt}> Credit</Text>
+                        <Text style={[styles.largetxt,{color:'green',fontSize:20}]}> Rs. {this.state.totalCredit.toLocaleString('en-GB')}</Text>
+                  </View>
+
+                  <View >
+                        <Text style={styles.smalltxt}> Debit</Text>
+                        <Text style={[styles.largetxt,{color:'red',fontSize:20}]}>Rs. {this.state.totalDebit.toLocaleString('en-GB')}</Text>
+                  </View>
+            </View>
+
+         </Card>
+           
+  
         
         <Text style={styles.itemLabelStyle}> Payment History:</Text>      
            </>}
            data={this.state.data}
            refreshing={this.state.refresh}
-          onRefresh={()=>this.getPaymentHistory()}
-           renderItem={item => this.paymentsHistoryItemsComponent(item)}
+          onRefresh={()=>this.getLedger()}
+           renderItem={item => this.ledgerItemsComponent(item)}
         />
         )}
 
@@ -323,10 +349,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFC000',
     textAlign:'center',
-    marginTop:10,
+    marginTop:5,
   },
   smalltxt: {
-    
+    marginTop:10,
     fontWeight: 'bold',
     textAlign:'center'
   },
@@ -346,8 +372,8 @@ const styles = StyleSheet.create({
     marginBottom:20,
   },
   retailerCardStyle: {
-    padding:20,
-    width:'45%',
+    padding:10,
+    width:'95%',
     borderRadius:10,
     marginLeft:5,
     marginRight:5,

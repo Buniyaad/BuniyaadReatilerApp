@@ -17,7 +17,7 @@ import CategoriesSearch from './components/categoriesSearch';
 import OtpLogin from './components/otpLogin'
 import Onboarding from './components/onboarding'
 import Notifications from './components/notifications'
-import Payments from './components/payments'
+import Ledger from './components/ledger'
 import { navigationRef, isReadyRef } from './RootNavigation';
 import * as RootNavigation from './RootNavigation.js';
 
@@ -193,8 +193,8 @@ export default function App() {
           options={{headerShown: false}}
         />
            <Stack.Screen
-          name="Payments"
-          component={Payments}
+          name="Ledger"
+          component={Ledger}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
