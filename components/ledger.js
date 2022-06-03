@@ -52,7 +52,7 @@ export default class Payments extends React.Component {
 
              <Text style={{marginTop:10,fontWeight:'bold',textAlign:'center',width:'33%'}}>{itemData.item.Type}</Text>
 
-             <Text style={{marginTop:10,fontWeight:'bold',color:itemData.item.Credit === null?'green':'red'
+             <Text style={{marginTop:10,fontWeight:'bold',color:itemData.item.Credit === null?'#05631a':'red'
              ,width:'33%',textAlign:'right'}} numberOfLines={2}>
                Rs. {itemData.item.Credit === null? itemData.item.Debit.toLocaleString('en-GB') :"-"+itemData.item.Credit.toLocaleString('en-GB')}</Text>
 
@@ -221,7 +221,7 @@ export default class Payments extends React.Component {
 
           <Card style={styles.retailerCardStyle}>
                 <Text style={styles.smalltxt}> Balance</Text>
-                <Text style={styles.largetxt}>Rs. {this.state.retailerBalance.toLocaleString('en-GB')}</Text>
+                <Text style={[styles.largetxt]}>Rs. {this.state.retailerBalance.toLocaleString('en-GB')}</Text>
 
                 <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:10,borderTopWidth:1,borderColor:'#f5f5f5'}}>
                   <View >
@@ -231,7 +231,7 @@ export default class Payments extends React.Component {
 
                   <View >
                         <Text style={styles.smalltxt}> Payments Total</Text>
-                        <Text style={[styles.largetxt,{color:'green',fontSize:20}]}>Rs. {this.state.totalDebit.toLocaleString('en-GB')}</Text>
+                        <Text style={[styles.largetxt,{color:'#05631a',fontSize:20}]}>Rs. {this.state.totalDebit.toLocaleString('en-GB')}</Text>
                   </View>
             </View>
 
