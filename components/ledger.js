@@ -48,9 +48,13 @@ export default class Payments extends React.Component {
 
 
              <Text style={{marginTop:10,fontWeight:'bold',width:'33%',
-              color:'#737070',textAlign:'left',fontStyle:'italic'}}>{new Date().toDateString()}</Text>
+              color:'#737070',textAlign:'left',fontStyle:'italic'}}>{itemData.item.hasOwnProperty('ActionDate')?itemData.item.ActionDate:"N/A"}</Text>
 
-             <Text style={{marginTop:10,fontWeight:'bold',textAlign:'center',width:'33%'}}>{itemData.item.Type}</Text>
+            <View style={{width:'33%'}}>
+              <Text style={{marginTop:10,fontWeight:'bold',textAlign:'center'}}>{itemData.item.Type}</Text>
+              <Text style={{color:'#737070',fontStyle:'italic',textAlign:'center',fontWeight:'bold'}}># {itemData.item.Identifier}</Text>
+            </View>
+            
 
              <Text style={{marginTop:10,fontWeight:'bold',color:itemData.item.Credit === null?'#05631a':'red'
              ,width:'33%',textAlign:'right'}} numberOfLines={2}>
@@ -66,7 +70,6 @@ export default class Payments extends React.Component {
     try {
       const jsonValue = await AsyncStorage.getItem('test')
       this.setState({retailerData:JSON.parse(jsonValue)})
-
      this.getLedger();
      this.getRetailerBalance();
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -103,7 +106,6 @@ export default class Payments extends React.Component {
              console.log(JSON.stringify(res.data));
             // console.log("total credit",totalCredit)
             // console.log("total debit",totalDebit)
-
           });
       }
 

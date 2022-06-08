@@ -164,12 +164,15 @@ productPricesItemComponent = itemData => (
 
   async getCart() {
     try {
+
       const jsonValue = await AsyncStorage.getItem('cart');
       jsonValue != null ? this.setState({cart: JSON.parse(jsonValue)}) : null;
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       this.getProducts();
+      this.getRetailerBalance();
       this.calculateCartTotal();
       console.log('this is async cart data: ', JSON.parse(jsonValue));
+
     } catch (e) {
       // error reading value
     }
@@ -459,6 +462,46 @@ productPricesItemComponent = itemData => (
       .then(data => console.log(data));
   }
 
+
+  getRetailerBalance(){
+    fetch(`${server}/ledgers/maintainRetailerBalance/${this.state.retailerData.checkUser._id}`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.setState({retailerBalance: res.data});
+        //console.log("retailer Balance ",res.data)
+      });
+  }
+
+  addLedger(orderid,cartTotal) {
+
+
+    fetch(
+      `${server}/ledgers/add`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+        body: JSON.stringify({
+          RetailerId:this.state.retailerData.checkUser._id,
+          ActionDate:new Date().toDateString(),
+          Type:"Order",
+          Credit:cartTotal,
+          Identifier:orderid,
+          Balance:parseInt(this.state.retailerBalance)-parseInt(cartTotal)
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => console.log(data));
+  }
+
   handle_Cart() {
     //check if cart is created first
     let controller = new AbortController()
@@ -591,6 +634,9 @@ productPricesItemComponent = itemData => (
         .then(data => orderId=data.data._id)
         .then(() => {
 
+          // storing order total for add ledger func, passed to getOrderById()
+         let cartTotal=this.state.cartTotal;
+          
           mixpanel.track('Order Placed',
           {'products': this.state.cart,
           'amount': this.state.cartTotal,
@@ -611,7 +657,7 @@ productPricesItemComponent = itemData => (
           this.getCart();
           this.getProducts();
           console.log("order id is",orderId);
-          this.getOrderById(orderId)
+          this.getOrderById(orderId,cartTotal)
           this.notify_admin();
           
           //this.props.navigation.push('Account',{showLatestOrder: true})
@@ -621,7 +667,7 @@ productPricesItemComponent = itemData => (
     }
   }
 
- getOrderById(orderId){
+ getOrderById(orderId,cartTotal){
     console.log("Order id is:",orderId)
     
     fetch(`${server}/orders/getById/${orderId}`, {
@@ -631,7 +677,10 @@ productPricesItemComponent = itemData => (
     })
       .then(response => response.json())
       .then(res => {
+
+        this.addLedger(res.data.orderId,cartTotal)
          this.getOrderProducts(res.data)
+         
       // console.log(JSON.stringify("Order details:",res.data));
       });
   }
@@ -641,7 +690,7 @@ productPricesItemComponent = itemData => (
 
       await this.setState({orderModalVisible:true,orderDetails:itemData,amount:itemData.amount,status:itemData.status,
       orderId:itemData.orderId})
-       console.log("tester :",this.state.orderDetails)
+       console.log("Order Details :",this.state.orderDetails)
       
        this.send_sms(this.state.orderId,this.state.amount); 
 
