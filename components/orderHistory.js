@@ -135,7 +135,13 @@ export default class OrderHistory extends React.Component {
         .then(response => response.json())
         .then(res => {
           this.setState({data: res.data,refresh:false});
-          //console.log(JSON.stringify(res.data));
+
+          result = res.data.reduce(function (r, a) {
+            r[a.date] = r[a.date] || [];
+            r[a.date].push(a);
+            return r;
+        }, Object.create(null));
+          console.log(JSON.stringify(result));
         });
     }
 

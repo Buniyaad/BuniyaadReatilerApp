@@ -476,6 +476,23 @@ productPricesItemComponent = itemData => (
       });
   }
 
+  // get previous order id and increment by 1
+  getOrderId(){
+    fetch(`${server}/orders/getLastOrderId`, {
+      headers: {
+        token: `bearer ${this.state.retailerData.token}`,
+      },
+    })
+      .then(response => response.json())
+      .then(res => {
+        this.setState({orderId: parseInt(res.data)+1});
+        this.addLedger(parseInt(res.data)+1, this.state.cartTotal);
+        console.log("orderid:",parseInt(res.data)+1)
+      });
+
+  }
+
+
   addLedger(orderid,cartTotal) {
 
 
@@ -499,7 +516,9 @@ productPricesItemComponent = itemData => (
       },
     )
       .then(response => response.json())
-      .then(data => console.log(data));
+      .then(data => {"ledger id:",console.log(data)
+        this.post_order(data.data._id)
+      });
   }
 
   handle_Cart() {
@@ -596,7 +615,7 @@ productPricesItemComponent = itemData => (
   }
 
   // Order Starts here
-  post_order() {
+  post_order(ledgerId) {
     var orderId='';
 
    
@@ -626,7 +645,8 @@ productPricesItemComponent = itemData => (
             products: this.state.cart,
             amount: this.state.cartTotal,
             date: new Date(),
-            type:'Mobile',
+            LedgerId:ledgerId,
+            orderId:this.state.orderId
           }),
         },
       )
@@ -635,7 +655,7 @@ productPricesItemComponent = itemData => (
         .then(() => {
 
           // storing order total for add ledger func, passed to getOrderById()
-         let cartTotal=this.state.cartTotal;
+        // let cartTotal=this.state.cartTotal;
           
           mixpanel.track('Order Placed',
           {'products': this.state.cart,
@@ -651,13 +671,14 @@ productPricesItemComponent = itemData => (
             products: [],
             cart: [],
             cartTotal: 0,
+            
           });
           this.post_cart();
           this.storeCart(this.state.cart);
           this.getCart();
           this.getProducts();
           console.log("order id is",orderId);
-          this.getOrderById(orderId,cartTotal)
+          this.getOrderById(orderId)
           this.notify_admin();
           
           //this.props.navigation.push('Account',{showLatestOrder: true})
@@ -667,7 +688,7 @@ productPricesItemComponent = itemData => (
     }
   }
 
- getOrderById(orderId,cartTotal){
+ getOrderById(orderId){
     console.log("Order id is:",orderId)
     
     fetch(`${server}/orders/getById/${orderId}`, {
@@ -678,7 +699,7 @@ productPricesItemComponent = itemData => (
       .then(response => response.json())
       .then(res => {
 
-        this.addLedger(res.data.orderId,cartTotal)
+       // this.addLedger(res.data.orderId,cartTotal)
          this.getOrderProducts(res.data)
          
       // console.log(JSON.stringify("Order details:",res.data));
@@ -1034,7 +1055,7 @@ productPricesItemComponent = itemData => (
           <Button
             full
             style={[styles.fullBtnStyle, {margin: 10}]}
-            onPress={() => this.post_order()}>
+            onPress={() => this.getOrderId()}>
             <Text>Place Order</Text>
           </Button>
         </Card>

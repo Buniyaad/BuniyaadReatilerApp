@@ -58,7 +58,7 @@ export default class Payments extends React.Component {
 
              <Text style={{marginTop:10,fontWeight:'bold',color:itemData.item.Credit === null?'#05631a':'red'
              ,width:'33%',textAlign:'right'}} numberOfLines={2}>
-               Rs. {itemData.item.Credit === null? itemData.item.Debit.toLocaleString('en-GB') :"-"+itemData.item.Credit.toLocaleString('en-GB')}</Text>
+               Rs. {itemData.item.Credit === null? "-"+itemData.item.Debit.toLocaleString('en-GB') :itemData.item.Credit.toLocaleString('en-GB')}</Text>
 
       </View>
  
@@ -223,7 +223,7 @@ export default class Payments extends React.Component {
 
           <Card style={styles.retailerCardStyle}>
                 <Text style={styles.smalltxt}> Balance</Text>
-                <Text style={[styles.largetxt]}>Rs. {this.state.retailerBalance.toLocaleString('en-GB')}</Text>
+                <Text style={[styles.largetxt]}>Rs. {this.state.retailerBalance===0?0:(parseInt(this.state.retailerBalance) * parseInt(-1)).toLocaleString()}</Text>
 
                 <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:10,borderTopWidth:1,borderColor:'#f5f5f5'}}>
                   <View >
