@@ -510,6 +510,7 @@ productPricesItemComponent = itemData => (
           ActionDate:new Date().toDateString(),
           Type:"Order",
           Credit:cartTotal,
+          Debit:'',
           Identifier:orderid,
           Balance:parseInt(this.state.retailerBalance)-parseInt(cartTotal)
         }),
@@ -735,6 +736,45 @@ productPricesItemComponent = itemData => (
   
       }
 
+      removeLedger(ledgerId){
+        fetch(`${server}/ledgers/getById/${ledgerId}`, {
+          headers: {
+            token: `bearer ${this.state.retailerData.token}`,
+          },
+        })
+          .then(response => response.json())
+          .then(res => {
+
+            ledger= res.data;
+
+            fetch(
+              `${server}/ledgers/InActiveLedger/${ledger._id}`,
+              {
+                method: 'PUT',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  token: `bearer ${this.state.retailerData.token}`,
+                },
+                body: JSON.stringify({
+                  RetailerId:ledger.RetailerId,
+                  ActionDate:ledger.ActionDate,
+                  Type:"Order",
+                  Credit:ledger.Credit,
+                  Debit:'',
+                  Identifier:ledger.Identifier,
+                  Balance:ledger.Balance,
+                  Active:false
+                }),
+              },
+            )
+              .then(response => response.json())
+              .then(data => {console.log("ledger id:",data)}); 
+          });
+
+    
+      }
+
       cancelOrder(){
         console.log("order Id: ",this.state.orderDetails._id," Products: ",this.state.orderDetails.products)
         fetch(`${server}/orders/update/${this.state.orderDetails._id}`, {
@@ -755,6 +795,7 @@ productPricesItemComponent = itemData => (
       {
       'source':'App'
     });
+    this.removeLedger(this.state.orderDetails.LedgerId)
       this.send_cancel_email(this.state.orderCombinedList)
       this.send_sms_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
       this.notify_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))

@@ -140,8 +140,11 @@ export default class OrderHistory extends React.Component {
             r[a.date] = r[a.date] || [];
             r[a.date].push(a);
             return r;
-        }, Object.create(null));
-          console.log(JSON.stringify(result));
+        }, Object.create(null))
+
+         let test=[]
+         result.length>0?result.map((res)=>{test.push({"date":res.date})}):null
+          console.log(result);
         });
     }
 

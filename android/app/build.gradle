@@ -135,8 +135,8 @@ android {
         applicationId "com.buniyaadretailerapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 34
-        versionName "1.32"
+        versionCode 35
+        versionName "2.0"
     }
     splits {
         abi {
