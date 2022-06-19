@@ -1378,7 +1378,7 @@ productPricesItemComponent = itemData => (
 
         <Button full style={styles.fullBtnStyle} onPress={()=> {this.goToProfile()}}>
 
-        <Text>Aap keh Orders</Text>
+        <Text>Aap ka Account</Text>
         </Button> 
 
           <Button full danger style={styles.cancelBtnStyle} onPress={()=> {this.cancelOrder()}}>

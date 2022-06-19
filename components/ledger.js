@@ -52,7 +52,7 @@ export default class Payments extends React.Component {
 
             <View style={{width:'33%'}}>
               <Text style={{marginTop:10,fontWeight:'bold',textAlign:'center'}}>{itemData.item.Type}</Text>
-              <Text style={{color:'#737070',fontStyle:'italic',textAlign:'center',fontWeight:'bold'}}># {itemData.item.Identifier}</Text>
+              <Text style={{color:'#737070',fontStyle:'italic',textAlign:'center',fontWeight:'bold'}}> {itemData.item.Identifier==''?'':'#'+itemData.item.Identifier}</Text>
             </View>
             
 
