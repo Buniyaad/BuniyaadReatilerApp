@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,ToastAndroid,Modal,View,BackHandler} from 'react-native';
+import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,ToastAndroid,Modal,View,BackHandler,SectionList} from 'react-native';
 import {
   Badge,
   Body,
@@ -134,17 +134,34 @@ export default class OrderHistory extends React.Component {
       })
         .then(response => response.json())
         .then(res => {
-          this.setState({data: res.data,refresh:false});
+       
 
-          result = res.data.reduce(function (r, a) {
-            r[a.date] = r[a.date] || [];
-            r[a.date].push(a);
-            return r;
-        }, Object.create(null))
+        //   result = res.data.reduce(function (r, a) {
+        //     r[a.date] = r[a.date] || [];
+        //     r[a.date].push(a);
+        //     return r;
+        // }, Object.create(null))
 
-         let test=[]
-         result.length>0?result.map((res)=>{test.push({"date":res.date})}):null
-          console.log(result);
+        let Dates= res.data.map((item)=>{
+            let newDate=new Date(item.date).toDateString();
+            console.log(newDate)
+            item['title']= newDate;
+            return item
+        })
+
+        let groupedList = Object.values(Dates.reduce((acc, item) => {
+          if (!acc[item.title]) acc[item.title] = {
+              title: item.date,
+              data: []
+          };
+          acc[item.title].data.push(item);
+          return acc;
+      }, {}))
+
+        //  let test=[]
+        //  result.length>0?result.map((res)=>{test.push({"date":res.date})}):null
+         // console.log(JSON.stringify(groupedList[2]));
+          this.setState({data: groupedList,refresh:false});
         });
     }
 
@@ -359,13 +376,19 @@ export default class OrderHistory extends React.Component {
        <Text style={styles.labelStyle}>Order History</Text>  
 
 
-          {this.state.retailerData != '' && (
-           <FlatList
+          {this.state.data.retailerData !='' && (
+           <SectionList
          
-           data={this.state.data}
+           sections={this.state.data}
            refreshing={this.state.refresh}
+           keyExtractor={(item, index) => item + index}
+          
           onRefresh={()=>this.getOrderHistory()}
            renderItem={item => this.orderHistoryItemsComponent(item)}
+           renderSectionHeader={({ section: { title } }) => (
+            <Text style={{marginTop:30,fontWeight:'bold',backgroundColor:'#FFC000',fontSize:15,color:'white', 
+            alignSelf: 'flex-start',padding:10,borderTopRightRadius:20,borderTopLeftRadius:10,marginLeft:10}}>{new Date(title).toDateString()}</Text>
+          )}
         />
         )}
 
