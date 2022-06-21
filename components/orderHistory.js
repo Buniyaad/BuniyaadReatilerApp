@@ -134,14 +134,6 @@ export default class OrderHistory extends React.Component {
       })
         .then(response => response.json())
         .then(res => {
-       
-
-        //   result = res.data.reduce(function (r, a) {
-        //     r[a.date] = r[a.date] || [];
-        //     r[a.date].push(a);
-        //     return r;
-        // }, Object.create(null))
-
         let Dates= res.data.map((item)=>{
             let newDate=new Date(item.date).toDateString();
             console.log(newDate)
@@ -158,8 +150,6 @@ export default class OrderHistory extends React.Component {
           return acc;
       }, {}))
 
-        //  let test=[]
-        //  result.length>0?result.map((res)=>{test.push({"date":res.date})}):null
          // console.log(JSON.stringify(groupedList[2]));
           this.setState({data: groupedList,refresh:false});
         });
@@ -391,9 +381,6 @@ export default class OrderHistory extends React.Component {
           )}
         />
         )}
-
-         
-    
  
 
           {/*View order details pop up */ }
