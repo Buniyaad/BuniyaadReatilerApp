@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,ToastAndroid,Modal,View,BackHandler} from 'react-native';
+import {Alert,StyleSheet, Image, FlatList,TouchableOpacity,ToastAndroid,Modal,View,BackHandler,SectionList} from 'react-native';
 import {
   Badge,
   Body,
@@ -124,20 +124,38 @@ export default class Account extends React.Component {
     }
   }
 
-    //get order history
-    getOrderHistory() {
-      this.setState({refresh:true})
-      fetch(`${server}/orders/history/${this.state.retailerData.checkUser._id}`, {
-        headers: {
-          token: `bearer ${this.state.retailerData.token}`,
-        },
-      })
-        .then(response => response.json())
-        .then(res => {
-          this.setState({data: res.data,refresh:false});
-          //console.log(JSON.stringify(res.data));
-        });
-    }
+
+//get order history
+getOrderHistory() {
+  this.setState({refresh:true})
+  fetch(`${server}/orders/history/${this.state.retailerData.checkUser._id}`, {
+    headers: {
+      token: `bearer ${this.state.retailerData.token}`,
+    },
+  })
+    .then(response => response.json())
+    .then(res => {
+    let Dates= res.data.map((item)=>{
+        let newDate=new Date(item.date).toDateString();
+        console.log(newDate)
+        item['title']= newDate;
+        return item
+    })
+
+    let groupedList = Object.values(Dates.reduce((acc, item) => {
+      if (!acc[item.title]) acc[item.title] = {
+          title: item.date,
+          data: []
+      };
+      acc[item.title].data.push(item);
+      return acc;
+  }, {}))
+  
+     // console.log(JSON.stringify(groupedList[2]));
+      this.setState({data: groupedList,refresh:false});
+    });
+}
+
 
    // get products of particular order
     async getProducts(itemData) {
@@ -343,9 +361,12 @@ export default class Account extends React.Component {
     
     return (
       <Container style={styles.containerStyle}>
-       <Content>
-       <Text style={styles.labelStyle}>Account</Text>
-       {this.state.retailerData != '' && (
+
+         {this.state.data.retailerData !='' && (
+           <SectionList
+          ListHeaderComponent={<>
+         <Text style={styles.labelStyle}>Account</Text>
+         {this.state.retailerData != '' && (
          <Card style={styles.retailerCardStyle}>
          <TouchableOpacity style={{alignSelf:'flex-end'}}  onPress={()=> this.logOut()}>
             <Icon name='log-out' color='#ffab03'  style={{fontSize:35,alignSelf:'center'}}/>
@@ -371,28 +392,29 @@ export default class Account extends React.Component {
                 {this.state.retailerData.checkUser.ShopAddress}
              </Text>
 
-       
+             <TouchableOpacity activeOpacity={0.8} style={styles.fullBtnStyle} onPress={()=>this.props.navigation.push('Ledger')}>
+          
+                  <Text style={[styles.largetxt,{color:'white',marginBottom:10}]}> Ledger </Text>
+           
+            </TouchableOpacity>
          </Card>
-       )}
-        
-
-         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('Ledger')}>
-          <Card style={styles.retailerCardStyle}>
-              <Text style={styles.largetxt}> Ledger </Text>
-          </Card>
-         </TouchableOpacity>
-
-         <TouchableOpacity activeOpacity={0.9} onPress={()=>this.props.navigation.push('OrderHistory')}>
-          <Card style={styles.retailerCardStyle}>
-              <Text style={styles.largetxt}> Order History </Text>
-          </Card>
-         </TouchableOpacity>
-       </Content>
-
- 
-
-
          
+       )}
+
+          <Text style={{fontWeight:'bold',fontSize:20,color: '#737070',marginLeft:10,marginTop:10}}>Order History:</Text>
+          </>}
+           sections={this.state.data}
+           refreshing={this.state.refresh}
+           keyExtractor={(item, index) => item + index}
+          
+          onRefresh={()=>this.getOrderHistory()}
+           renderItem={item => this.orderHistoryItemsComponent(item)}
+           renderSectionHeader={({ section: { title } }) => (
+            <Text style={{marginTop:20,fontWeight:'bold',backgroundColor:'#FFC000',fontSize:15,color:'white', 
+            alignSelf: 'flex-start',padding:10,borderTopRightRadius:20,borderTopLeftRadius:10,marginLeft:10}}>{new Date(title).toDateString()}</Text>
+          )}
+        />
+        )}        
 
          
     
