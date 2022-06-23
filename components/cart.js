@@ -647,7 +647,9 @@ productPricesItemComponent = itemData => (
             amount: this.state.cartTotal,
             date: new Date(),
             LedgerId:ledgerId,
-            orderId:this.state.orderId
+            orderId:this.state.orderId,
+            ProcessingTime: new Date(),
+            ProcessingBy:this.state.retailerData.checkUser.Name
           }),
         },
       )
@@ -731,7 +733,9 @@ productPricesItemComponent = itemData => (
           console.log("merged array",mergedArray)
 
           // Sending email here
-       this.send_email(mergedArray);
+        if(!__DEV__){
+          this.send_email(mergedArray);
+        }
        this.notify(this.state.orderId,this.state.amount)
   
       }
@@ -796,10 +800,13 @@ productPricesItemComponent = itemData => (
       'source':'App'
     });
     this.removeLedger(this.state.orderDetails.LedgerId)
+    if(!__DEV__){
       this.send_cancel_email(this.state.orderCombinedList)
-      this.send_sms_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
-      this.notify_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
       this.notify_admin_on_cancel()
+    }
+
+      this.send_sms_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))
+      this.notify_on_cancel(this.state.orderId,this.state.amount.toLocaleString('en-GB'))  
       this.setState({orderModalVisible:false})
       
      })
