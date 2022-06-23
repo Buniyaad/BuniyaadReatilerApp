@@ -214,6 +214,17 @@ export default class Payments extends React.Component {
     return (
       <Container style={styles.containerStyle}>
       
+      <Button
+       transparent
+       style={{ alignSelf:'flex-start',marginLeft:20,marginTop:10}}
+       onPress={() => this.props.navigation.pop()}>
+       <Icon
+         name="arrow-back"
+         color="#737070"
+         style={{fontSize: 30}}
+       />
+     </Button>
+     
        <Text style={styles.labelStyle}>Ledger</Text>  
 
 
