@@ -512,7 +512,8 @@ productPricesItemComponent = itemData => (
           Credit:cartTotal,
           Debit:'',
           Identifier:orderid,
-          Balance:parseInt(this.state.retailerBalance)-parseInt(cartTotal)
+          Balance:parseInt(this.state.retailerBalance)-parseInt(cartTotal),
+          PreviousBalance:this.state.retailerBalance
         }),
       },
     )
