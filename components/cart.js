@@ -518,9 +518,38 @@ productPricesItemComponent = itemData => (
       },
     )
       .then(response => response.json())
-      .then(data => {"ledger id:",console.log(data)
-        this.post_order(data.data._id)
+      .then(data => {"ledger added:",console.log(data)
+      this.inactiveLedger(data.data._id,orderid,cartTotal);
       });
+  }
+
+  inactiveLedger(ledgerId,orderid,cartTotal){
+
+    fetch(
+      `${server}/ledgers/InActiveLedger/${ledgerId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          token: `bearer ${this.state.retailerData.token}`,
+        },
+        body: JSON.stringify({
+          RetailerId:this.state.retailerData.checkUser._id,
+          ActionDate:new Date().toDateString(),
+          Type:"Order",
+          Credit:cartTotal,
+          Debit:'',
+          Identifier:orderid,
+          Balance:parseInt(this.state.retailerBalance)-parseInt(cartTotal),
+          Active:false
+        }),
+      },
+    )
+      .then(response => response.json())
+      .then(data => {console.log("dectivated ledger:",data)
+      this.post_order(ledgerId)
+      }); 
   }
 
   handle_Cart() {
@@ -648,6 +677,7 @@ productPricesItemComponent = itemData => (
             amount: this.state.cartTotal,
             date: new Date(),
             LedgerId:ledgerId,
+            status:(parseInt(this.state.retailerBalance)-parseInt(this.state.cartTotal))*-1>this.state.retailerData.checkUser.CreditLimit?'Hold':'Processing',
             orderId:this.state.orderId,
             ProcessingTime: new Date(),
             ProcessingBy:this.state.retailerData.checkUser.Name
