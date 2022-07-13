@@ -1060,6 +1060,20 @@ productPricesItemComponent = itemData => (
   }
 
 
+  // prompt and confirm advance payment
+  alertAdvancePayment(){
+    Alert.alert('Confirm?', `Aap kou Rs.${this.state.advancePayment.Type==="perc"?
+    parseInt(parseInt(this.state.cartTotal)*(parseInt(this.state.advancePayment.Amount)/100)).toLocaleString('en-GB'):
+    this.state.advancePayment.Amount} advance payment delivery keh waqt ada karni hougi`, [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'OK', onPress: () => this.getOrderId()},
+    ]);
+  }
+
   //handle back button function
   backAction = () => {
     let currentScreen = this.props.route.name;
@@ -1146,7 +1160,7 @@ productPricesItemComponent = itemData => (
   
             <Text style={{fontSize: 20,marginLeft:5,fontWeight:'bold'}}>
               Rs. {this.state.advancePayment.Type==="perc"?
-              (parseInt(this.state.cartTotal)*(parseInt(this.state.advancePayment.Amount)/100)).toLocaleString('en-GB'):
+              parseInt(parseInt(this.state.cartTotal)*(parseInt(this.state.advancePayment.Amount)/100)).toLocaleString('en-GB'):
               this.state.advancePayment.Amount}
             </Text>
             </View>     
@@ -1173,7 +1187,7 @@ productPricesItemComponent = itemData => (
           <Button
             full
             style={[styles.fullBtnStyle, {margin: 10}]}
-            onPress={() => this.getOrderId()}>
+            onPress={() => this.state.paymentType==='Cash'?this.getOrderId():this.alertAdvancePayment()}>
             <Text>Place Order</Text>
           </Button>
         </Card>
