@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {Alert,StyleSheet,Image,FlatList,TouchableOpacity,Modal,ToastAndroid,View,BackHandler,ImageBackground} from 'react-native';
-import { Badge,Body,Card,Container,Content,Text,Item,Button,Header,Footer,FooterTab,Spinner,Tabs,Tab,Input,Label} from 'native-base';
+import { Badge,Body,Card,Container,Content,Text,Item,Button,Header,Form,Footer,FooterTab,Spinner,Tabs,Tab,Input,Label,Picker} from 'native-base';
 import Icon from 'react-native-ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import SwitchSelector from "react-native-switch-selector";
 import {Mixpanel} from 'mixpanel-react-native';
 
 import server from './fetch/baseURL';
@@ -17,6 +18,8 @@ export default class Cart extends React.Component {
   state = {
     data: [],
     retailerData: '',
+    advancePayment:'',
+    advancePaymentRequired:false,
     products: [],
     cart: [],
     combinedList: [],
@@ -36,6 +39,7 @@ export default class Cart extends React.Component {
     amount:'',
     orderId:'',
     status:'',
+    paymentType:'Cash',
     orderDetails:[],
     orderModalVisible:false,
     orderCombinedList:[],
@@ -181,7 +185,9 @@ productPricesItemComponent = itemData => (
   async getData() {
     try {
       const jsonValue = await AsyncStorage.getItem('test');
-      this.setState({retailerData: JSON.parse(jsonValue)});
+     // console.log("Advance Payment: ", JSON.parse(jsonValue).checkUser.AdvancePaymentAmount)
+      this.setState({retailerData: JSON.parse(jsonValue), advancePayment:JSON.parse(jsonValue).checkUser.AdvancePaymentAmount,
+        advancePaymentRequired:JSON.parse(jsonValue).checkUser.AdvancePayment});
       mixpanel.identify(JSON.parse(jsonValue).checkUser.PhoneNumber)
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
       console.log('this is async data: ', JSON.parse(jsonValue));
@@ -680,7 +686,8 @@ productPricesItemComponent = itemData => (
             status:(parseInt(this.state.retailerBalance)-parseInt(this.state.cartTotal))*-1>this.state.retailerData.checkUser.CreditLimit?'Hold':'Processing',
             orderId:this.state.orderId,
             ProcessingTime: new Date(),
-            ProcessingBy:this.state.retailerData.checkUser.Name
+            ProcessingBy:this.state.retailerData.checkUser.Name,
+            PaymentType:this.state.paymentType
           }),
         },
       )
@@ -849,9 +856,9 @@ productPricesItemComponent = itemData => (
       goToProfile(){
         this.setState({orderModalVisible:false});
         mixpanel.track('Order History viewed',
-      {
-      'source':'App'
-    });
+        {
+        'source':'App'
+         });
         this.props.navigation.push('Account')
       }
 
@@ -1130,6 +1137,38 @@ productPricesItemComponent = itemData => (
            Rs. {this.state.cartTotal.toLocaleString('en-GB')}
           </Text>
           </View>
+
+          {this.state.advancePaymentRequired && this.state.paymentType==='Credit' && (
+            <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',margin:10}}>
+            <Text style={styles.totalLabelStyle}>
+              Advance:  
+            </Text>
+  
+            <Text style={{fontSize: 20,marginLeft:5,fontWeight:'bold'}}>
+              Rs. {this.state.advancePayment.Type==="perc"?
+              (parseInt(this.state.cartTotal)*(parseInt(this.state.advancePayment.Amount)/100)).toLocaleString('en-GB'):
+              this.state.advancePayment.Amount}
+            </Text>
+            </View>     
+          )}
+   
+   {this.state.advancePaymentRequired && (
+          <View style={{flexDirection:'row', justifyContent:'space-between',marginLeft:10,marginBottom:5}}>
+          <Text style={styles.totalLabelStyle}>
+                payment:  
+              </Text>
+               <SwitchSelector
+                options={[ { label: "Cash", value: "Cash" },{ label: "Credit", value: "Credit"}]}
+                initial={0}
+                hasPadding
+                buttonColor='#ffab03'
+                style={{width:'30%',alignSelf:'flex-end',marginRight:5,marginTop:5}}
+                onPress={value => this.setState({paymentType:value})}
+                />
+          </View>
+   )}
+         
+
           
           <Button
             full

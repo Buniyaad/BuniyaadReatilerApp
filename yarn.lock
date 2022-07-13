@@ -1259,6 +1259,11 @@
   "resolved" "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-14.5.0.tgz"
   "version" "14.5.0"
 
+"@react-native-picker/picker@^2.4.2":
+  "integrity" "sha512-0nY8638h1J3wKz6P3IJMpOoxJDdOj7Dk/K2hP/xpqP3KnIY0lmoqYlhyNihuyVPocDGajf6SA7LFFsFepQ56ag=="
+  "resolved" "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.4.2.tgz"
+  "version" "2.4.2"
+
 "@react-native/assets@1.0.0":
   "integrity" "sha512-KrwSpS1tKI70wuKl68DwJZYEvXktDHdZMG0k2AXD/rJVSlB23/X2CB2cutVR0HwNMJIal9HOUOBB2rVfa6UGtQ=="
   "resolved" "https://registry.npmjs.org/@react-native/assets/-/assets-1.0.0.tgz"
@@ -2132,9 +2137,9 @@
   "version" "6.3.0"
 
 "caniuse-lite@^1.0.30001286":
-  "integrity" "sha512-cVjiJHWGcNlJi8TZVKNMnvMid3Z3TTdDHmLDzlOdIiZq138Exvo0G+G0wTdVYolxKb4AYwC+38pxodiInVtJSA=="
-  "resolved" "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001300.tgz"
-  "version" "1.0.30001300"
+  "integrity" "sha512-yy7XLWCubDobokgzudpkKux8e0UOOnLHE6mlNJBzT3lZJz6s5atSEzjoL+fsCPkI0G8MP5uVdDx1ur/fXEWkZA=="
+  "resolved" "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001366.tgz"
+  "version" "1.0.30001366"
 
 "capture-exit@^2.0.0":
   "integrity" "sha512-PiT/hQmTonHhl/HFGN+Lx3JJUznrVYJ3+AQsnthneZbvW7x+f08Tk7yLJTLEOUvBTbduLeeBkxEaYXUOUrRq6g=="
@@ -6002,6 +6007,13 @@
     "css-select" "^2.1.0"
     "css-tree" "^1.0.0-alpha.39"
 
+"react-native-switch-selector@^2.2.1":
+  "integrity" "sha512-HeUGoPD+rDV9F0CWJnIjZaK1JJS95dnxxVzTzufeLYCtA/iFKxhy+PS8kAyXTwfrTSgFFAmURgcpkAcAMqDg8Q=="
+  "resolved" "https://registry.npmjs.org/react-native-switch-selector/-/react-native-switch-selector-2.2.1.tgz"
+  "version" "2.2.1"
+  dependencies:
+    "prop-types" "^15.7.2"
+
 "react-native-vector-icons@^7.0.0":
   "integrity" "sha512-V2a1zJ4i+kS8O4j183gIwX14St9AxxXabxwYpFBgRhvr2NDXyFcjHDEAgrOYYlt2W57e20aN1tBDU/I+wn9WtQ=="
   "resolved" "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-7.1.0.tgz"
@@ -6112,7 +6124,7 @@
     "raf" "^3.1.0"
     "tween-functions" "^1.0.1"
 
-"react@*", "react@^16.0", "react@^16.0.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0", "react@^16.8.6 || ^17.0.0", "react@^17.0.0", "react@>=16.0", "react@>=16.0.0-alpha.3", "react@>=16.4.1", "react@>=16.9.0", "react@17.0.2":
+"react@*", "react@^16.0", "react@^16.0.0 || ^17.0.0", "react@^16.8.0 || ^17.0.0", "react@^16.8.6 || ^17.0.0", "react@^17.0.0", "react@>=16.0", "react@>=16.0.0-alpha.3", "react@>=16.4.1", "react@>=16.9.0", "react@16 || 17", "react@17.0.2":
   "integrity" "sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.2.tgz"
   "version" "17.0.2"
